@@ -24,7 +24,6 @@
       inherit inputs; 
       src = ./.;
 
-      
       snowfall = {
         meta = {
           name = "Yuki";
