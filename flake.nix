@@ -20,16 +20,16 @@
   };
 
   outputs = inputs: 
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs; 
-      src = ./.;
+  inputs.snowfall-lib.mkFlake {
+    inherit inputs;
+    src = ./.;
 
-      snowfall = {
-        meta = {
-          name = "Yuki";
-          title = "rft's nix flake";
-	};
-      };
-
+    snowfall = {
+      meta = {
+        name = "Yuki";
+        title = "rft's nix flake";
+	    };
     };
+
+  };
 }
