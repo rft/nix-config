@@ -24,6 +24,7 @@
     procs
     tldr
     lazygit
+    python3
 
     xonsh
   ];
