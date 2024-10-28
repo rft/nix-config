@@ -9,7 +9,9 @@
 
     ];
 
+
     fonts.fontconfig = {
+      enable = true;
       defaultFonts = {
         serif = ["inter"];
         sansSerif = ["inter"];
