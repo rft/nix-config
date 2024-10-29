@@ -24,6 +24,9 @@
     inherit inputs;
     src = ./.;
 
+    channels-config = {
+          allowUnfree = true;
+    };
     snowfall = {
       meta = {
         name = "Yuki";
