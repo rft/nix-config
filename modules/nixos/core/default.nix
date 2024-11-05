@@ -14,7 +14,7 @@
     bat 
     fzf
     git 
-    neovim
+    #neovim
     jq
     zoxide
     xplr
@@ -27,5 +27,6 @@
     python3
 
     xonsh
+    inputs.nixcats-nvim.packages.${pkgs.system}.default
   ];
 }
