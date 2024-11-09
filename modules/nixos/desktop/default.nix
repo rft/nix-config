@@ -9,8 +9,11 @@
     # ./awesome
   ];
 
-    environment.systemPackages = with pkgs; [
-      autorandr
+  environment.systemPackages = with pkgs; [
+    autorandr
+    wdisplays
+    arandr
+    kanshi
   ];
 
 }

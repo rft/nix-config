@@ -5,6 +5,7 @@
   ...
 }:
 {
+  imports = [];
   environment.systemPackages = with pkgs; [
     hy
     elixir

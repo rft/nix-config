@@ -5,6 +5,9 @@
   ...
 }:
 {
+  imports = [
+    ./vscode/vscode.nix
+  ];
   environment.systemPackages = with pkgs; [
     solvespace
     imhex

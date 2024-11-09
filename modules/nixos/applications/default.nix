@@ -29,9 +29,6 @@
     #zed-editor
     flameshot
     ollama
-    wdisplays
-    arandr
-    kanshi
 
     neovide
     rustdesk
