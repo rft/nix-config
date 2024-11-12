@@ -19,7 +19,10 @@
   config,
   ...
 }:{
-  imports = [ inputs.nix-doom-emacs-unstraightened.hmModule ];
+  imports = [
+    inputs.nix-doom-emacs-unstraightened.hmModule
+    ./vscode
+  ];
   programs.doom-emacs = {
     enable = true;
     doomDir = ./doom.d;
