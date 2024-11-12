@@ -5,7 +5,8 @@
   ...
 }:
 {
-  imports = [];
+  imports = [
+  ];
   environment.systemPackages = with pkgs; [
     hy
     elixir
@@ -35,10 +36,15 @@
     nixfmt-rfc-style
 
     # Python Packages
-    python311Packages.opencv4
-    python311Packages.fastapi
-    python311Packages.pydantic
-    python311Packages.beautifulsoup4
-    python311Packages.polars
+    (python312.withPackages (ps: with ps; [
+        beautifulsoup4
+        polars
+        pandas
+        numpy
+        matplotlib
+        simpy
+        ortools
+    ]))
+
   ];
 }
