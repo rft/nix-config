@@ -31,7 +31,6 @@ in
         oderwat.indent-rainbow
         mechatroner.rainbow-csv
         gruntfuggly.todo-tree
-
       ])
       ++ (with marketplace; [
         github.copilot
@@ -39,6 +38,7 @@ in
         roipoussiere.cadquery
         maattdd.gitless
         tonybaloney.vscode-pets
+        awesomektvn.scratchpad
       ])
       ++ (with marketplace-release; [
       ]);
