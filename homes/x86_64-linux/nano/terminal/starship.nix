@@ -95,12 +95,12 @@
       shell = {
         disabled = false;
         style = "bg:nord0 fg:nord4";
-        format = "[ $indicator]($style)";
+        format = "[  $indicator]($style)";
       };
       os = {
         format = "[ $symbol ]($style)";
         style = "bg:nord0 fg:nord4";
-        disabled = false;
+        disabled = true;
       };
 
       directory = {
