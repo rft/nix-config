@@ -17,12 +17,14 @@
 
     settings = {
       format = lib.concatStrings [
+        "[╭─](nord1)"
         "[](nord0)"
         "[ 🌸 ](bg:nord0)"
         "$username"
         "[@](bg:nord0 fg:nord4)"
         "$hostname"
         "$os"
+        "$shell"
         "[](bg:nord1 fg:nord0)"
         "$directory"
         "[](bg:nord2 fg:nord1)"
@@ -30,6 +32,10 @@
         "$git_status"
         "$git_metrics"
         "[](bg:nord3 fg:nord2)"
+        "[](fg:nord3)"
+        "$fill"
+        "[](nord0)"
+        "[$status](bg:nord0 fg:nord4)"
         "$c"
         "$elixir"
         "$elm"
@@ -43,16 +49,13 @@
         "$nim"
         "$rust"
         "$scala"
-        "$shell"
-        "[](fg:nord3)"
-        "$fill"
-        "[](nord0)"
-        "[$status](bg:nord0 fg:nord4)"
+        "[](bg:nord0 fg:nord2)"
         "$cmd_duration"
-        "[](bg:nord1 fg:nord0)"
+        "[](bg:nord2 fg:nord1)"
         "$time"
-        "[](fg:nord3)"
+        "[](fg:nord1)"
         "$line_break"
+        "[╰─](nord1)"
         "$character"
 
       ];
@@ -91,8 +94,8 @@
 
       shell = {
         disabled = false;
-        style = ":bg:nord3 fg:nord2";
-        format = "[  $indicator]($style)";
+        style = "bg:nord0 fg:nord4";
+        format = "[ $indicator]($style)";
       };
       os = {
         format = "[ $symbol ]($style)";
@@ -125,6 +128,8 @@
 
       time = {
         disabled = false;
+        style = "bg:nord1 fg:nord4";
+        format = "[ $time ]($style)";
       };
 
       cmd_duration = {
@@ -132,6 +137,8 @@
         min_time = 0;
         min_time_to_notify = 6000;
         show_notifications = true;
+        style = "bg:nord2 fg:nord4";
+        format = "[took $duration]($style)";
       };
 
       git_branch = {
@@ -230,9 +237,9 @@
 
       status = {
         format = "[ $symbol ]($style)";
-        style = "bg:nord0";
+        style = "bg:nord0 fg:nord4";
         symbol = "[](fg:nord11)";
-        success_symbol = "[](fg:nord14)";
+        success_symbol = "[](fg:nord14 bg:nord0)";
         not_executable_symbol = "[🛇](fg:nord11)";
         not_found_symbol = "[󰍉](fg:nord11)";
         sigint_symbol = "[](fg:nord13)";
