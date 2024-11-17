@@ -70,6 +70,7 @@ end
 
 -- run_once({ "urxvtd", "unclutter -root" }) -- comma-separated entries
 --run_once({"~/.screenlayout/gpd.sh"}) -- comma-separated entries
+-- run_once({"autorandr --change"}) -- comma-separated entries
 
 -- This function implements the XDG autostart specification
 --[[
