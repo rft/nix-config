@@ -11,9 +11,7 @@
 
   environment.systemPackages = with pkgs; [
     autorandr
-    wdisplays
     arandr
-    kanshi
   ];
 
 }
