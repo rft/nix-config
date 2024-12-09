@@ -1,7 +1,8 @@
 { lib, pkgs, inputs, config, ...
 }:
 {
-  imports = [];
+  imports = [
+  ];
 
   environment.systemPackages = with pkgs; [
     picat
@@ -24,9 +25,10 @@
     procs
     tldr
     lazygit
-    python3
+    visidata
+    syncthing
 
-    xonsh
     inputs.nixcats-nvim.packages.${pkgs.system}.default
+    xonsh
   ];
 }
