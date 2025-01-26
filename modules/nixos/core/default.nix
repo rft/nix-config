@@ -29,6 +29,6 @@
     syncthing
 
     inputs.nixcats-nvim.packages.${pkgs.system}.default
-    xonsh
+    #xonsh
   ];
 }
