@@ -29,6 +29,7 @@
     };
     nur = {
       url = "github:nix-community/NUR";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -40,6 +41,11 @@
     channels-config = {
           allowUnfree = true;
     };
+
+    overlays = with inputs; [
+        nur.overlays.default
+    ];
+
     snowfall = {
       meta = {
         name = "Yuki";

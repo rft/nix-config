@@ -5,7 +5,7 @@
   ...
 }:
 {
-  imports = [ ./starship.nix ];
+  imports = [ ./starship.nix ./xonsh.nix];
 
   programs.zsh = {
     enable = true;

@@ -2,6 +2,7 @@
 }:
 {
   imports = [
+      ./xonsh.nix
   ];
 
   environment.systemPackages = with pkgs; [
