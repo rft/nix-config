@@ -6,7 +6,7 @@
 }:
 {
   environment.systemPackages = with pkgs; [
-    #xonsh
+    xonsh
     nur.repos.xonsh-xontribs.xontrib-prompt-starship
     #nur.repos.xonsh-xontribs.xontrib-fish-completer
   ];

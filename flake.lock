@@ -504,9 +504,7 @@
       "inputs": {
         "doomemacs": "doomemacs",
         "emacs-overlay": "emacs-overlay",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": [],
         "systems": "systems_2"
       },
       "locked": {
