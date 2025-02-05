@@ -59,11 +59,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1738463968,
-        "narHash": "sha256-Q39LCI0EOWQoihO6QTtJN3V0m4I20I9BEBDAbVLBoLg=",
+        "lastModified": 1738659674,
+        "narHash": "sha256-KAgZccXkBOxrB7+OR1PrzRpEO/Om1ahSfOaZLt5qjUo=",
         "owner": "nix-community",
         "repo": "emacs-overlay",
-        "rev": "ff7476cfaab15541bb4eb769b50dc213c86fcf70",
+        "rev": "52f31b67d641dbb79ded6253e2731c48a79b8de9",
         "type": "github"
       },
       "original": {
@@ -313,11 +313,11 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1738546470,
-        "narHash": "sha256-jqShdqJVme3Yc+wY4m/zh/S4K3jGPlAoV9vlzZ0TnQg=",
+        "lastModified": 1738664288,
+        "narHash": "sha256-BOO6/zNIX4YaefvelCcyB2+J7ZkwYFB4bTi5LusP/uk=",
         "ref": "refs/heads/main",
-        "rev": "708d16636047c6a311c4e44424cf7d2090219a47",
-        "revCount": 5783,
+        "rev": "3b99e906df8b439d65e740301940e57efc057012",
+        "revCount": 5787,
         "submodules": true,
         "type": "git",
         "url": "https://github.com/hyprwm/Hyprland"
@@ -510,11 +510,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1738485168,
-        "narHash": "sha256-LKIXP9+bSi84l9xrjpmlSaZqJYt8Qij3ytXzK4TDYsI=",
+        "lastModified": 1738665343,
+        "narHash": "sha256-yOalS3dmGHzhpW/w8PblQHTyLwpqBdz6AYL0ThU2EAM=",
         "owner": "marienz",
         "repo": "nix-doom-emacs-unstraightened",
-        "rev": "c0918da0f3720a42f3a0cb86304a8f45d8082521",
+        "rev": "ca62ef8e46c51aed780d4cfb16310dfee5af516c",
         "type": "github"
       },
       "original": {
@@ -532,11 +532,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1738547248,
-        "narHash": "sha256-ALPkA9L4G0j7piorEyeQ7zf6fW4vii4ULxRZBXmeKYM=",
+        "lastModified": 1738720055,
+        "narHash": "sha256-EM3qXpBkIP5Pt4NgmaKlI+QHPZRfLbYl/Lym4muHWUY=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "bfacd5e2786caf61da0ad956728559dd6c1e8037",
+        "rev": "c30f3cd8a3256cb7916af31aa3625759ebb05ace",
         "type": "github"
       },
       "original": {
@@ -597,6 +597,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-unstable": {
+      "locked": {
+        "lastModified": 1738680400,
+        "narHash": "sha256-ooLh+XW8jfa+91F1nhf9OF7qhuA/y1ChLx6lXDNeY5U=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "799ba5bffed04ced7067a91798353d360788b30d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1729265718,
@@ -615,11 +631,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1738435198,
-        "narHash": "sha256-5+Hmo4nbqw8FrW85FlNm4IIrRnZ7bn0cmXlScNsNRLo=",
+        "lastModified": 1738702386,
+        "narHash": "sha256-nJj8f78AYAxl/zqLiFGXn5Im1qjFKU8yBPKoWEeZN5M=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "f6687779bf4c396250831aa5a32cbfeb85bb07a3",
+        "rev": "030ba1976b7c0e1a67d9716b17308ccdab5b381e",
         "type": "github"
       },
       "original": {
@@ -638,11 +654,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1738362438,
-        "narHash": "sha256-EO2dVkMVLThWqv4hobEZEZGWBEuH2Z9SYqQDrbLSclU=",
+        "lastModified": 1738727154,
+        "narHash": "sha256-dF0HgPOpguLLToGD9CNvzbwn+44Y3Ty3nR++XbDIdE0=",
         "owner": "nix-community",
         "repo": "NUR",
-        "rev": "95ddad0ff0e67c90314c6ca46324dce5f9a910d2",
+        "rev": "671f2724b00f29bd856b407c4898bdf611f88fe9",
         "type": "github"
       },
       "original": {
@@ -682,9 +698,7 @@
         "nix-vscode-extensions": "nix-vscode-extensions",
         "nixcats-nvim": "nixcats-nvim",
         "nixpkgs": "nixpkgs_3",
-        "nixpkgs-unstable": [
-          "nixpkgs"
-        ],
+        "nixpkgs-unstable": "nixpkgs-unstable",
         "nur": "nur",
         "snowfall-lib": "snowfall-lib"
       }
