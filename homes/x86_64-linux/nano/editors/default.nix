@@ -22,6 +22,7 @@
   imports = [
     inputs.nix-doom-emacs-unstraightened.hmModule
     ./vscode
+    ./helix
   ];
   programs.doom-emacs = {
     enable = true;

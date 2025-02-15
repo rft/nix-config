@@ -6,6 +6,8 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    helix
+    yazi
     picat
     zellij 
     ripgrep
