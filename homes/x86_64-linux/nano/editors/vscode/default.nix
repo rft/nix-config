@@ -35,6 +35,7 @@ in
         oderwat.indent-rainbow
         mechatroner.rainbow-csv
         gruntfuggly.todo-tree
+        jebbs.plantuml
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [

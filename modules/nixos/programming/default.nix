@@ -34,6 +34,7 @@
 
     # Supporting Tools
     nixfmt-rfc-style
+    plantuml-c4
 
     # Python Packages
     (python312.withPackages (ps: with ps; [
