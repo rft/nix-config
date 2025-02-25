@@ -238,7 +238,7 @@
       status = {
         format = "[ $symbol ]($style)";
         style = "bg:nord0 fg:nord4";
-        symbol = "[](fg:nord11)";
+        symbol = "[](fg:nord14 bg:nord0)";
         success_symbol = "[](fg:nord14 bg:nord0)";
         not_executable_symbol = "[🛇](fg:nord11)";
         not_found_symbol = "[󰍉](fg:nord11)";
