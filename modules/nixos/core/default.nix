@@ -34,4 +34,6 @@
     inputs.nixcats-nvim.packages.${pkgs.system}.default
     #xonsh
   ];
+
+  users.defaultUserShell = pkgs.nushell;
 }
