@@ -5,6 +5,8 @@
       ./xonsh.nix
   ];
 
+  home-manager.backupFileExtension = "backup";
+
   environment.systemPackages = with pkgs; [
     helix
     yazi

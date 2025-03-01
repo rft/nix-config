@@ -27,7 +27,6 @@
     };
   };
 
-  home-manager.backupFileExtension = "backup";
   networking.hostName = "cottonwood"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
