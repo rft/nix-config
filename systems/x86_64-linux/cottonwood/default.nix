@@ -5,13 +5,13 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
   nix.settings.experimental-features = [
-  "nix-command"
-  "flakes"
+    "nix-command"
+    "flakes"
   ];
 
   # Bootloader.
@@ -27,6 +27,7 @@
     };
   };
 
+  home-manager.backupFileExtension = "backup";
   networking.hostName = "cottonwood"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -94,10 +95,13 @@
   users.users.nano = {
     isNormalUser = true;
     description = "nano";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
       kate
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -110,10 +114,10 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-     # neovim
-     git 
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
+    # neovim
+    git
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
