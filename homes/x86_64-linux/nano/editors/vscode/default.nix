@@ -39,8 +39,8 @@ in
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [
-        github.copilot
-        github.copilot-chat
+        #github.copilot
+       # github.copilot-chat
         roipoussiere.cadquery
         maattdd.gitless
         tonybaloney.vscode-pets
