@@ -9,9 +9,5 @@
     # ./awesome
   ];
 
-  environment.systemPackages = with pkgs; [
-    autorandr
-    arandr
-  ];
 
 }

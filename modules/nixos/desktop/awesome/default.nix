@@ -1,4 +1,8 @@
 { config, pkgs, ... }: {
+  environment.systemPackages = with pkgs; [
+    autorandr
+    arandr
+  ];
   services.xserver = {
     enable = true;
     windowManager = {

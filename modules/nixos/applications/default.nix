@@ -11,7 +11,6 @@
   ];
 
     environment.systemPackages = with pkgs; [
-    alacritty
     kitty
     floorp
     wezterm
@@ -30,7 +29,6 @@
     flameshot
     ollama
 
-    neovide
     rustdesk
     nyxt
   ];
