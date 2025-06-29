@@ -22,7 +22,7 @@ in
     enableUpdateCheck = false;
     mutableExtensionsDir = true;
     extensions =
-      # https://search.nixos.org/packages?channel=24.11
+      # https://search.nixos.org/packages?channel=25.05
       (with pkgs.vscode-extensions; [
         github.copilot
         github.copilot-chat
