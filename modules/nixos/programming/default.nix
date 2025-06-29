@@ -30,14 +30,15 @@
     agda
     coq
 
-
     # Supporting Tools
     nixfmt-rfc-style
     nixd
+    direnv
     plantuml-c4
 
     # Python Packages
-    (python312.withPackages (ps: with ps; [
+    (python312.withPackages (
+      ps: with ps; [
         # TODO: Sort these out
         #jupyter
         beautifulsoup4
@@ -62,16 +63,17 @@
         distributed
         #fastapi
         #matplotlib
-#        (ps.buildPythonPackage rec {
-#            pname = "build123d";
-#            version = "0.8.0";
-#            src = pkgs.fetchPypi {
-#                inherit pname version;
-#                sha256 = "fDbm7YynFxhzNuJjWOmAI8KvN6mlX7Mla9WCUlSe374=";
-#            };
-#        })
+        #        (ps.buildPythonPackage rec {
+        #            pname = "build123d";
+        #            version = "0.8.0";
+        #            src = pkgs.fetchPypi {
+        #                inherit pname version;
+        #                sha256 = "fDbm7YynFxhzNuJjWOmAI8KvN6mlX7Mla9WCUlSe374=";
+        #            };
+        #        })
 
-    ]))
+      ]
+    ))
 
   ];
 }
