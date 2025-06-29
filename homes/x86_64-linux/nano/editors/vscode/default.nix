@@ -7,7 +7,8 @@
 }:
 let
   marketplace = inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace;
-  marketplace-release = inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace-release;
+  marketplace-release =
+    inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace-release;
 in
 {
   imports = [
@@ -36,11 +37,16 @@ in
         mechatroner.rainbow-csv
         gruntfuggly.todo-tree
         jebbs.plantuml
+        aaron-bond.better-comments
+        brettm12345.nixfmt-vscode
+        mkhl.direnv
+        jnoortheen.nix-ide
+        #arrterian.nix-env-selector
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [
         #github.copilot
-       # github.copilot-chat
+        # github.copilot-chat
         roipoussiere.cadquery
         maattdd.gitless
         tonybaloney.vscode-pets

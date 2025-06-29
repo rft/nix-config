@@ -57,6 +57,8 @@
     "editor.codeActionsOnSave"= {
       "source.fixAll"= "explicit";
     };
+    "editor.fontLigatures" = true;
+    "editor.fontFamily" = "Fira Code";
   };
 
   git = {
@@ -65,11 +67,21 @@
   };
 
   languages = {
-    "python.analysis.typeCheckingMode"= "strict";
+    "python.analysis.typeCheckingMode" = "strict";
+    "nix.serverPath" = "nixd";
+    "nix.enableLanguageServer" = true;
+    "nix.serverSettings" = {
+      "nixd" = {
+        "formatting" = {
+          "command" = [ "nixfmt" ];
+        };
+      };
+    };
   };
 
   in
     {
+      # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
       programs.vscode.userSettings =
         general
         // editor

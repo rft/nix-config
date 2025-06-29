@@ -2,16 +2,18 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 {
   imports = [
   ];
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
   environment.systemPackages = with pkgs; [
     hy
     elixir
     julia
-    swiProlog
+    swi-prolog
     crystal
     zig
     rustc
@@ -34,6 +36,7 @@
 
     # Supporting Tools
     nixfmt-rfc-style
+    nixd
     plantuml-c4
 
     # Python Packages
