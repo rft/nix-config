@@ -1,48 +1,49 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   general = {
-    "vim.easymotion"= true;
-    "vim.useSystemClipboard"= true;
-    "vscode-pets.throwBallWithMouse"= true;
-    "vim.normalModeKeyBindingsNonRecursive"= [
-        {
-          "before"= [
-            "<space>"
-          ];
-          "commands"= [
-            "vspacecode.space"
-          ];
-        }
-        {
-          "before"= [
-            ","
-          ];
-          "commands"= [
-            "vspacecode.space"
-            {
-              "command"= "whichkey.triggerKey";
-              "args"= "m";
-            }
-          ];
-        }
-    ];
-    "vim.visualModeKeyBindingsNonRecursive"= [
+    "vim.easymotion" = true;
+    "vim.useSystemClipboard" = true;
+    "vscode-pets.throwBallWithMouse" = true;
+    "vim.normalModeKeyBindingsNonRecursive" = [
       {
-        "before"= [
+        "before" = [
           "<space>"
         ];
-        "commands"= [
-         "vspacecode.space"
+        "commands" = [
+          "vspacecode.space"
         ];
       }
       {
-        "before"= [
+        "before" = [
           ","
         ];
-        "commands"= [
+        "commands" = [
           "vspacecode.space"
           {
-            "command"= "whichkey.triggerKey";
-            "args"= "m";
+            "command" = "whichkey.triggerKey";
+            "args" = "m";
+          }
+        ];
+      }
+    ];
+    "vim.visualModeKeyBindingsNonRecursive" = [
+      {
+        "before" = [
+          "<space>"
+        ];
+        "commands" = [
+          "vspacecode.space"
+        ];
+      }
+      {
+        "before" = [
+          ","
+        ];
+        "commands" = [
+          "vspacecode.space"
+          {
+            "command" = "whichkey.triggerKey";
+            "args" = "m";
           }
         ];
       }
@@ -50,20 +51,22 @@
   };
 
   editor = {
-    "editor.stickyScroll.enabled"= true;
-    "editor.bracketPairColorization.enabled"= true;
-    "editor.guides.bracketPairs"= "active";
-    "editor.formatOnSave"= true;
-    "editor.codeActionsOnSave"= {
-      "source.fixAll"= "explicit";
+    "editor.stickyScroll.enabled" = true;
+    "editor.bracketPairColorization.enabled" = true;
+    "editor.guides.bracketPairs" = "active";
+    "editor.formatOnSave" = true;
+    "editor.codeActionsOnSave" = {
+      "source.fixAll" = "explicit";
     };
     "editor.fontLigatures" = true;
-    "editor.fontFamily" = "Fira Code";
+    "editor.fontFamily" = "FiraCode Nerd Font Mono";
+    "terminal.integrated.fontFamily" = "'FiraCode Nerd Font Mono'";
+    "terminal.integrated.fontLigatures" = true;
   };
 
   git = {
-    "git.autofetch"= true;
-    "git.confirmSync"= false;
+    "git.autofetch" = true;
+    "git.confirmSync" = false;
   };
 
   languages = {
@@ -77,14 +80,13 @@
         };
       };
     };
+    "[nix]" = {
+      "editor.defaultFormatter" = "brettm12345.nixfmt-vscode";
+    };
   };
 
-  in
-    {
-      # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
-      programs.vscode.userSettings =
-        general
-        // editor
-        // git
-        // languages;
-    }
+in
+{
+  # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
+  programs.vscode.userSettings = general // editor // git // languages;
+}

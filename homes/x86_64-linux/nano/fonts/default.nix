@@ -5,7 +5,7 @@
       fira-code
       fira-code-symbols
       jetbrains-mono
-      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono"]; })
+      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono"]; }) # TODO: when I upgrade to 25.05 make this using the nicer method https://nixos.wiki/wiki/Fonts
 
     ];
 

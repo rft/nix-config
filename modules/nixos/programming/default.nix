@@ -14,7 +14,6 @@
     elixir
     julia
     swi-prolog
-    crystal
     zig
     rustc
     rustup
@@ -23,9 +22,7 @@
     idris2
     gleam
     nim
-    futhark
     go
-    j
     uiua
     supercollider
     coconut
