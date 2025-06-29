@@ -12,7 +12,7 @@
         id = 0;
         isDefault = true;
         containersForce = true;
-        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+        extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
           sponsorblock
           auto-tab-discard
           bitwarden
