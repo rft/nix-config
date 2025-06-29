@@ -24,6 +24,8 @@ in
     extensions =
       # https://search.nixos.org/packages?channel=24.11
       (with pkgs.vscode-extensions; [
+        github.copilot
+        github.copilot-chat
         ms-python.python
         ms-vscode-remote.remote-ssh
         ms-toolsai.jupyter
@@ -45,8 +47,6 @@ in
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [
-        #github.copilot
-        # github.copilot-chat
         roipoussiere.cadquery
         maattdd.gitless
         tonybaloney.vscode-pets

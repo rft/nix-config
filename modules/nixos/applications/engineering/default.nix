@@ -23,6 +23,7 @@
     chirp
     pulseview
     sdrangel
+    zed-editor
 
   ];
 }
