@@ -1,21 +1,24 @@
-{ config, pkgs, inputs, ... }: {
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
+{
 
-    home.packages = with pkgs; [
-      inter
-      fira-code
-      fira-code-symbols
-      jetbrains-mono
-      (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono"]; }) # TODO: when I upgrade to 25.05 make this using the nicer method https://nixos.wiki/wiki/Fonts
+  home.packages = with pkgs; [
+    inter
+    fira-code-symbols
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+  ];
 
-    ];
-
-
-    fonts.fontconfig = {
-      enable = true;
-      defaultFonts = {
-        serif = ["inter"];
-        sansSerif = ["inter"];
-        monospace = ["fira-code"];
-      };
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      serif = [ "inter" ];
+      sansSerif = [ "inter" ];
+      monospace = [ "fira-code" ];
     };
+  };
 }
