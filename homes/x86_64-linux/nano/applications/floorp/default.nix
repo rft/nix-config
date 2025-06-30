@@ -12,24 +12,29 @@
         id = 0;
         isDefault = true;
         containersForce = true;
+        # Search here -> https://nur.nix-community.org/repos/rycee/
         extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-          sponsorblock
           auto-tab-discard
+          betterttv
           bitwarden
-          darkreader
-          decentraleyes
           clearurls
+          darkreader
+          dearrow
+          decentraleyes
+          gesturefy
+          multi-account-containers
           old-reddit-redirect
           privacy-badger
           reddit-enhancement-suite
+          return-youtube-dislikes
+          sidebery
+          sponsorblock
           stylus
           temporary-containers
-          multi-account-containers
-          dearrow
-          betterttv
-          violentmonkey
-          return-youtube-dislikes
           terms-of-service-didnt-read
+          videospeed
+          vimium-c
+          violentmonkey
         ];
       };
     };
