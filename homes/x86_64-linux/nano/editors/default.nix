@@ -18,7 +18,8 @@
   # All other arguments come from the home home.
   config,
   ...
-}:{
+}:
+{
   imports = [
     inputs.nix-doom-emacs-unstraightened.hmModule
     ./vscode

@@ -10,7 +10,7 @@
     ./engineering
   ];
 
-    environment.systemPackages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     kitty
     floorp
     wezterm

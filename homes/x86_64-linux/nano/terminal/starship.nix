@@ -14,7 +14,6 @@
     # command_timeout = 1000
     # add_newline = false
 
-
     settings = {
       format = lib.concatStrings [
         "[╭─](nord1)"
@@ -290,7 +289,6 @@
           Windows = "󰍲 ";
         };
       };
-
 
     };
   };

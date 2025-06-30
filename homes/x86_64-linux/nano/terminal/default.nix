@@ -5,7 +5,12 @@
   ...
 }:
 {
-  imports = [ ./starship.nix ./xonsh.nix ./kitty ./nushell.nix];
+  imports = [
+    ./starship.nix
+    ./xonsh.nix
+    ./kitty
+    ./nushell.nix
+  ];
 
   # Probably should move this to it's own, but it's kind of small so idk
   programs.zsh = {

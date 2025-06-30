@@ -1,8 +1,13 @@
-{ lib, pkgs, inputs, config, ...
+{
+  lib,
+  pkgs,
+  inputs,
+  config,
+  ...
 }:
 {
   imports = [
-      ./xonsh.nix
+    ./xonsh.nix
   ];
 
   home-manager.backupFileExtension = "backup";
@@ -11,15 +16,15 @@
     helix
     yazi
     picat
-    zellij 
+    zellij
     ripgrep
     distrobox
     podman
     podman-tui
     fd
-    bat 
+    bat
     fzf
-    git 
+    git
     #neovim
     jq
     zoxide

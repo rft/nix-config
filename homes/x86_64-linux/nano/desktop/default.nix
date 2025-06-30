@@ -1,5 +1,10 @@
 {
- config, pkgs, inputs, ... }:{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
+{
   imports = [
     ./awesome
     ./hyprland
