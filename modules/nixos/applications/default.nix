@@ -29,7 +29,7 @@
     flameshot
     ollama
 
-    rustdesk
+    #rustdesk
     nyxt
   ];
 

@@ -28,7 +28,6 @@
     #neovim
     jq
     zoxide
-    xplr
     bottom
     pandoc
     ffmpeg_7-full

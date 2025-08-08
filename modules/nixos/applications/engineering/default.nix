@@ -14,7 +14,7 @@
     # imagej
     fiji
     cutter
-    #kicad
+    kicad
     alloy6
     tlaps
     tlaplusToolbox
