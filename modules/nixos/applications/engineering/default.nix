@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 {
@@ -27,5 +29,7 @@
     zed-editor
     openems
     claude-code
+  ] ++ [
+    inputs.self.packages.${system}.plascad
   ];
 }

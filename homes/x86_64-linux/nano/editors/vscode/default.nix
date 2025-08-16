@@ -28,7 +28,6 @@ in
         brettm12345.nixfmt-vscode
         github.copilot
         github.copilot-chat
-        gruntfuggly.todo-tree
         jebbs.plantuml
         jnoortheen.nix-ide
         mechatroner.rainbow-csv
