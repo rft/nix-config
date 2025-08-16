@@ -13,7 +13,6 @@
   home-manager.backupFileExtension = "backup";
 
   environment.systemPackages = with pkgs; [
-    helix
     yazi
     picat
     zellij

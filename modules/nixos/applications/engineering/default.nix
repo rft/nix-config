@@ -8,6 +8,7 @@
   imports = [
   ];
   environment.systemPackages = with pkgs; [
+    helix
     solvespace
     imhex
     ghidra
@@ -25,5 +26,6 @@
     sdrangel
     zed-editor
     openems
+    claude-code
   ];
 }
