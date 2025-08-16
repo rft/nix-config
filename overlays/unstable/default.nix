@@ -8,4 +8,5 @@ final: prev: {
   inherit (channels.nixpkgs-unstable) vscodium;
   # inherit (channels.nixpkgs-unstable) xonsh;
   inherit (channels.nixpkgs-unstable) helix;
+  inherit (channels.nixpkgs-unstable) claude-code;
 }
