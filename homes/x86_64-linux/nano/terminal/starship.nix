@@ -160,77 +160,77 @@
 
       c = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
       elixir = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       elm = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       golang = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       python = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) (\($virtualenv\)) ]($style)";
       };
 
       gradle = {
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       haskell = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       java = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       julia = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       nodejs = {
         symbol = "";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       nim = {
         symbol = "󰆥 ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       rust = {
         symbol = "";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 
       scala = {
         symbol = " ";
-        style = "bg:nord3 fg:nord4";
+        style = "bg:nord0 fg:nord4";
         format = "[ $symbol ($version) ]($style)";
       };
 

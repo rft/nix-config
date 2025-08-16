@@ -35,6 +35,7 @@
           videospeed
           vimium-c
           violentmonkey
+          ublock-origin
         ];
       };
     };
