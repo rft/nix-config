@@ -31,5 +31,6 @@
     claude-code
   ] ++ [
     inputs.self.packages.${system}.plascad
+    inputs.self.packages.${system}.calcpy
   ];
 }
