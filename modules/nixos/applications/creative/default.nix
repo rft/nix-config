@@ -10,5 +10,7 @@
     blender
     godot_4
     krita
+    aseprite
+    reaper
   ];
 }

@@ -25,12 +25,9 @@
     hydrus
 
     rofi-wayland
-    #zed-editor
     flameshot
     ollama
-
     #rustdesk
-    nyxt
   ];
 
 }
