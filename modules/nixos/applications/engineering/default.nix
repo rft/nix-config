@@ -24,6 +24,6 @@
     pulseview
     sdrangel
     zed-editor
-
+    openems
   ];
 }
