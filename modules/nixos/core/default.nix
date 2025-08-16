@@ -36,6 +36,8 @@
     lazygit
     visidata
     syncthing
+    rsync
+    watchexec
 
     inputs.nixcats-nvim.packages.${pkgs.system}.default
     #xonsh
