@@ -13,7 +13,7 @@
   environment.systemPackages = with pkgs; [
     kitty
     floorp
-    wezterm
+    # wezterm
     pciutils
 
     libsForQt5.dolphin

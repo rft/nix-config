@@ -33,6 +33,8 @@ in
         mechatroner.rainbow-csv
         mkhl.direnv
         ms-python.python
+        ms-python.debugpy
+        ms-python.vscode-pylance
         ms-toolsai.jupyter
         ms-vscode-remote.remote-ssh
         ms-vscode.live-server
@@ -53,6 +55,7 @@ in
         maattdd.gitless
         roipoussiere.cadquery
         tonybaloney.vscode-pets
+        bernhard-42.ocp-cad-viewer
       ])
       ++ (with marketplace-release; [
       ]);
