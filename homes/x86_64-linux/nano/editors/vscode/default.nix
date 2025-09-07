@@ -45,6 +45,7 @@ in
         vspacecode.whichkey
         yzhang.markdown-all-in-one
         #arrterian.nix-env-selector
+        svelte.svelte-vscode
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [

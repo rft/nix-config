@@ -83,6 +83,9 @@ let
     "[nix]" = {
       "editor.defaultFormatter" = "brettm12345.nixfmt-vscode";
     };
+    "[svelte]" = {
+      "editor.defaultFormatter" = "svelte.svelte-vscode";
+    };
   };
 
 in
