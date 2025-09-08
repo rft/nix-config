@@ -86,6 +86,8 @@ let
     "[svelte]" = {
       "editor.defaultFormatter" = "svelte.svelte-vscode";
     };
+    "svelte.enable-ts-plugin" = true;
+    "svelte.ask-to-enable-ts-plugin" = false;
   };
 
 in
