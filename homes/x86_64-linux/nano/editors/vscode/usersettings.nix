@@ -70,7 +70,6 @@ let
   };
 
   languages = {
-    "python.analysis.typeCheckingMode" = "strict";
     "nix.serverPath" = "nixd";
     "nix.enableLanguageServer" = true;
     "nix.serverSettings" = {
@@ -88,6 +87,16 @@ let
     };
     "svelte.enable-ts-plugin" = true;
     "svelte.ask-to-enable-ts-plugin" = false;
+
+    "python.analysis.typeCheckingMode" = "strict";
+    "python.defaultInterpreterPath" = "python";
+    "python.linting.enabled" = true;
+    "python.linting.pylintEnabled" = true;
+    "python.formatting.provider" = "ruff";
+    "python.analysis.autoImportCompletions" = true;
+    "python.languageServer" = "Jedi";
+    "python.analysis.extraPaths" = [ "\${workspaceFolder}" ];
+    "python.autoComplete.extraPaths" = [ "\${workspaceFolder}" ];
   };
 
 in
