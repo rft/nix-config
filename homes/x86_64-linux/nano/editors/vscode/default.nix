@@ -49,7 +49,7 @@ in
       ])
       # Can be searched here -> https://marketplace.visualstudio.com/items?itemName=jacobdufault.fuzzy-search url shows the name
       ++ (with marketplace; [
-        awesomektvn.scratchpad
+        buenon.scratchpads
         bodil.file-browser
         jacobdufault.fuzzy-search
         kahole.magit

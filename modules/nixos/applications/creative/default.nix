@@ -12,5 +12,6 @@
     krita
     aseprite
     reaper
+    davinci-resolve
   ];
 }
