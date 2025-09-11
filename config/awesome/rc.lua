@@ -406,10 +406,10 @@ globalkeys = mytable.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
               {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
-              {description = "select next", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                end,
-              {description = "select previous", group = "layout"}),
+    awful.key({ modkey,           }, ".", function () awful.layout.inc( 1)                end,
+              {description = "select next layout", group = "layout"}),
+    awful.key({ modkey,           }, ",", function () awful.layout.inc(-1)                end,
+              {description = "select previous layout", group = "layout"}),
 
     awful.key({ modkey, "Control" }, "n", function ()
         local c = awful.client.restore()
@@ -533,7 +533,7 @@ globalkeys = mytable.join(
     --]]
     -- rofi - dmenu-like application with more features
     -- check https://github.com/DaveDavenport/rofi for more details
-    awful.key({ modkey }, "d", function ()
+    awful.key({ modkey }, "space", function ()
             os.execute("rofi -show run")
         end,
         {description = "show rofi run", group = "launcher"}),
