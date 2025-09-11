@@ -57,6 +57,7 @@ in
         roipoussiere.cadquery
         tonybaloney.vscode-pets
         bernhard-42.ocp-cad-viewer
+        anthropic.claude-code
       ])
       ++ (with marketplace-release; [
       ]);
