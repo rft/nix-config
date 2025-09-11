@@ -24,8 +24,18 @@
       efiSupport = true;
       device = "nodev";
       useOSProber = true;
+      # Rotate GRUB display for vertical screen
+      extraConfig = ''
+        GRUB_GFXMODE=auto
+        GRUB_GFXPAYLOAD_LINUX=keep
+      '';
     };
   };
+
+  # Kernel parameter for early framebuffer rotation
+  boot.kernelParams = [
+    "fbcon=rotate:1"  # 1 = 90° counter-clockwise, 3 = 90° clockwise
+  ];
 
   networking.hostName = "cottonwood"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
