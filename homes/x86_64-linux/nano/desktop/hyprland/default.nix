@@ -1,10 +1,12 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, osConfig, ... }:
 {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      monitor = [
-        ",preferred,auto,auto"
+      monitor = if osConfig.networking.hostName == "cottonwood" then [
+        "eDP-1,preferred,auto,1,transform,1"  # Rotate for vertical display on cottonwood
+      ] else [
+        ",preferred,auto,auto"  # Default for other machines
       ];
 
       env = [

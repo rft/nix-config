@@ -75,15 +75,7 @@
     ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate left || true
   '';
 
-  # Hyprland configuration for cottonwood
-  programs.hyprland = {
-    enable = true;
-    settings = {
-      monitor = [
-        "eDP-1,preferred,auto,1,transform,1"  # Rotate display 90° counter-clockwise
-      ];
-    };
-  };
+  # Hyprland display rotation handled in home-manager config
 
   # Enable the KDE Plasma Desktop Environment.
   # services.displayManager.sddm.enable = true;
