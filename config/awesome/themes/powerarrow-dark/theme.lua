@@ -66,6 +66,7 @@ theme.widget_vol_no                             = theme.dir .. "/icons/vol_no.pn
 theme.widget_vol_mute                           = theme.dir .. "/icons/vol_mute.png"
 theme.widget_mail                               = theme.dir .. "/icons/mail.png"
 theme.widget_mail_on                            = theme.dir .. "/icons/mail_on.png"
+theme.widget_wifi                               = theme.dir .. "/icons/net.png"
 theme.tasklist_plain_task_name                  = true
 theme.tasklist_disable_icon                     = true
 theme.useless_gap                               = dpi(0)
@@ -265,6 +266,34 @@ local net = lain.widget.net({
     end
 })
 
+-- WiFi widget
+local wifiicon = wibox.widget.imagebox(theme.widget_wifi)
+local wifi = wibox.widget.textbox()
+
+-- Function to update WiFi status
+local function update_wifi_status()
+    awful.spawn.easy_async_with_shell("nmcli -t -f active,ssid dev wifi | grep '^yes:'", function(stdout)
+        local ssid = stdout:gsub("^yes:", ""):gsub("\n", "")
+        if ssid ~= "" then
+            wifi:set_markup(markup.font(theme.font, " " .. ssid .. " "))
+        else
+            wifi:set_markup(markup.font(theme.font, " No WiFi "))
+        end
+    end)
+end
+
+-- Timer for WiFi updates
+local wifi_timer = gears.timer({ timeout = 15 })
+wifi_timer:connect_signal("timeout", update_wifi_status)
+wifi_timer:start()
+update_wifi_status()
+
+-- WiFi click handlers
+wifiicon:buttons(my_table.join(
+    awful.button({ }, 1, function () awful.spawn(awful.util.terminal .. " -e nmtui") end),
+    awful.button({ }, 3, function () awful.spawn("nm-connection-editor") end)
+))
+
 -- Separators
 local spr     = wibox.widget.textbox(' ')
 local arrl_dl = separators.arrow_left(theme.bg_focus, "alpha")
@@ -345,8 +374,11 @@ function theme.at_screen_connect(s)
             baticon,
             bat.widget,
             arrl_ld,
-            wibox.container.background(neticon, theme.bg_focus),
-            wibox.container.background(net.widget, theme.bg_focus),
+            wibox.container.background(wifiicon, theme.bg_focus),
+            wibox.container.background(wifi, theme.bg_focus),
+            arrl_dl,
+            neticon,
+            net.widget,
             arrl_dl,
             clock,
             spr,
