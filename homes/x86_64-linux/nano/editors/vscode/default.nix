@@ -18,10 +18,11 @@ in
   programs.vscode = {
     package = pkgs.vscodium;
     enable = true;
-    enableExtensionUpdateCheck = true;
-    enableUpdateCheck = false;
     mutableExtensionsDir = true;
-    extensions =
+    profiles.default = {
+      enableExtensionUpdateCheck = true;
+      enableUpdateCheck = false;
+      extensions =
       # https://search.nixos.org/packages?channel=25.05
       (with pkgs.vscode-extensions; [
         aaron-bond.better-comments
@@ -61,5 +62,6 @@ in
       ])
       ++ (with marketplace-release; [
       ]);
+    };
   };
 }

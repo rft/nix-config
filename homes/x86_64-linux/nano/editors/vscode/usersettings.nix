@@ -102,5 +102,5 @@ let
 in
 {
   # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
-  programs.vscode.userSettings = general // editor // git // languages;
+  programs.vscode.profiles.default.userSettings = general // editor // git // languages;
 }
