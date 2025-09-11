@@ -75,19 +75,13 @@
     ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate left || true
   '';
 
-  # Wayland display rotation using kanshi
-  services.kanshi = {
+  # Hyprland configuration for cottonwood
+  programs.hyprland = {
     enable = true;
-    systemdTarget = "graphical-session.target";
-    profiles = {
-      cottonwood-vertical = {
-        outputs = [
-          {
-            criteria = "eDP-1";
-            transform = "90"; # 90 degrees counter-clockwise
-          }
-        ];
-      };
+    settings = {
+      monitor = [
+        "eDP-1,preferred,auto,1,transform,1"  # Rotate display 90° counter-clockwise
+      ];
     };
   };
 
