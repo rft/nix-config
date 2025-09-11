@@ -6,7 +6,8 @@
 }:
 {
   imports = [
-    ./awesome
+    # ./awesome
     ./hyprland
+    ./caelestia
   ];
 }
