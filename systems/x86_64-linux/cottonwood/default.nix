@@ -34,7 +34,7 @@
 
   # Kernel parameter for early framebuffer rotation
   boot.kernelParams = [
-    "fbcon=rotate:1"  # 1 = 90° counter-clockwise, 3 = 90° clockwise
+    "fbcon=rotate:1" # 1 = 90° counter-clockwise, 3 = 90° clockwise
   ];
 
   networking.hostName = "cottonwood"; # Define your hostname.
@@ -84,7 +84,7 @@
         outputs = [
           {
             criteria = "eDP-1";
-            transform = "90";  # 90 degrees counter-clockwise
+            transform = "90"; # 90 degrees counter-clockwise
           }
         ];
       };
@@ -132,7 +132,6 @@
       "wheel"
     ];
     packages = with pkgs; [
-      kate
       #  thunderbird
     ];
   };
