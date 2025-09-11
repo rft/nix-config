@@ -1,4 +1,9 @@
-{ pkgs, lib, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     inputs.caelestia-shell.homeManagerModules.default
@@ -6,7 +11,7 @@
   programs.caelestia = {
     enable = true;
     systemd = {
-      enable = true;
+      enable = false;
       target = "graphical-session.target";
       environment = [ ];
     };

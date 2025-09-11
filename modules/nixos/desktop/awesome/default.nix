@@ -12,7 +12,7 @@
         package = pkgs.awesome;
       };
     };
-
+    displayManager.startx.enable = true;
   };
   services.libinput = {
     enable = true;
