@@ -531,15 +531,18 @@ globalkeys = mytable.join(
         end,
         {description = "show dmenu", group = "launcher"}),
     --]]
-    -- alternatively use rofi, a dmenu-like application with more features
+    -- rofi - dmenu-like application with more features
     -- check https://github.com/DaveDavenport/rofi for more details
-    --[[ rofi
-    awful.key({ modkey }, "x", function ()
-            os.execute(string.format("rofi -show %s -theme %s",
-            'run', 'dmenu'))
+    awful.key({ modkey }, "d", function ()
+            os.execute("rofi -show run")
         end,
-        {description = "show rofi", group = "launcher"}),
-    --]]
+        {description = "show rofi run", group = "launcher"}),
+    
+    -- rofi window switcher
+    awful.key({ modkey }, "p", function ()
+            os.execute("rofi -show window")
+        end,
+        {description = "show rofi window switcher", group = "launcher"}),
     -- Prompt
     awful.key({ modkey }, "r", function () awful.screen.focused().mypromptbox:run() end,
               {description = "run prompt", group = "launcher"}),
