@@ -58,6 +58,29 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # Display rotation for vertical display
+  services.xserver.displayManager.sessionCommands = ''
+    # Replace "eDP-1" with your actual display output name
+    # Run 'xrandr' to find the correct output name for your built-in display
+    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate left || true
+  '';
+
+  # Wayland display rotation using kanshi
+  services.kanshi = {
+    enable = true;
+    systemdTarget = "graphical-session.target";
+    profiles = {
+      cottonwood-vertical = {
+        outputs = [
+          {
+            criteria = "eDP-1";
+            transform = "90";  # 90 degrees counter-clockwise
+          }
+        ];
+      };
+    };
+  };
+
   # Enable the KDE Plasma Desktop Environment.
   # services.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
