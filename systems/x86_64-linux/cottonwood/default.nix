@@ -34,7 +34,7 @@
 
   # Kernel parameter for early framebuffer rotation
   boot.kernelParams = [
-    "fbcon=rotate:3" # 1 = 90° counter-clockwise, 3 = 90° clockwise
+    "fbcon=rotate:1" # 1 = 90° counter-clockwise, 3 = 90° clockwise
   ];
 
   networking.hostName = "cottonwood"; # Define your hostname.
@@ -72,7 +72,7 @@
   services.xserver.displayManager.sessionCommands = ''
     # Replace "eDP-1" with your actual display output name
     # Run 'xrandr' to find the correct output name for your built-in display
-    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate right || true
+    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate left || true
   '';
 
   # Hyprland display rotation handled in home-manager config
