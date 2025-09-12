@@ -76,8 +76,8 @@ end
 awful.spawn.with_shell(
     'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
     'xrdb -merge <<< "awesome.started:true";' ..
-    -- Display rotation for cottonwood
-    'test "$(hostname)" = "cottonwood" && xrandr --output eDP-1 --rotate right;' ..
+    -- Run cottonwood startup script if available
+    'command -v cottonwood-startup >/dev/null 2>&1 && cottonwood-startup;' ..
     -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
     'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"' -- https://github.com/jceb/dex
 )
