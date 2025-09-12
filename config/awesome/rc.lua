@@ -73,14 +73,14 @@ end
 -- run_once({"autorandr --change"}) -- comma-separated entries
 
 -- This function implements the XDG autostart specification
---[[
 awful.spawn.with_shell(
     'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
     'xrdb -merge <<< "awesome.started:true";' ..
+    -- Display rotation for cottonwood
+    'hostname | grep -q cottonwood && xrandr --output eDP-1 --rotate left;' ..
     -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
     'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"' -- https://github.com/jceb/dex
 )
---]]
 
 -- }}}
 
