@@ -13,5 +13,6 @@
     wdisplays
     kanshi
     wofi
+    hyprcursor
   ];
 }

@@ -37,7 +37,7 @@
     syncthing
     rsync
     watchexec
-
+    gnome-keyring
     inputs.nixcats-nvim.packages.${pkgs.system}.default
     #xonsh
   ];
