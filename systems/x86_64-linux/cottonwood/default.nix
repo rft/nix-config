@@ -68,7 +68,6 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Startup script will be added to systemPackages below
 
   # Hyprland display rotation handled in home-manager config
 
@@ -130,11 +129,6 @@
     #  wget
     # neovim
     git
-    # Cottonwood startup script for display rotation
-    (writeShellScriptBin "cottonwood-startup" ''
-      # Display rotation for vertical display
-      ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate right || true
-    '')
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
