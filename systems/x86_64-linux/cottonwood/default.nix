@@ -72,7 +72,7 @@
   services.xserver.displayManager.sessionCommands = ''
     # Replace "eDP-1" with your actual display output name
     # Run 'xrandr' to find the correct output name for your built-in display
-    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate left || true
+    ${pkgs.xorg.xrandr}/bin/xrandr --output eDP-1 --rotate right || true
   '';
 
   # Hyprland display rotation handled in home-manager config
