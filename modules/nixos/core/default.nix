@@ -37,8 +37,11 @@
     syncthing
     rsync
     watchexec
+    rink
     inputs.nixcats-nvim.packages.${pkgs.system}.default
     #xonsh
+    pass
+    gh
   ];
 
   users.defaultUserShell = pkgs.nushell;

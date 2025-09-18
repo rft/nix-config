@@ -1,13 +1,22 @@
-{ pkgs, lib, osConfig, ... }:
+{
+  pkgs,
+  lib,
+  osConfig,
+  ...
+}:
 {
   wayland.windowManager.hyprland = {
     enable = true;
     settings = {
-      monitor = if osConfig.networking.hostName == "cottonwood" then [
-        "eDP-1,preferred,auto,1,transform,3"  # Rotate for vertical display on cottonwood
-      ] else [
-        ",preferred,auto,auto"  # Default for other machines
-      ];
+      monitor =
+        if osConfig.networking.hostName == "cottonwood" then
+          [
+            "eDP-1,preferred,auto,1,transform,3" # Rotate for vertical display on cottonwood
+          ]
+        else
+          [
+            ",preferred,auto,auto" # Default for other machines
+          ];
 
       env = [
         "XCURSOR_SIZE,24"
@@ -15,7 +24,6 @@
       ];
 
       exec-once = [
-        "sleep 2 && caelestia shell --daemon"
         "waybar"
         "dunst"
         "wl-paste --type text --watch cliphist store"
