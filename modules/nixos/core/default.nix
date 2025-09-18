@@ -45,4 +45,11 @@
   ];
 
   users.defaultUserShell = pkgs.nushell;
+
+  # Automatic garbage collection for all systems
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
 }
