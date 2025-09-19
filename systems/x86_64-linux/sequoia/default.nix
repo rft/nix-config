@@ -10,6 +10,13 @@
     ./hardware-configuration.nix
   ];
 
+  # Enable all modules for desktop system
+  modules = {
+    applications.enable = true;
+    desktop.enable = true;
+    programming.enable = true;
+  };
+
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";

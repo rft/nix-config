@@ -12,6 +12,13 @@
     ../../../modules/nixos/core
   ];
 
+  # Disable non-core modules for mistletoe
+  modules = {
+    applications.enable = false;
+    desktop.enable = false;
+    programming.enable = false;
+  };
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
