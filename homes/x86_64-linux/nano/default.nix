@@ -12,7 +12,6 @@
     ./editors
     ./fonts
     ./terminal
-  ] ++ lib.optionals (osConfig.networking.hostName != "mistletoe") [
     ./desktop
     ./applications
   ];
