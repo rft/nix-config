@@ -6,7 +6,11 @@
   osConfig,
   ...
 }:
-
+let
+  # Determine which modules to enable based on hostname
+  hostname = osConfig.networking.hostName or "";
+  isMistletoe = hostname == "mistletoe";
+in
 {
   imports = [
     ./editors
@@ -15,6 +19,15 @@
     ./desktop
     ./applications
   ];
+
+  # Enable modules based on system type
+  modules.home = {
+    terminal.enable = true;  # Always enable terminal
+    editors.enable = true;   # Always enable editors
+    fonts.enable = !isMistletoe;     # Disable fonts on mistletoe
+    desktop.enable = !isMistletoe;   # Disable desktop on mistletoe
+    applications.enable = !isMistletoe;  # Disable applications on mistletoe
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

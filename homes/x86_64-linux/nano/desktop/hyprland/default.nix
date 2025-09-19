@@ -2,10 +2,12 @@
   pkgs,
   lib,
   osConfig,
+  config,
   ...
 }:
 {
-  wayland.windowManager.hyprland = {
+  config = lib.mkIf config.modules.home.desktop.enable {
+    wayland.windowManager.hyprland = {
     enable = true;
     settings = {
       monitor =
@@ -147,5 +149,6 @@
         "suppressevent maximize, class:.*"
       ];
     };
+  };
   };
 }

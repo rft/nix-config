@@ -5,7 +5,8 @@
   ...
 }:
 {
-  programs = {
+  config = lib.mkIf config.modules.home.terminal.enable {
+    programs = {
     carapace.enable = true;
 
     nushell = {
@@ -53,5 +54,6 @@
     eza.enableNushellIntegration = true;
     carapace.enableNushellIntegration = true;
 
+  };
   };
 }

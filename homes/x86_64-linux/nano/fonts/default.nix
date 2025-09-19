@@ -1,24 +1,30 @@
 {
   config,
+  lib,
   pkgs,
   inputs,
   ...
 }:
 {
+  options = {
+    modules.home.fonts.enable = lib.mkEnableOption "home fonts module";
+  };
 
-  home.packages = with pkgs; [
-    inter
-    fira-code-symbols
-    nerd-fonts.fira-code
-    nerd-fonts.jetbrains-mono
-  ];
+  config = lib.mkIf config.modules.home.fonts.enable {
+    home.packages = with pkgs; [
+      inter
+      fira-code-symbols
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+    ];
 
-  fonts.fontconfig = {
-    enable = true;
-    defaultFonts = {
-      serif = [ "inter" ];
-      sansSerif = [ "inter" ];
-      monospace = [ "fira-code" ];
+    fonts.fontconfig = {
+      enable = true;
+      defaultFonts = {
+        serif = [ "inter" ];
+        sansSerif = [ "inter" ];
+        monospace = [ "fira-code" ];
+      };
     };
   };
 }

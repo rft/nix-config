@@ -15,7 +15,8 @@ in
     ./keybindings.nix
     ./usersettings.nix
   ];
-  programs.vscode = {
+  config = lib.mkIf config.modules.home.editors.enable {
+    programs.vscode = {
     package = pkgs.vscodium;
     enable = true;
     mutableExtensionsDir = true;
@@ -63,5 +64,6 @@ in
       ++ (with marketplace-release; [
       ]);
     };
+  };
   };
 }

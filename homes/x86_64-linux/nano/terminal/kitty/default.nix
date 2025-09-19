@@ -5,7 +5,8 @@
   ...
 }:
 {
-  programs.kitty = {
+  config = lib.mkIf config.modules.home.terminal.enable {
+    programs.kitty = {
     enable = true;
     settings = {
       cursor_trail = 3;
@@ -15,5 +16,6 @@
       italic_font = "FiraCode Italic Nerd Font";
       bold_italic_font = "FiraCode Bold Italic Nerd Font";
     };
+  };
   };
 }
