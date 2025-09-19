@@ -26,7 +26,7 @@
     ./helix
   ];
   programs.doom-emacs = {
-    enable = true;
+    enable = false;
     doomDir = ./doom.d;
   };
 }

@@ -2,6 +2,8 @@
   config,
   pkgs,
   inputs,
+  lib,
+  osConfig,
   ...
 }:
 
@@ -9,13 +11,15 @@
   imports = [
     ./editors
     ./fonts
-    ./desktop
     ./terminal
+  ] ++ lib.optionals (osConfig.networking.hostName != "mistletoe") [
+    ./desktop
     ./applications
   ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "nano";
@@ -85,8 +89,6 @@
   home.sessionVariables = {
     # EDITOR = "emacs";
   };
-
-  # Let Home Manager install and manage itself.
 
   programs.git = {
     enable = true;

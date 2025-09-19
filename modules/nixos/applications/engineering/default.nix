@@ -30,7 +30,6 @@
       sdrangel
       # zed-editor
       openems
-      claude-code
     ]
     ++ [
       inputs.self.packages.${system}.plascad
