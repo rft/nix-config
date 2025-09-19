@@ -10,7 +10,9 @@
   };
 
   imports = [
-    # ./awesome
+    ./awesome
     ./login
+    ./hyprland
+    ./caelestia
   ];
 }

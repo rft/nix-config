@@ -1,21 +1,23 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
-  environment.systemPackages = with pkgs; [
-    autorandr
-    arandr
-  ];
-  services.xserver = {
-    enable = true;
-    windowManager = {
-      awesome = {
-        enable = true;
-        package = pkgs.awesome;
+  config = lib.mkIf config.modules.desktop.enable {
+    environment.systemPackages = with pkgs; [
+      autorandr
+      arandr
+    ];
+    services.xserver = {
+      enable = true;
+      windowManager = {
+        awesome = {
+          enable = true;
+          package = pkgs.awesome;
+        };
       };
+      displayManager.startx.enable = true;
     };
-    displayManager.startx.enable = true;
-  };
-  services.libinput = {
-    enable = true;
-    touchpad.naturalScrolling = true;
+    services.libinput = {
+      enable = true;
+      touchpad.naturalScrolling = true;
+    };
   };
 }
