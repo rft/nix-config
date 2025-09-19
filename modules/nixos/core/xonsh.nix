@@ -22,6 +22,10 @@
         sympy
         matplotlib
         scipy
+        polars
+        pandas
+        beautifulsoup4
+        ipdb
         xonsh.xontribs.xontrib-vox
         xonsh.xontribs.xonsh-direnv
         xonsh.xontribs.xontrib-whole-word-jumping
