@@ -28,6 +28,9 @@
   wsl.enable = true;
   wsl.defaultUser = "nano";
 
+  # Enable nix-ld for compatibility (mostly for vscode remote)
+  programs.nix-ld.enable = true;
+
   # Basic networking
   networking.hostName = "mistletoe";
 
