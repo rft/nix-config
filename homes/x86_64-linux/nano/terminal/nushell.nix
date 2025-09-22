@@ -9,6 +9,11 @@
     programs = {
     carapace.enable = true;
 
+    zoxide = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
+
     nushell = {
       enable = true;
       #plugins = with pkgs.nushellPlugins; [
@@ -46,8 +51,7 @@
       '';
     };
 
-    zoxide.enableNushellIntegration.enable = true;
-    yazi.enableNushellIntegration.enable = true;
+    yazi.enableNushellIntegration = true;
     thefuck.enableNushellIntegration = true;
     starship.enableNushellIntegration = true;
     broot.enableNushellIntegration = true;
