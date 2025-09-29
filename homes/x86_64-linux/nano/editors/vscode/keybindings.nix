@@ -1,5 +1,7 @@
+{ config, lib, ... }:
 {
-  programs.vscode.profiles.default.keybindings = [
+  config = lib.mkIf config.modules.home.editors.enable {
+    programs.vscode.profiles.default.keybindings = [
     {
       "key" = "space";
       "command" = "vspacecode.space";
@@ -144,4 +146,5 @@
     }
 
   ];
+  };
 }

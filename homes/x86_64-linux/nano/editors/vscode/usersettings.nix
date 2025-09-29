@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, lib, ... }:
 let
   general = {
     "vim.easymotion" = true;
@@ -101,6 +101,8 @@ let
 
 in
 {
-  # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
-  programs.vscode.profiles.default.userSettings = general // editor // git // languages;
+  config = lib.mkIf config.modules.home.editors.enable {
+    # Note: to future me, remind yourselfe that the "//" is not a comment but actually combining these lol
+    programs.vscode.profiles.default.userSettings = general // editor // git // languages;
+  };
 }

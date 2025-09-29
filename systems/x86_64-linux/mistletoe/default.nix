@@ -2,16 +2,22 @@
   config,
   pkgs,
   inputs,
+  lib,
   ...
 }:
 
 {
   imports = [
-    # NixOS-WSL module
     inputs.nixos-wsl.nixosModules.wsl
-    # Only import core module for minimal WSL setup
     ../../../modules/nixos/core
   ];
+
+  # Disable non-core modules for mistletoe
+  modules = {
+    applications.enable = false;
+    desktop.enable = false;
+    programming.enable = false;
+  };
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -22,9 +28,12 @@
   wsl.enable = true;
   wsl.defaultUser = "nano";
 
+  # Enable nix-ld for compatibility (mostly for vscode remote)
+  programs.nix-ld.enable = true;
+
   # Basic networking
   networking.hostName = "mistletoe";
 
   # System state version
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.05";
 }

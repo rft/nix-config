@@ -1,6 +1,7 @@
-{ pkgs, config, ... }:
+{ pkgs, config, lib, ... }:
 {
-  home = {
+  config = lib.mkIf config.modules.home.terminal.enable {
+    home = {
     packages = [
       pkgs.starship
     ];
@@ -9,5 +10,6 @@
     fzf = {
       enable = true;
     };
+  };
   };
 }
