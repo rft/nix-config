@@ -5,6 +5,10 @@
   ...
 }:
 {
+  options = {
+    modules.home.terminal.enable = lib.mkEnableOption "home terminal module";
+  };
+
   imports = [
     ./starship.nix
     ./xonsh.nix
@@ -12,12 +16,19 @@
     ./nushell.nix
   ];
 
-  # Probably should move this to it's own, but it's kind of small so idk
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-  };
+  config = lib.mkIf config.modules.home.terminal.enable {
+    # Probably should move this to it's own, but it's kind of small so idk
+    programs.zsh = {
+      enable = true;
+      enableCompletion = true;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+    };
 
+    programs.zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+  };
 }

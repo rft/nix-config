@@ -5,7 +5,8 @@
   ...
 }:
 {
-  programs.starship = {
+  config = lib.mkIf config.modules.home.terminal.enable {
+    programs.starship = {
     enable = true;
     enableZshIntegration = true;
     enableNushellIntegration = true;
@@ -291,5 +292,6 @@
       };
 
     };
+  };
   };
 }

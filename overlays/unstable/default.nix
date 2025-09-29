@@ -9,4 +9,5 @@ final: prev: {
   # inherit (channels.nixpkgs-unstable) xonsh;
   inherit (channels.nixpkgs-unstable) helix;
   inherit (channels.nixpkgs-unstable) claude-code;
+  inherit (channels.nixpkgs-unstable) codex;
 }

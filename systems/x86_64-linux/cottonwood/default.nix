@@ -9,6 +9,13 @@
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
   ];
+
+  # Enable all modules for desktop system
+  modules = {
+    applications.enable = true;
+    desktop.enable = true;
+    programming.enable = true;
+  };
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"

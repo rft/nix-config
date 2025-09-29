@@ -5,8 +5,14 @@
   ...
 }:
 {
-  programs = {
+  config = lib.mkIf config.modules.home.terminal.enable {
+    programs = {
     carapace.enable = true;
+
+    zoxide = {
+      enable = true;
+      enableNushellIntegration = true;
+    };
 
     nushell = {
       enable = true;
@@ -45,13 +51,13 @@
       '';
     };
 
-    zoxide.enableNushellIntegration.enable = true;
-    yazi.enableNushellIntegration.enable = true;
+    yazi.enableNushellIntegration = true;
     thefuck.enableNushellIntegration = true;
     starship.enableNushellIntegration = true;
     broot.enableNushellIntegration = true;
     eza.enableNushellIntegration = true;
     carapace.enableNushellIntegration = true;
 
+  };
   };
 }

@@ -6,7 +6,8 @@
   ...
 }:
 {
-  programs.helix = {
+  config = lib.mkIf config.modules.home.editors.enable {
+    programs.helix = {
     enable = true;
     settings = {
       theme = "monokai_pro_spectrum";
@@ -28,5 +29,6 @@
         "inherits" = "monokai_pro_spectrum";
       };
     };
+  };
   };
 }

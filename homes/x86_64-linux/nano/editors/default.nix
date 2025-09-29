@@ -20,13 +20,20 @@
   ...
 }:
 {
+  options = {
+    modules.home.editors.enable = lib.mkEnableOption "home editors module";
+  };
+
   imports = [
     inputs.nix-doom-emacs-unstraightened.hmModule
     ./vscode
     ./helix
   ];
-  programs.doom-emacs = {
-    enable = true;
-    doomDir = ./doom.d;
+  
+  config = lib.mkIf config.modules.home.editors.enable {
+    programs.doom-emacs = {
+      enable = false;
+      doomDir = ./doom.d;
+    };
   };
 }

@@ -42,6 +42,8 @@
     #xonsh
     pass
     gh
+    claude-code
+    codex
   ];
 
   users.defaultUserShell = pkgs.nushell;
