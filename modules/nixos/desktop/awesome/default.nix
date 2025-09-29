@@ -10,7 +10,6 @@
       windowManager = {
         awesome = {
           enable = true;
-          package = pkgs.awesome;
         };
       };
       displayManager.startx.enable = true;

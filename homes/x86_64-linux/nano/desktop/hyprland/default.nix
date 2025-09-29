@@ -3,12 +3,14 @@
   lib,
   osConfig,
   config,
+  inputs,
   ...
 }:
 {
   config = lib.mkIf config.modules.home.desktop.enable {
     wayland.windowManager.hyprland = {
     enable = true;
+    package = inputs.hyprland.packages."${pkgs.system}".hyprland;
     settings = {
       monitor =
         if osConfig.networking.hostName == "cottonwood" then
