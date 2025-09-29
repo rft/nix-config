@@ -25,9 +25,16 @@
       syntaxHighlighting.enable = true;
     };
 
+    programs.bash = {
+      enable = true;
+      enableCompletion = true;
+    };
+
     programs.zoxide = {
       enable = true;
       enableZshIntegration = true;
+      #enableXonshIntegration = true;
+      enableBashIntegration = true;
     };
 
   };

@@ -14,6 +14,7 @@
       aseprite
       reaper
       davinci-resolve
+      inkscape
     ];
   };
 }

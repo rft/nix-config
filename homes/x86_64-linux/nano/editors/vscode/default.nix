@@ -60,6 +60,8 @@ in
         tonybaloney.vscode-pets
         bernhard-42.ocp-cad-viewer
         anthropic.claude-code
+        marimo-team.vscode-marimo
+        openai.chatgpt
       ])
       ++ (with marketplace-release; [
       ]);
