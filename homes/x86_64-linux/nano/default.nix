@@ -22,11 +22,11 @@ in
 
   # Enable modules based on system type
   modules.home = {
-    terminal.enable = true;  # Always enable terminal
-    editors.enable = true;   # Always enable editors
-    fonts.enable = !isMistletoe;     # Disable fonts on mistletoe
-    desktop.enable = !isMistletoe;   # Disable desktop on mistletoe
-    applications.enable = !isMistletoe;  # Disable applications on mistletoe
+    terminal.enable = true; # Always enable terminal
+    editors.enable = true; # Always enable editors
+    fonts.enable = !isMistletoe; # Disable fonts on mistletoe
+    desktop.enable = !isMistletoe; # Disable desktop on mistletoe
+    applications.enable = !isMistletoe; # Disable applications on mistletoe
   };
 
   # Let Home Manager install and manage itself.
@@ -106,5 +106,8 @@ in
     enable = true;
     userName = "rft";
     userEmail = "nano@nomolabs.net";
+    extraConfig = {
+      pull.rebase = false;
+    };
   };
 }
