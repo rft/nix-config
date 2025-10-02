@@ -13,6 +13,7 @@
     ./starship.nix
     ./xonsh.nix
     ./kitty
+    ./zellij.nix
     ./nushell.nix
   ];
 
