@@ -26,6 +26,9 @@
     git
     #neovim
     jq
+    yq
+    tealdeer
+    #hygg it's in unstable will add later
     zoxide
     bottom
     pandoc
