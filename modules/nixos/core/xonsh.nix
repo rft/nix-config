@@ -36,6 +36,7 @@
 
     # Looks like the only ones available right now are
     # nix repl github:NixOS/nixpkgs
+    # nix repl github:nixos/nixpkgs/nixos-unstable
     # legacyPackages.x86_64-linux.xonsh.xontribs ->
     # {
     #   xonsh-direnv = «derivation /nix/store/ziwwgf6m3yskyxf62rqcbni8b8l4b8h8-python3.13-xonsh-direnv-1.6.5.drv»;

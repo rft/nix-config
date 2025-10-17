@@ -19,6 +19,13 @@
           execx($(starship init xonsh))
       except Exception:
           pass
+
+      try:
+          execx($(zoxide init xonsh))
+      except Exception:
+          pass
+      # Remove WSL paths from xonsh otherwise it's really slow, doesn't fix startup problems but it helps see https://github.com/xonsh/xonsh/issues/3895
+      [$PATH.remove(path) for path in $PATH.paths if path.startswith("/mnt/c/")]
     '';
   };
 }

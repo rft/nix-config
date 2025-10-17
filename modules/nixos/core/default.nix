@@ -43,15 +43,15 @@
     watchexec
     rink
     inputs.nixcats-nvim.packages.${pkgs.system}.default
-    #xonsh
     pass
     gh
     tokei
     claude-code
     codex
+    xonsh
   ];
 
-  users.defaultUserShell = pkgs.nushell;
+  users.defaultUserShell = pkgs.xonsh;
 
   # Automatic garbage collection for all systems
   nix.gc = {
