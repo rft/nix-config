@@ -12,6 +12,11 @@
           execx($(atuin init xonsh))
       except Exception:
           pass
+
+      try:
+          execx($(starship init xonsh))
+      except Exception:
+          pass
     '';
   };
 }
