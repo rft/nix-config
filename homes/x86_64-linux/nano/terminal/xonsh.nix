@@ -8,6 +8,8 @@
     programs.fzf.enable = true;
 
     home.file.".config/xonsh/rc.xsh".text = ''
+      $XONSH_SHOW_TRACEBACK = True
+
       try:
           execx($(atuin init xonsh))
       except Exception:
