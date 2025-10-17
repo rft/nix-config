@@ -31,6 +31,13 @@
       enableCompletion = true;
     };
 
+    programs.atuin = {
+      enable = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+      enableNushellIntegration = true;
+    };
+
     programs.zoxide = {
       enable = true;
       enableZshIntegration = true;

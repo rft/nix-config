@@ -17,6 +17,7 @@
     picat
     zellij
     ripgrep
+    atuin
     distrobox
     podman
     podman-tui
@@ -45,6 +46,7 @@
     #xonsh
     pass
     gh
+    tokei
     claude-code
     codex
   ];

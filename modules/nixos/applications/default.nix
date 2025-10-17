@@ -33,6 +33,7 @@
       flameshot
       ollama
       #rustdesk
+      plover
     ];
   };
 }
