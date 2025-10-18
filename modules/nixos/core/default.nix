@@ -48,10 +48,14 @@
     tokei
     claude-code
     codex
-    xonsh
   ];
 
-  users.defaultUserShell = pkgs.xonsh;
+  virtualisation = {
+    podman.enable = true;
+    containers.registries.search = [ "docker.io" ];
+  };
+
+  users.defaultUserShell = "/run/current-system/sw/bin/xonsh";
 
   # Automatic garbage collection for all systems
   nix.gc = {

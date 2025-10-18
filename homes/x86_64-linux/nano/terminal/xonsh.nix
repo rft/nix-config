@@ -25,6 +25,7 @@
       except Exception:
           pass
       # Remove WSL paths from xonsh otherwise it's really slow, doesn't fix startup problems but it helps see https://github.com/xonsh/xonsh/issues/3895
+      # This screws up copy and pasting for WSL though so I'm not sure what the ideal fix is
       [$PATH.remove(path) for path in $PATH.paths if path.startswith("/mnt/c/")]
     '';
   };
