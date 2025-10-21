@@ -12,7 +12,11 @@
 
   # Enable all modules for desktop system
   modules = {
-    applications.enable = true;
+    applications = {
+      enable = true;
+      creative.enable = true;
+      engineering.enable = true;
+    };
     desktop.enable = true;
     programming.enable = true;
   };
