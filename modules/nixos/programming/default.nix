@@ -5,19 +5,30 @@
   inputs,
   ...
 }:
+let
+  cfg = config.modules.programming;
+in
 {
   options = {
     modules.programming.enable = lib.mkEnableOption "programming module";
+    modules.programming.analysis.enable =
+      lib.mkEnableOption "analysis tooling for the programming module";
+    modules.programming.cloud.enable =
+      lib.mkEnableOption "cloud tooling for the programming module";
   };
 
-  config = lib.mkIf config.modules.programming.enable {
+  imports = [
+    ./analysis
+    ./cloud
+  ];
+
+  config = lib.mkIf cfg.enable {
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     environment.systemPackages = with pkgs; [
       hy
       elixir
       julia
       swi-prolog
-      zig
       rustc
       rustup
       rustfmt
@@ -25,7 +36,6 @@
       idris2
       gleam
       nim
-      go
       uiua
       supercollider
       coconut
@@ -79,5 +89,8 @@
       ))
 
     ];
+
+    modules.programming.analysis.enable = lib.mkDefault true;
+    modules.programming.cloud.enable = lib.mkDefault false;
   };
 }

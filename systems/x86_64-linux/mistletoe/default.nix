@@ -16,7 +16,11 @@
   modules = {
     applications.enable = false;
     desktop.enable = false;
-    programming.enable = false;
+    programming = {
+      enable = true;
+      analysis.enable = true;
+      cloud.enable = true;
+    };
   };
 
   nix.settings.experimental-features = [

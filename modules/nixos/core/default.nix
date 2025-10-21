@@ -46,6 +46,21 @@
     pass
     gh
     tokei
+    rr
+    hexyl
+    # pwndbg
+    procps
+    util-linux
+    sysstat
+    iproute2
+    numactl
+    tcpdump
+    msr-tools
+    cpuid
+    tiptop
+    ethtool
+    nicstat
+    bpftrace
     claude-code
     codex
   ];

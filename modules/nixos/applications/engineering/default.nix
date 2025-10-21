@@ -20,9 +20,6 @@
         cutter
         kicad
         alloy6
-        tlaps
-        tlaplusToolbox
-        aflplusplus
         bioawk
         chirp
         pulseview
