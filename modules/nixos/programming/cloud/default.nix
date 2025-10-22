@@ -10,6 +10,8 @@ in
 {
   config = lib.mkIf (cfg.enable && cfg.cloud.enable) {
     environment.systemPackages = with pkgs; [
+      terraform
+      google-cloud-sdk
     ];
   };
 }

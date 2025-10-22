@@ -40,6 +40,7 @@
     visidata
     syncthing
     rsync
+    rclone
     watchexec
     rink
     inputs.nixcats-nvim.packages.${pkgs.system}.default
