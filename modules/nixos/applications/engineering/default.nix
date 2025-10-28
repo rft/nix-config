@@ -4,12 +4,12 @@
   pkgs,
   inputs,
   system,
-  namespace,
   ...
 }:
 let
   cfg = config.modules.applications;
-  inherit (inputs.self.packages.${system}.${namespace}) plascad calcpy;
+  plascad = inputs.self.packages.${system}.plascad;
+  calcpy = inputs.self.packages.${system}.calcpy;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.engineering.enable) {
