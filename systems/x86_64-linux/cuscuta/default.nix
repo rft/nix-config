@@ -34,7 +34,7 @@
 
   # Enable nix-ld for compatibility (mostly for vscode remote)
   programs.nix-ld.enable = true;
-  programs.nushell.enable = true;
+  environment.systemPackages = [ pkgs.nushell ];
 
   # Basic networking
   networking.hostName = "cuscuta";
