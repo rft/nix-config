@@ -40,7 +40,7 @@
   networking.hostName = "cuscuta";
 
   # Use nushell for this host instead of the default xonsh
-  users.defaultUserShell = pkgs.nushell;
+  users.defaultUserShell = lib.mkForce "${pkgs.nushell}/bin/nu";
 
   # System state version
   system.stateVersion = "25.05";
