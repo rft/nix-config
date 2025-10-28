@@ -4,10 +4,12 @@
   pkgs,
   inputs,
   system,
+  namespace,
   ...
 }:
 let
   cfg = config.modules.applications;
+  inherit (inputs.self.packages.${system}.${namespace}) plascad calcpy;
 in
 {
   config = lib.mkIf (cfg.enable && cfg.engineering.enable) {
@@ -31,8 +33,8 @@ in
         openems
       ]
       ++ [
-        inputs.self.packages.${system}.plascad
-        inputs.self.packages.${system}.calcpy
+        plascad
+        calcpy
       ];
   };
 }
