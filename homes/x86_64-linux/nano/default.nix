@@ -9,7 +9,7 @@
 let
   # Determine which modules to enable based on hostname
   hostname = osConfig.networking.hostName or "";
-  isMistletoe = hostname == "mistletoe";
+  isHeadlessWsl = lib.elem hostname [ "mistletoe" "cuscuta" ];
 in
 {
   imports = [
@@ -24,9 +24,9 @@ in
   modules.home = {
     terminal.enable = true; # Always enable terminal
     editors.enable = true; # Always enable editors
-    fonts.enable = !isMistletoe; # Disable fonts on mistletoe
-    desktop.enable = !isMistletoe; # Disable desktop on mistletoe
-    applications.enable = !isMistletoe; # Disable applications on mistletoe
+    fonts.enable = !isHeadlessWsl; # Disable fonts on headless WSL hosts
+    desktop.enable = !isHeadlessWsl; # Disable desktop on headless WSL hosts
+    applications.enable = !isHeadlessWsl; # Disable applications on headless WSL hosts
   };
 
   # Let Home Manager install and manage itself.
