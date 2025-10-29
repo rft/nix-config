@@ -43,7 +43,7 @@ in
       flameshot
       ollama
       #rustdesk
-      plover
+      plover.dev
     ];
 
     modules.applications.archiving.enable = lib.mkDefault false;
