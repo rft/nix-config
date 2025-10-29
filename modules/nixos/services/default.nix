@@ -16,7 +16,7 @@ in
     environment.systemPackages = with pkgs; [
       kasmweb
       n8n
-      ollama
+      ollama.package
       paperless-ng
       home-assistant
       borgmatic

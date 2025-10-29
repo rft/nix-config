@@ -41,7 +41,7 @@ in
 
       rofi-wayland
       flameshot
-      ollama
+      ollama.package
       #rustdesk
       plover
     ];
