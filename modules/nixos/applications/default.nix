@@ -41,9 +41,9 @@ in
 
       rofi-wayland
       flameshot
-      ollama.package
+      ollama
       #rustdesk
-      plover
+      plover.dev
     ];
 
     modules.applications.archiving.enable = lib.mkDefault false;
