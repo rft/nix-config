@@ -31,6 +31,8 @@ in
         sdrangel
         # zed-editor
         openems
+        qemu
+        virt-manager
       ]
       ++ [
         plascad
