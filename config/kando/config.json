@@ -1,0 +1,5 @@
+{
+  "ignoreWriteProtectedConfigFiles": true,
+  "enableVersionCheck": false,
+  "trayIconFlavor": "color"
+}

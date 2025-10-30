@@ -20,6 +20,7 @@ binds {
     // Additional Awesome-style shortcuts
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space hotkey-overlay-title="Run an Application: rofi run" { spawn "rofi" "-show" "run"; }
+    Ctrl+Space hotkey-overlay-title="Open Pie Menu: Kando" { spawn "kando" "--menu" "Noctalia Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
     Mod+Q hotkey-overlay-title="Browser: Floorp" { spawn "floorp"; }
     Mod+Shift+C repeat=false { close-window; }
@@ -283,4 +284,11 @@ binds {
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
+}
+
+window-rule {
+    match title="Kando Menu"
+    open-floating true
+    border { off; }
+    shadow { off; }
 }

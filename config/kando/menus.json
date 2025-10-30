@@ -1,0 +1,161 @@
+{
+  "menus": [
+    {
+      "shortcut": "",
+      "shortcutID": "noctalia-menu",
+      "centered": false,
+      "warpMouse": false,
+      "anchored": false,
+      "hoverMode": false,
+      "root": {
+        "type": "submenu",
+        "name": "Noctalia Menu",
+        "icon": "apps",
+        "iconTheme": "material-symbols-rounded",
+        "children": [
+          {
+            "type": "submenu",
+            "name": "Applications",
+            "icon": "apps",
+            "iconTheme": "material-symbols-rounded",
+            "children": [
+              {
+                "type": "command",
+                "data": {
+                  "command": "kitty"
+                },
+                "name": "Kitty Terminal",
+                "icon": "terminal",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "floorp"
+                },
+                "name": "Floorp Browser",
+                "icon": "public",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "codium"
+                },
+                "name": "VSCodium",
+                "icon": "code",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "xdg-open ~"
+                },
+                "name": "Home Folder",
+                "icon": "folder",
+                "iconTheme": "material-symbols-rounded"
+              }
+            ]
+          },
+          {
+            "type": "submenu",
+            "name": "Launchers",
+            "icon": "widgets",
+            "iconTheme": "material-symbols-rounded",
+            "children": [
+              {
+                "type": "command",
+                "data": {
+                  "command": "rofi -show run"
+                },
+                "name": "Rofi Run",
+                "icon": "search",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "rofi -show window"
+                },
+                "name": "Rofi Windows",
+                "icon": "view_quilt",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "fuzzel"
+                },
+                "name": "Fuzzel Launcher",
+                "icon": "bolt",
+                "iconTheme": "material-symbols-rounded"
+              }
+            ]
+          },
+          {
+            "type": "submenu",
+            "name": "Kando",
+            "icon": "pie_chart",
+            "iconTheme": "material-symbols-rounded",
+            "children": [
+              {
+                "type": "command",
+                "data": {
+                  "command": "kando --settings"
+                },
+                "name": "Open Editor",
+                "icon": "tune",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "kando --reload-menu-theme"
+                },
+                "name": "Reload Menu Theme",
+                "icon": "refresh",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "xdg-open ~/.config/kando"
+                },
+                "name": "Open Config Folder",
+                "icon": "folder_open",
+                "iconTheme": "material-symbols-rounded"
+              }
+            ]
+          },
+          {
+            "type": "submenu",
+            "name": "Session",
+            "icon": "power_settings_new",
+            "iconTheme": "material-symbols-rounded",
+            "children": [
+              {
+                "type": "command",
+                "data": {
+                  "command": "swaylock"
+                },
+                "name": "Lock Screen",
+                "icon": "lock",
+                "iconTheme": "material-symbols-rounded"
+              },
+              {
+                "type": "command",
+                "data": {
+                  "command": "systemctl suspend"
+                },
+                "name": "Suspend",
+                "icon": "bedtime",
+                "iconTheme": "material-symbols-rounded"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "templates": []
+}

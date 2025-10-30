@@ -10,4 +10,5 @@ final: prev: {
   inherit (channels.nixpkgs-unstable) helix;
   inherit (channels.nixpkgs-unstable) claude-code;
   inherit (channels.nixpkgs-unstable) codex;
+  inherit (channels.nixpkgs-unstable) kando;
 }
