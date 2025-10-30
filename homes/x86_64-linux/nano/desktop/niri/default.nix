@@ -4,7 +4,11 @@
     home.file.".config/niri".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/config/niri";
 
-    home.packages = [ pkgs.niri ];
+    home.packages = with pkgs; [
+      niri
+      kanshi
+      wdisplays
+    ];
 
     systemd.user.services.niri = {
       Unit = {
