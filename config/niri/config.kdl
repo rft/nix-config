@@ -1,0 +1,4 @@
+// Minimal Niri configuration that autostarts Noctalia via Quickshell.
+// Extend this file with your own outputs, keymaps, etc.
+
+spawn-at-startup "qs" "-c" "noctalia-shell"

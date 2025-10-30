@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 {
@@ -12,7 +13,13 @@
   imports = [
     ./awesome
     ./login
-    ./hyprland
-    ./caelestia
+    inputs.noctalia.nixosModules.default
   ];
+
+  config = lib.mkIf config.modules.desktop.enable {
+    services.noctalia-shell = {
+      enable = true;
+      package = inputs.noctalia.packages.${pkgs.system}.default;
+    };
+  };
 }

@@ -12,7 +12,11 @@
 
   imports = [
     ./awesome
-    ./hyprland
-    ./caelestia
+    ./niri
+    inputs.noctalia.homeModules.default
   ];
+
+  config = lib.mkIf config.modules.home.desktop.enable {
+    programs.noctalia-shell.enable = true;
+  };
 }
