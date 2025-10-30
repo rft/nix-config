@@ -19,7 +19,7 @@
       engineering.enable = false;
     };
     desktop.enable = true;
-    programming.enable = true;
+    programming.enable = false;
   };
 
   # Bootloader.
