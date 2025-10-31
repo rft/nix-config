@@ -22,6 +22,7 @@ binds {
     Mod+Space hotkey-overlay-title="Run an Application: rofi run" { spawn "rofi" "-show" "run"; }
     Ctrl+Space hotkey-overlay-title="Open Pie Menu: Kando" { spawn "kando" "--menu" "Noctalia Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
+    Mod+Ctrl+G hotkey-overlay-title="Global Menu: rofi-desktop" { spawn "rofi-desktop-hud"; }
     Mod+Q hotkey-overlay-title="Browser: Floorp" { spawn "floorp"; }
     Mod+Shift+C repeat=false { close-window; }
     Mod+Shift+Q { quit skip-confirmation=true; }

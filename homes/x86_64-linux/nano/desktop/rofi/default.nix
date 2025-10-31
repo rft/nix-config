@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -14,5 +15,31 @@ in
       package = pkgs.rofi-wayland;
       theme = ./nord.rasi;
     };
+
+    home.packages = [
+      inputs.self.packages.${pkgs.system}.rofi-desktop
+      pkgs.libdbusmenu
+    ];
+
+    systemd.user.services.rofi-appmenu-service = {
+      Unit = {
+        Description = "AppMenu registrar for rofi-desktop HUD";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+
+      Service = {
+        Type = "simple";
+        ExecStart = "${inputs.self.packages.${pkgs.system}.rofi-desktop}/bin/rofi-appmenu-service";
+        Restart = "on-failure";
+        RestartSec = 2;
+        Environment = "PYTHONUNBUFFERED=1";
+      };
+
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
+
   };
 }

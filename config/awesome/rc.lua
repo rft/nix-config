@@ -537,7 +537,12 @@ globalkeys = mytable.join(
             os.execute("rofi -show run")
         end,
         {description = "show rofi run", group = "launcher"}),
-    
+
+    awful.key({ modkey, "Control" }, "g", function ()
+            awful.spawn("rofi-desktop-hud")
+        end,
+        {description = "rofi global menu", group = "launcher"}),
+
     -- rofi window switcher
     awful.key({ modkey }, "p", function ()
             os.execute("rofi -show window")
