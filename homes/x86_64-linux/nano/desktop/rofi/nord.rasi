@@ -1,6 +1,10 @@
 /* ROFI VERTICAL THEME USING THE NORD COLOR PALETTE */
 /* Author: Newman Sanchez (https://github.com/newmanls) */
 
+configuration {
+    show-icons: true;
+}
+
 * {
     font:   "IBM Plex Mono 12";
 
