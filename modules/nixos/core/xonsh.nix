@@ -4,6 +4,9 @@
   inputs,
   ...
 }:
+let
+  xonshExtraPackages = import ../../../lib/xonsh-extra-packages.nix;
+in
 {
   # environment.systemPackages = with pkgs; [
   #   xonsh
@@ -14,25 +17,7 @@
 
   programs.xonsh = {
     enable = true;
-    extraPackages =
-      ps: with ps; [
-        numpy
-        requests
-        coconut
-        sympy
-        matplotlib
-        scipy
-        polars
-        pandas
-        beautifulsoup4
-        ipdb
-        xonsh.xontribs.xontrib-vox
-        xonsh.xontribs.xonsh-direnv
-        xonsh.xontribs.xontrib-whole-word-jumping
-        xonsh.xontribs.xontrib-bashisms
-        #xonsh.xontribs.xontrib-mpl
-        #xonsh.xontribs.xontrib-prompt-starship
-      ];
+    extraPackages = xonshExtraPackages;
 
     # Looks like the only ones available right now are
     # nix repl github:NixOS/nixpkgs

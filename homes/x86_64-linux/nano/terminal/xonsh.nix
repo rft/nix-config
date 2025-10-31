@@ -1,8 +1,15 @@
 { pkgs, config, lib, ... }:
+let
+  xonshExtraPackages = import ../../../../lib/xonsh-extra-packages.nix;
+in
 {
   config = lib.mkIf config.modules.home.terminal.enable {
     home.packages = [
       pkgs.starship
+      (pkgs.python3.withPackages (
+        ps:
+        [ ps.xonsh ] ++ xonshExtraPackages ps
+      ))
     ];
 
     programs.fzf.enable = true;
