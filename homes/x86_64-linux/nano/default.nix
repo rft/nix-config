@@ -113,6 +113,7 @@ in
     enable = true;
     userName = "rft";
     userEmail = "nano@nomolabs.net";
+    lfs.enable = true;
     extraConfig = {
       pull.rebase = false;
     };
