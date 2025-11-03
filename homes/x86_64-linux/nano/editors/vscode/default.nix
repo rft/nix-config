@@ -9,6 +9,19 @@ let
   marketplace = inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace;
   marketplace-release =
     inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace-release;
+  vscodium-wayland = pkgs.symlinkJoin {
+    name = "${pkgs.vscodium.name}-wayland";
+    pname = pkgs.vscodium.pname;
+    version = pkgs.vscodium.version;
+    meta = pkgs.vscodium.meta;
+    paths = [ pkgs.vscodium ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/codium \
+        --set ELECTRON_OZONE_PLATFORM_HINT auto \
+        --set NIXOS_OZONE_WL 1
+    '';
+  };
 in
 {
   imports = [
@@ -17,7 +30,7 @@ in
   ];
   config = lib.mkIf config.modules.home.editors.enable {
     programs.vscode = {
-    package = pkgs.vscodium;
+    package = vscodium-wayland;
     enable = true;
     mutableExtensionsDir = true;
     profiles.default = {
