@@ -65,6 +65,7 @@
     difftastic
     claude-code
     codex
+    tio
   ];
 
   virtualisation = {
