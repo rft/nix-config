@@ -62,6 +62,7 @@
     ethtool
     nicstat
     bpftrace
+    difftastic
     claude-code
     codex
   ];
