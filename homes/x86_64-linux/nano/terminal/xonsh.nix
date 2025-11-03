@@ -1,11 +1,19 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  inputs,
+  ...
+}:
 let
   xonshExtraPackages = import ../../../../lib/xonsh-extra-packages.nix;
+  xxh = inputs.self.packages.${pkgs.system}.xxh;
 in
 {
   config = lib.mkIf config.modules.home.terminal.enable {
     home.packages = [
       pkgs.starship
+      xxh
       (pkgs.python3.withPackages (
         ps:
         [ ps.xonsh ] ++ xonshExtraPackages ps
