@@ -71,6 +71,8 @@
     dua
     trippy
     csvlens
+    oxker
+    yt-dlp
   ];
 
   virtualisation = {
