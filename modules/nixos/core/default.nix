@@ -66,6 +66,11 @@
     claude-code
     codex
     tio
+    bandwhich
+    binsider
+    dua
+    trippy
+    csvlens
   ];
 
   virtualisation = {
