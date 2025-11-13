@@ -109,7 +109,6 @@
       "wheel"
     ];
     packages = with pkgs; [
-      kate
       #  thunderbird
       git
     ];
