@@ -39,6 +39,8 @@ in
       #rustdesk
       plover.dev
       obs-studio
+      discord
+      spotify
     ];
 
     modules.applications.creative.enable = lib.mkDefault true;
