@@ -38,6 +38,7 @@ in
       ollama
       #rustdesk
       plover.dev
+      obs-studio
     ];
 
     modules.applications.creative.enable = lib.mkDefault true;
