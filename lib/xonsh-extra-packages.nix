@@ -17,6 +17,12 @@ with ps;
   pandas
   beautifulsoup4
   ipdb
+  numpyro
+  wat
+  qrcode
+  skidl
+  scapy
+  seaborn
   # Looks like the only ones available right now are
   # nix repl github:NixOS/nixpkgs
   # nix repl github:nixos/nixpkgs/nixos-unstable
