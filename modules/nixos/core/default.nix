@@ -73,6 +73,8 @@
     csvlens
     oxker
     yt-dlp
+    # perf
+    # objdump
   ];
 
   virtualisation = {
