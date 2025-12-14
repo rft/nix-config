@@ -25,6 +25,16 @@ with ps;
   seaborn
   z3-solver
   selenium
+  # Pystan
+  # py-spy
+  # scapy
+  # p5
+  # pyswip
+  # logpy
+  # wat
+  # gs-quant
+  # horus
+
   # Looks like the only ones available right now are
   # nix repl github:NixOS/nixpkgs
   # nix repl github:nixos/nixpkgs/nixos-unstable
