@@ -9,7 +9,7 @@ with ps;
 [
   numpy
   requests
-  coconut
+  # coconut
   sympy
   matplotlib
   scipy
@@ -17,10 +17,10 @@ with ps;
   pandas
   beautifulsoup4
   ipdb
-  numpyro
+  # numpyro
   wat
   qrcode
-  skidl
+  # skidl
   scapy
   seaborn
   z3-solver

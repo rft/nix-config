@@ -11,10 +11,8 @@ in
 {
   options = {
     modules.programming.enable = lib.mkEnableOption "programming module";
-    modules.programming.analysis.enable =
-      lib.mkEnableOption "analysis tooling for the programming module";
-    modules.programming.cloud.enable =
-      lib.mkEnableOption "cloud tooling for the programming module";
+    modules.programming.analysis.enable = lib.mkEnableOption "analysis tooling for the programming module";
+    modules.programming.cloud.enable = lib.mkEnableOption "cloud tooling for the programming module";
   };
 
   imports = [
@@ -72,7 +70,7 @@ in
           #jax
           #scikit-learn
           #scikit-image
-          manim
+          # manim
           distributed
           #fastapi
           #matplotlib

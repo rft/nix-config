@@ -79,7 +79,6 @@ in
       };
 
       yazi.enableNushellIntegration = true;
-      thefuck.enableNushellIntegration = true;
       starship.enableNushellIntegration = true;
       broot.enableNushellIntegration = true;
       eza.enableNushellIntegration = true;

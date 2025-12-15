@@ -20,6 +20,9 @@ python3.pkgs.buildPythonApplication rec {
     hash = "sha256-rqu4Aqp5VyQ/5+y1udAE/45ZThU1iJAlDZX8yf3ZafA=";
   };
 
+  pyproject = true;
+  build-system = [ python3.pkgs.setuptools ];
+
   propagatedBuildInputs = with python3.pkgs; [
     requests
     ipython

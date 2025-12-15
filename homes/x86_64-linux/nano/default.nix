@@ -118,4 +118,6 @@ in
       pull.rebase = false;
     };
   };
+
+  nixpkgs.config.allowUnfree = true;
 }

@@ -38,6 +38,8 @@
   # Basic networking
   networking.hostName = "mistletoe";
 
+  nixpkgs.config.allowUnfree = true;
+
   # System state version
   system.stateVersion = "25.05";
 }

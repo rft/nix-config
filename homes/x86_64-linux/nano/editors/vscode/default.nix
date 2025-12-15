@@ -6,9 +6,8 @@
   ...
 }:
 let
-  marketplace = inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace;
-  marketplace-release =
-    inputs.nix-vscode-extensions.extensions.${pkgs.system}.vscode-marketplace-release;
+  marketplace = pkgs.vscode-marketplace;
+  marketplace-release = pkgs.vscode-marketplace-release;
   vscodium-wayland = pkgs.symlinkJoin {
     name = "${pkgs.vscodium.name}-wayland";
     pname = pkgs.vscodium.pname;
