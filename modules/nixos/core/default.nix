@@ -65,6 +65,8 @@
     difftastic
     claude-code
     codex
+    copilot-cli
+    gemini-cli
     tio
     bandwhich
     binsider

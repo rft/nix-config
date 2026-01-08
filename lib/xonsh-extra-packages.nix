@@ -51,6 +51,7 @@ with ps;
   #   xontrib-vox = «derivation /nix/store/2hzsciragljxlwijiwkbrpy91vf8gfyd-python3.13-xontrib-vox-0.0.1.drv»;
   #   xontrib-whole-word-jumping = «derivation /nix/store/9078p2bx8lsj7iy6i9i9j3i19va2ar7r-python3.13-xontrib-whole-word-jumping-0.0.1.drv»;
   # }
+  ortools
   xxh
   xonsh.xontribs.xontrib-vox
   xonsh.xontribs.xonsh-direnv
