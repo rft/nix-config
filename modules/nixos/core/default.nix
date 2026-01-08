@@ -8,9 +8,8 @@
 {
   imports = [
     ./xonsh.nix
+    ../home-manager
   ];
-
-  home-manager.backupFileExtension = "backup";
 
   environment.systemPackages = with pkgs; [
     yazi

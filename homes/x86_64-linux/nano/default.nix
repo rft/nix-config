@@ -3,12 +3,13 @@
   pkgs,
   inputs,
   lib,
-  osConfig,
+  osConfig ? null,
   ...
 }:
 let
   # Determine which modules to enable based on hostname
-  hostname = osConfig.networking.hostName or "";
+  hostname =
+    if osConfig == null then "" else osConfig.networking.hostName or "";
   isHeadlessWsl = lib.elem hostname [ "mistletoe" "cuscuta" ];
   isCuscuta = hostname == "cuscuta";
 in
@@ -118,6 +119,4 @@ in
       pull.rebase = false;
     };
   };
-
-  nixpkgs.config.allowUnfree = true;
 }

@@ -12,6 +12,9 @@ My NixOS flake
 `sudo nixos-rebuild switch --flake .#mistletoe`
 `sudo nixos-rebuild switch --flake .#cuscuta`
 
+# Home Manager (standalone)
+`home-manager switch --flake .#nano@x86_64-linux`
+
 ## Niri Keybinds
 - `Mod+Shift+Slash` shows the built-in hotkey overlay.
 - `Mod+Return` launches `kitty`; `Mod+Space` opens rofi run; `Mod+P` raises the rofi window switcher; `Mod+Q` starts Floorp.

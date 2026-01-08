@@ -45,26 +45,62 @@
   };
 
   outputs =
-    inputs:
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs;
-      src = ./.;
-
-      channels-config = {
-        allowUnfree = true;
-      };
-
-      overlays = with inputs; [
+    inputs@{ self, ... }:
+    let
+      lib = inputs.nixpkgs.lib;
+      sharedOverlays = with inputs; [
         nur.overlays.default
         nix-vscode-extensions.overlays.default
       ];
-
-      snowfall = {
-        meta = {
-          name = "Yuki";
-          title = "rft's nix flake";
+      homesLib = import ./lib/homes.nix { inherit lib; };
+      mkPkgs = system:
+        import inputs.nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+          overlays = sharedOverlays;
         };
-      };
+      mkHomeConfig = system: module:
+        inputs.home-manager.lib.homeManagerConfiguration {
+          pkgs = mkPkgs system;
+          modules = [ module ];
+          extraSpecialArgs = { inherit inputs; };
+        };
+      manualHomeConfigurations =
+        lib.foldl'
+          (acc: system:
+            let
+              userModules = homesLib.forSystem system;
+              userAttrs =
+                lib.mapAttrs'
+                  (user: module:
+                    lib.nameValuePair "${user}@${system}"
+                      (mkHomeConfig system module))
+                  userModules;
+            in
+            acc // userAttrs)
+          { }
+          homesLib.systems;
+      snowfallFlake =
+        inputs.snowfall-lib.mkFlake {
+          inherit inputs;
+          src = ./.;
 
+          channels-config = {
+            allowUnfree = true;
+          };
+
+          overlays = sharedOverlays;
+
+          snowfall = {
+            meta = {
+              name = "Yuki";
+              title = "rft's nix flake";
+            };
+          };
+
+        };
+    in
+    snowfallFlake // {
+      homeConfigurations = manualHomeConfigurations;
     };
 }
