@@ -33,7 +33,7 @@ in
       nsxiv
       audacity
 
-      rofi-wayland
+      rofi
       flameshot
       ollama
       #rustdesk
