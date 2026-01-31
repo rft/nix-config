@@ -22,7 +22,7 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       kitty
-      floorp
+      floorp-bin
       # wezterm
       pciutils
 

@@ -8,6 +8,7 @@
     home.packages = [ pkgs.ff2mpv-rust ];
     programs.floorp = {
       enable = true;
+      package = pkgs.floorp-bin;
       profiles = {
         main = {
           id = 0;
