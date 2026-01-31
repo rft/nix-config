@@ -26,7 +26,7 @@ in
       # wezterm
       pciutils
 
-      libsForQt5.dolphin
+      kdePackages.dolphin
       calibre
       mpv
       anki
