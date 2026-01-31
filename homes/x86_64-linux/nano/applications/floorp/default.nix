@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   config = lib.mkIf config.modules.home.applications.enable {
     home.sessionVariables = {
@@ -8,6 +13,7 @@
     home.packages = [ pkgs.ff2mpv-rust ];
     programs.floorp = {
       enable = true;
+      package = pkgs.floorp-bin;
       profiles = {
         main = {
           id = 0;
@@ -16,7 +22,6 @@
           # Search here -> https://nur.nix-community.org/repos/rycee/
           extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
             auto-tab-discard
-            betterttv
             bitwarden
             clearurls
             darkreader

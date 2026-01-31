@@ -17,7 +17,7 @@ python3.pkgs.buildPythonApplication rec {
     owner = "idanpa";
     repo = "calcpy";
     rev = "main";
-    hash = "sha256-rqu4Aqp5VyQ/5+y1udAE/45ZThU1iJAlDZX8yf3ZafA=";
+    hash = "sha256-ra96u/FGJeYKexmwaQJHdc5PACA9sdtTqXn5GyNly0Q=";
   };
 
   pyproject = true;
@@ -30,15 +30,7 @@ python3.pkgs.buildPythonApplication rec {
     matplotlib
     sympy
     dateparser
-    (buildPythonPackage rec {
-      pname = "antlr4-python3-runtime";
-      version = "4.11.1";
-
-      src = fetchPypi {
-        inherit pname version;
-        hash = "sha256-pT3nATEvm9rMUlimhyzWxiuQ06kK4l5JQCb3YmczO2A=";
-      };
-    })
+    antlr4-python3-runtime
   ];
 
   # No tests available in the repository

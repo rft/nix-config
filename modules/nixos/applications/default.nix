@@ -22,18 +22,18 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       kitty
-      floorp
+      floorp-bin
       # wezterm
       pciutils
 
-      libsForQt5.dolphin
+      kdePackages.dolphin
       calibre
       mpv
       anki
       nsxiv
       audacity
 
-      rofi-wayland
+      rofi
       flameshot
       ollama
       #rustdesk
