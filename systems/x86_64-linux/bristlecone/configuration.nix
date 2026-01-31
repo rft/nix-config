@@ -10,6 +10,12 @@
       ./hardware-configuration.nix
     ];
 
+  modules = {
+    applications.enable = true;
+    desktop.enable = true;
+    programming.enable = true;
+  };
+
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "nodev";
