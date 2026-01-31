@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   config = lib.mkIf config.modules.home.applications.enable {
     home.sessionVariables = {
@@ -17,7 +22,6 @@
           # Search here -> https://nur.nix-community.org/repos/rycee/
           extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
             auto-tab-discard
-            betterttv
             bitwarden
             clearurls
             darkreader
