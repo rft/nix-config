@@ -36,7 +36,7 @@ in
       ]
       ++ [
         plascad
-        calcpy
+        # calcpy
       ];
   };
 }
