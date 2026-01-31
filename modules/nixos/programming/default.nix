@@ -40,6 +40,9 @@ in
       nodejs_22
       agda
       coq
+      ghc
+      cabal-install
+      stack
 
       # Supporting Tools
       nixfmt-rfc-style
