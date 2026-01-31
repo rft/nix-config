@@ -17,7 +17,7 @@ python3.pkgs.buildPythonApplication rec {
     owner = "idanpa";
     repo = "calcpy";
     rev = "main";
-    hash = "sha256-rqu4Aqp5VyQ/5+y1udAE/45ZThU1iJAlDZX8yf3ZafA=";
+    hash = "sha256-ra96u/FGJeYKexmwaQJHdc5PACA9sdtTqXn5GyNly0Q=";
   };
 
   pyproject = true;
