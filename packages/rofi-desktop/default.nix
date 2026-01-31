@@ -13,7 +13,7 @@
   gdk-pixbuf,
   pango,
   atk,
-  wrapGAppsHook,
+  wrapGAppsHook3,
   ...
 }:
 
@@ -49,7 +49,7 @@ stdenvNoCC.mkDerivation rec {
 
   nativeBuildInputs = [
     makeWrapper
-    wrapGAppsHook
+    wrapGAppsHook3
   ];
 
   buildInputs = [
