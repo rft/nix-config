@@ -16,8 +16,7 @@ in
       krita
       aseprite
       reaper
-      davinci-resolve
-      inkscape
+      kdePackages.kdenlive
     ];
   };
 }

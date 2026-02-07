@@ -4,7 +4,7 @@
   namespace,
   pkgs,
   stdenvNoCC,
-  fetchFromGitHub,
+  fetchgit,
   makeWrapper,
   runtimeShell,
   python3 ? pkgs.python3,
@@ -37,9 +37,8 @@ stdenvNoCC.mkDerivation rec {
   pname = "rofi-desktop";
   version = "unstable-2025-10-06";
 
-  src = fetchFromGitHub {
-    owner = "giomatfois62";
-    repo = "rofi-desktop";
+  src = fetchgit {
+    url = "https://github.com/giomatfois62/rofi-desktop";
     rev = "878e415f99017f10a9684f6269bdd489dc6b4ecc";
     hash = "sha256-cwtGLQJBG8ORg051CS5fUdS5sFT4a3HfiiTP1/mcfiM=";
   };
