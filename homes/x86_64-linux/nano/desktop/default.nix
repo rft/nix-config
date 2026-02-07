@@ -13,7 +13,6 @@
   imports = [
     ./awesome
     ./niri
-    ./kando
     ./rofi
     inputs.noctalia.homeModules.default
   ];
