@@ -5,6 +5,7 @@ let
   };
 in
 
+# TODO: Might be good to make sure core and this are synced together
 with ps;
 [
   numpy

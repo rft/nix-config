@@ -518,8 +518,6 @@ globalkeys = mytable.join(
     -- User programs
     awful.key({ modkey }, "q", function () awful.spawn(browser) end,
               {description = "run browser", group = "launcher"}),
-    awful.key({ modkey, altkey }, "c", function () awful.spawn(terminal .. " -e calcpy") end,
-              {description = "launch calcpy", group = "launcher"}),
 
     -- Default
     --[[ Menubar

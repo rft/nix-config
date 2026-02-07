@@ -23,26 +23,27 @@ in
   config = lib.mkIf cfg.enable {
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     environment.systemPackages = with pkgs; [
-      hy
-      elixir
-      julia
+      # TODO: Commented most of the languages out, likely better to use devshells for these. Make templates later
+      # hy
+      # elixir
+      # julia
       swi-prolog
-      rustc
-      rustup
-      rustfmt
-      mercury
-      idris2
-      gleam
-      nim
-      uiua
-      supercollider
+      # rustc
+      # rustup
+      # rustfmt
+      # mercury
+      # idris2
+      # gleam
+      # nim
+      # uiua
+      # supercollider
       coconut
       nodejs_22
-      agda
-      coq
-      ghc
-      cabal-install
-      stack
+      # agda
+      # coq
+      # ghc
+      # cabal-install
+      # stack
 
       # Supporting Tools
       nixfmt-rfc-style

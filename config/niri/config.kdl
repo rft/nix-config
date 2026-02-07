@@ -24,7 +24,6 @@ binds {
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
     Mod+Ctrl+G hotkey-overlay-title="Global Menu: rofi-desktop" { spawn "rofi-desktop-hud"; }
     Mod+Q hotkey-overlay-title="Browser: Floorp" { spawn "floorp"; }
-    Mod+Alt+C hotkey-overlay-title="Calculator: calcpy" { spawn "kitty" "-e" "calcpy"; }
     Mod+Shift+C repeat=false { close-window; }
     Mod+Shift+Q { quit skip-confirmation=true; }
     Mod+Ctrl+Space { toggle-window-floating; }
