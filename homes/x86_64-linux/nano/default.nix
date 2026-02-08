@@ -111,13 +111,13 @@ in
 
   programs.git = {
     enable = true;
-    userName = "rft";
-    userEmail = "nano@nomolabs.net";
     lfs.enable = true;
-    extraConfig = {
+    settings = {
+      user = {
+        name = "rft";
+        email = "nano@nomolabs.net";
+      };
       pull.rebase = false;
     };
   };
-
-  nixpkgs.config.allowUnfree = true;
 }

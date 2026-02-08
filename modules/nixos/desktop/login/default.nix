@@ -26,7 +26,7 @@
           '';
         in {
           command =
-            "${pkgs.greetd.tuigreet}/bin/tuigreet --time --remember --cmd ${startNiri}";
+            "${pkgs.tuigreet}/bin/tuigreet --time --remember --cmd ${startNiri}";
           user = "greeter";
         };
       };

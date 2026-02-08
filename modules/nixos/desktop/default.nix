@@ -19,7 +19,7 @@
   config = lib.mkIf config.modules.desktop.enable {
     services.noctalia-shell = {
       enable = true;
-      package = inputs.noctalia.packages.${pkgs.system}.default;
+      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
     };
   };
 }

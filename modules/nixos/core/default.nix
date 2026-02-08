@@ -43,7 +43,7 @@
     rclone
     watchexec
     rink
-    inputs.nixcats-nvim.packages.${pkgs.system}.default
+    inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     pass
     gh
     tokei

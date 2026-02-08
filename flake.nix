@@ -19,7 +19,6 @@
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "quickshell";
     };
     snowfall-lib = {
       url = "github:snowfallorg/lib";

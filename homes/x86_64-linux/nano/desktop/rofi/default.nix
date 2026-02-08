@@ -17,7 +17,7 @@ in
     };
 
     home.packages = [
-      inputs.self.packages.${pkgs.system}.rofi-desktop
+      inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rofi-desktop
       pkgs.libdbusmenu
     ];
 
@@ -30,7 +30,7 @@ in
 
       Service = {
         Type = "simple";
-        ExecStart = "${inputs.self.packages.${pkgs.system}.rofi-desktop}/bin/rofi-appmenu-service";
+        ExecStart = "${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rofi-desktop}/bin/rofi-appmenu-service";
         Restart = "on-failure";
         RestartSec = 2;
         Environment = "PYTHONUNBUFFERED=1";

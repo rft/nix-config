@@ -7,7 +7,7 @@
 }:
 let
   xonshExtraPackages = import ../../../../lib/xonsh-extra-packages.nix;
-  xxh = inputs.self.packages.${pkgs.system}.xxh;
+  xxh = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.xxh;
 in
 {
   config = lib.mkIf config.modules.home.terminal.enable {
