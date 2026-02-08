@@ -45,25 +45,44 @@
 
   outputs =
     inputs:
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs;
-      src = ./.;
-
-      channels-config = {
-        allowUnfree = true;
-      };
-
+    let
       overlays = with inputs; [
         nur.overlays.default
         nix-vscode-extensions.overlays.default
       ];
+      flake = inputs.snowfall-lib.mkFlake {
+        inherit inputs;
+        src = ./.;
 
-      snowfall = {
-        meta = {
-          name = "Yuki";
-          title = "rft's nix flake";
+        channels-config = {
+          allowUnfree = true;
+        };
+
+        inherit overlays;
+
+        snowfall = {
+          meta = {
+            name = "Yuki";
+            title = "rft's nix flake";
+          };
         };
       };
-
+      system = "x86_64-linux";
+      pkgs = import inputs.nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
+    in
+    flake
+    // {
+      homeConfigurations.nano = inputs.home-manager.lib.homeManagerConfiguration {
+        inherit pkgs;
+        extraSpecialArgs = {
+          inherit inputs;
+        };
+        modules = [
+          ./homes/x86_64-linux/nano
+        ];
+      };
     };
 }
