@@ -1,9 +1,15 @@
-{ pkgs, config, lib, ... }:
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
 let
   general = {
     "vim.easymotion" = true;
     "vim.useSystemClipboard" = true;
     "vscode-pets.throwBallWithMouse" = true;
+    "chat.disableAIFeatures" = false;
     "vim.normalModeKeyBindingsNonRecursive" = [
       {
         "before" = [

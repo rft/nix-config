@@ -46,9 +46,9 @@ in
             jnoortheen.nix-ide
             mechatroner.rainbow-csv
             mkhl.direnv
-            ms-python.python
-            ms-python.debugpy
-            ms-python.vscode-pylance
+            # ms-python.python
+            # ms-python.debugpy
+            # ms-python.vscode-pylance
             ms-toolsai.jupyter
             ms-toolsai.jupyter-keymap
             ms-toolsai.jupyter-renderers
@@ -81,6 +81,7 @@ in
             anthropic.claude-code
             marimo-team.vscode-marimo
             openai.chatgpt
+            astral-sh.ty
           ])
           ++ (with marketplace-release; [
           ]);
