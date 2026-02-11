@@ -77,6 +77,7 @@
     yt-dlp
     # perf
     # objdump
+    wget
   ];
 
   virtualisation = {
