@@ -12,8 +12,8 @@
 
   config = lib.mkIf config.modules.home.fonts.enable {
     home.packages = with pkgs; [
-      inter
       fira-code-symbols
+      inter
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
     ];

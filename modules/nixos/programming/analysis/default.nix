@@ -10,15 +10,14 @@ in
 {
   config = lib.mkIf (cfg.enable && cfg.analysis.enable) {
     environment.systemPackages = with pkgs; [
-      file
-      # strings
-      # readelf
       # objdump
-      binwalk
-      tlaps
-      tlaplusToolbox
+      # readelf
+      # strings
       aflplusplus
+      binwalk
+      file
+      tlaplusToolbox
+      tlaps
     ];
   };
 }
-

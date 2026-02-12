@@ -21,25 +21,23 @@ in
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      kitty
-      floorp-bin
       # wezterm
-      pciutils
-
-      kdePackages.dolphin
-      calibre
-      mpv
-      anki
-      nsxiv
-      audacity
-
-      rofi
-      flameshot
-      ollama
       #rustdesk
-      plover.dev
-      obs-studio
+      anki
+      audacity
+      calibre
       discord
+      flameshot
+      floorp-bin
+      kdePackages.dolphin
+      kitty
+      mpv
+      nsxiv
+      obs-studio
+      ollama
+      pciutils
+      plover.dev
+      rofi
       spotify
     ];
 

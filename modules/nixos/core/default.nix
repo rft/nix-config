@@ -13,71 +13,70 @@
   home-manager.backupFileExtension = "backup";
 
   environment.systemPackages = with pkgs; [
-    yazi
-    picat
-    zellij
-    ripgrep
-    atuin
-    distrobox
-    podman
-    podman-tui
-    fd
-    bat
-    fzf
-    git
-    #neovim
-    jq
-    yq
-    tealdeer
-    #hygg it's in unstable will add later
-    zoxide
-    bottom
-    pandoc
-    ffmpeg_7-full
-    procs
-    tldr
-    lazygit
-    visidata
-    syncthing
-    rsync
-    rclone
-    watchexec
-    rink
-    inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
-    pass
-    gh
-    tokei
-    rr
-    hexyl
+    # objdump
+    # perf
     # pwndbg
-    procps
-    util-linux
-    sysstat
-    iproute2
-    numactl
-    tcpdump
-    msr-tools
-    cpuid
-    tiptop
-    ethtool
-    nicstat
+    #hygg it's in unstable will add later
+    #neovim
+    atuin
+    bandwhich
+    bat
+    binsider
+    bottom
     bpftrace
-    difftastic
     claude-code
     codex
     copilot-cli
-    gemini-cli
-    tio
-    bandwhich
-    binsider
-    dua
-    trippy
+    cpuid
     csvlens
+    difftastic
+    distrobox
+    dua
+    ethtool
+    fd
+    ffmpeg_7-full
+    fzf
+    gemini-cli
+    gh
+    git
+    hexyl
+    inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
+    iproute2
+    jq
+    lazygit
+    msr-tools
+    nicstat
+    numactl
     oxker
-    yt-dlp
-    # perf
-    # objdump
+    pandoc
+    pass
+    picat
+    podman
+    podman-tui
+    procps
+    procs
+    rclone
+    rink
+    ripgrep
+    rr
+    rsync
+    syncthing
+    sysstat
+    tcpdump
+    tealdeer
+    tio
+    tiptop
+    tokei
+    trippy
+    util-linux
+    visidata
+    watchexec
     wget
+    yazi
+    yq
+    yt-dlp
+    zellij
+    zoxide
   ];
 
   virtualisation = {
