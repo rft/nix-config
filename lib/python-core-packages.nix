@@ -1,6 +1,4 @@
-ps:
-with ps;
-[
+ps: with ps; [
   beautifulsoup4
   polars
   pandas
@@ -20,4 +18,8 @@ with ps;
   scapy
   ortools
   wat
+  scipy
+  jax
+  matplotlib
+  ortools
 ]
