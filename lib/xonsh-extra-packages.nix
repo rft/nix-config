@@ -1,41 +1,14 @@
 ps:
 let
+  pythonCorePackages = import ./python-core-packages.nix;
   xxh = ps.callPackage ../packages/xxh {
     python3Packages = ps;
   };
 in
-
-# TODO: Might be good to make sure core and this are synced together
-with ps;
-[
-  numpy
-  requests
-  # coconut
-  sympy
-  matplotlib
-  scipy
-  polars
-  pandas
-  beautifulsoup4
-  ipdb
-  # numpyro
-  wat
-  qrcode
-  # skidl
-  scapy
-  seaborn
-  z3-solver
-  selenium
-  # Pystan
-  # py-spy
-  # scapy
-  # p5
-  # pyswip
-  # logpy
-  # wat
-  # gs-quant
-  # horus
-
+(pythonCorePackages ps)
+++ [
+  # xonsh-specific extras
+  xxh
   # Looks like the only ones available right now are
   # nix repl github:NixOS/nixpkgs
   # nix repl github:nixos/nixpkgs/nixos-unstable
@@ -51,11 +24,8 @@ with ps;
   #   xontrib-jupyter = «derivation /nix/store/i3g0a3hcfybrvh0bdg3fmkaiz01i7fwy-python3.13-xontrib-jupyter-0.3.2.drv»;
   #   xontrib-vox = «derivation /nix/store/2hzsciragljxlwijiwkbrpy91vf8gfyd-python3.13-xontrib-vox-0.0.1.drv»;
   #   xontrib-whole-word-jumping = «derivation /nix/store/9078p2bx8lsj7iy6i9i9j3i19va2ar7r-python3.13-xontrib-whole-word-jumping-0.0.1.drv»;
-  # }
-  ortools
-  xxh
-  xonsh.xontribs.xontrib-vox
-  xonsh.xontribs.xonsh-direnv
-  xonsh.xontribs.xontrib-whole-word-jumping
-  xonsh.xontribs.xontrib-bashisms
+  ps.xonsh.xontribs.xontrib-vox
+  ps.xonsh.xontribs.xonsh-direnv
+  ps.xonsh.xontribs.xontrib-whole-word-jumping
+  ps.xonsh.xontribs.xontrib-bashisms
 ]

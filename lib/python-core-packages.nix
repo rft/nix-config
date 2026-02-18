@@ -1,0 +1,22 @@
+ps: with ps; [
+  beautifulsoup4
+  distributed
+  ipdb
+  ipython
+  jax
+  matplotlib
+  numpy
+  ortools
+  pandas
+  polars
+  qrcode
+  requests
+  scapy
+  scipy
+  seaborn
+  selenium
+  sympy
+  tqdm
+  wat
+  z3-solver
+]

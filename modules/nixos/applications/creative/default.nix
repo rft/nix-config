@@ -9,13 +9,13 @@ let
 in
 {
   config = lib.mkIf (cfg.enable && cfg.creative.enable) {
+    # Creative programs
     environment.systemPackages = with pkgs; [
-      # Creative programs
-      blender
-      krita
       aseprite
-      reaper
+      blender
       kdePackages.kdenlive
+      krita
+      reaper
     ];
   };
 }
