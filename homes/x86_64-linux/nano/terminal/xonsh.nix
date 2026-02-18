@@ -48,11 +48,15 @@ in
           if wsl_user and os.path.isdir(f"/mnt/c/Users/{wsl_user}"):
               win_user = wsl_user
           else:
-              candidates = [
-                  d for d in os.listdir("/mnt/c/Users")
-                  if d not in ("All Users", "Default", "Default User", "Public", "desktop.ini")
-              ]
-              win_user = candidates[0] if candidates else None
+              users_root = "/mnt/c/Users"
+              if os.path.isdir(users_root):
+                  candidates = [
+                      d for d in os.listdir(users_root)
+                      if d not in ("All Users", "Default", "Default User", "Public", "desktop.ini")
+                  ]
+                  win_user = candidates[0] if candidates else None
+              else:
+                  win_user = None
       if win_user:
           $PATH.append(f"/mnt/c/Users/{win_user}/AppData/Local/Programs/Microsoft VS Code/bin")
       $PATH.append("/mnt/c/Windows")
