@@ -10,18 +10,6 @@
     ./hardware-configuration.nix
   ];
 
-  # Enable modules for desktop system with only archiving tools
-  modules = {
-    applications = {
-      enable = true;
-      archiving.enable = true;
-      creative.enable = false;
-      engineering.enable = false;
-    };
-    desktop.enable = true;
-    programming.enable = false;
-  };
-
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";

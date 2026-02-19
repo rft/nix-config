@@ -175,19 +175,19 @@ My NixOS flake
 - autorandr
 - arandr
 
-### Home (homes/x86_64-linux/nano)
-#### Fonts (homes/x86_64-linux/nano/fonts)
+### Home (modules/home/nano)
+#### Fonts (modules/home/nano/fonts)
 - fira-code-symbols
 - inter
 - nerd-fonts.fira-code
 - nerd-fonts.jetbrains-mono
 
-#### Applications (homes/x86_64-linux/nano/applications/floorp)
+#### Applications (modules/home/nano/applications/floorp)
 - ff2mpv-rust
 - floorp-bin
 - Floorp extensions (NUR): auto-tab-discard, bitwarden, clearurls, darkreader, dearrow, decentraleyes, gesturefy, multi-account-containers, old-reddit-redirect, privacy-badger, reddit-enhancement-suite, return-youtube-dislikes, sidebery, sponsorblock, stylus, temporary-containers, terms-of-service-didnt-read, videospeed, vimium-c, violentmonkey, ublock-origin
 
-#### Desktop (homes/x86_64-linux/nano/desktop)
+#### Desktop (modules/home/nano/desktop)
 - niri
 - kanshi
 - wdisplays
@@ -195,12 +195,12 @@ My NixOS flake
 - rofi-desktop (inputs.self.packages)
 - libdbusmenu
 
-#### Terminal (homes/x86_64-linux/nano/terminal)
+#### Terminal (modules/home/nano/terminal)
 - starship
 - xxh
 - python3.withPackages(xonsh + xonsh-extra-packages)
 
-#### Editors (homes/x86_64-linux/nano/editors/vscode)
+#### Editors (modules/home/nano/editors/vscode)
 - vscodium-wayland
 - VS Code extensions: aaron-bond.better-comments, brettm12345.nixfmt-vscode, github.copilot, github.copilot-chat, jebbs.plantuml, jnoortheen.nix-ide, mechatroner.rainbow-csv, mkhl.direnv, ms-toolsai.jupyter, ms-toolsai.jupyter-keymap, ms-toolsai.jupyter-renderers, ms-toolsai.vscode-jupyter-cell-tags, ms-toolsai.vscode-jupyter-slideshow, ms-vscode-remote.remote-ssh, ms-vscode.live-server, oderwat.indent-rainbow, usernamehw.errorlens, vscodevim.vim, vspacecode.vspacecode, vspacecode.whichkey, yzhang.markdown-all-in-one, svelte.svelte-vscode, streetsidesoftware.code-spell-checker, github.vscode-github-actions, charliermarsh.ruff, buenon.scratchpads, bodil.file-browser, jacobdufault.fuzzy-search, kahole.magit, maattdd.gitless, roipoussiere.cadquery, tonybaloney.vscode-pets, bernhard-42.ocp-cad-viewer, anthropic.claude-code, marimo-team.vscode-marimo, openai.chatgpt, astral-sh.ty
 

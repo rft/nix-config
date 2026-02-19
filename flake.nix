@@ -5,9 +5,20 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    #home-manager.url = "github:nix-community/home-manager";
     home-manager.url = "github:nix-community/home-manager/release-25.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    denix = {
+      url = "github:yunfachi/denix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+      inputs.nix-darwin.follows = "nix-darwin";
+    };
 
     nix-doom-emacs-unstraightened.url = "github:marienz/nix-doom-emacs-unstraightened";
     nix-doom-emacs-unstraightened.inputs.nixpkgs.follows = "";
@@ -18,10 +29,6 @@
     };
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    snowfall-lib = {
-      url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixcats-nvim = {
@@ -40,30 +47,63 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
   outputs =
-    inputs:
-    inputs.snowfall-lib.mkFlake {
-      inherit inputs;
-      src = ./.;
+    { denix, nixpkgs, self, ... }@inputs:
+    let
+      supportedSystems = [ "x86_64-linux" ];
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
-      channels-config = {
-        allowUnfree = true;
-      };
-
-      overlays = with inputs; [
-        nur.overlays.default
-        nix-vscode-extensions.overlays.default
-      ];
-
-      snowfall = {
-        meta = {
-          name = "Yuki";
-          title = "rft's nix flake";
+      mkPackages =
+        system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+            overlays = [
+              (import ./overlays/unstable { inherit inputs; })
+              (import ./overlays/xxh { })
+              inputs.nur.overlays.default
+              inputs.nix-vscode-extensions.overlays.default
+            ];
+          };
+        in
+        {
+          rofi-desktop = pkgs.callPackage ./packages/rofi-desktop {
+            inherit inputs;
+            namespace = "internal";
+          };
+          xxh = pkgs.callPackage ./packages/xxh { };
         };
-      };
 
+      mkConfigurations =
+        moduleSystem:
+        denix.lib.configurations {
+          inherit moduleSystem;
+          homeManagerUser = "nano";
+
+          paths = [
+            ./hosts
+            ./rices
+            ./modules/denix
+          ];
+
+          extensions = with denix.lib.extensions; [
+            args
+            (base.withConfig {
+              args.enable = true;
+            })
+          ];
+
+          specialArgs = {
+            inherit inputs;
+          };
+        };
+    in
+    {
+      packages = forAllSystems mkPackages;
+      nixosConfigurations = mkConfigurations "nixos";
+      homeConfigurations = mkConfigurations "home";
     };
 }

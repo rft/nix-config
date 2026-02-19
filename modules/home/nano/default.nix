@@ -3,7 +3,7 @@
   pkgs,
   inputs,
   lib,
-  osConfig,
+  osConfig ? { networking = { hostName = ""; }; },
   ...
 }:
 let

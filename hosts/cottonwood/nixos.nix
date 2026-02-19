@@ -10,29 +10,35 @@
     ./hardware-configuration.nix
   ];
 
-  # Enable all modules for desktop system
-  modules = {
-    applications = {
-      enable = true;
-      creative.enable = true;
-      engineering.enable = true;
-    };
-    desktop.enable = true;
-    programming.enable = true;
-  };
-
-  # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
-  boot.loader.grub.useOSProber = true;
-
-  virtualisation.vmware.guest.enable = true;
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
 
-  networking.hostName = "sequoia"; # Define your hostname.
+  # Bootloader.
+  #boot.loader.systemd-boot.enable = true;
+  boot.loader = {
+    efi = {
+      canTouchEfiVariables = true;
+    };
+    grub = {
+      efiSupport = true;
+      device = "nodev";
+      useOSProber = true;
+      # Rotate GRUB display for vertical screen
+      extraConfig = ''
+        GRUB_GFXMODE=auto
+        GRUB_GFXPAYLOAD_LINUX=keep
+      '';
+    };
+  };
+
+  # Kernel parameter for early framebuffer rotation
+  boot.kernelParams = [
+    "fbcon=rotate:1" # 1 = 90° counter-clockwise, 3 = 90° clockwise
+  ];
+
+  networking.hostName = "cottonwood"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -43,7 +49,7 @@
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "America/Phoenix";
+  time.timeZone = "America/Los_Angeles";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -63,21 +69,24 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+
+  # Hyprland display rotation handled in home-manager config
+
   # Enable the KDE Plasma Desktop Environment.
   # services.displayManager.sddm.enable = true;
   # services.xserver.desktopManager.plasma5.enable = true;
 
   # Configure keymap in X11
-  services.xserver.xkb = {
+  services.xserver = {
     layout = "us";
-    variant = "";
+    xkbVariant = "";
   };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
+  hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -103,6 +112,9 @@
       "networkmanager"
       "wheel"
     ];
+    packages = with pkgs; [
+      #  thunderbird
+    ];
   };
 
   # Install firefox.
@@ -116,6 +128,7 @@
   environment.systemPackages = with pkgs; [
     #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #  wget
+    # neovim
     git
   ];
 

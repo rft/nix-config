@@ -9,19 +9,8 @@
 {
   imports = [
     inputs.nixos-wsl.nixosModules.wsl
-    ../../../modules/nixos/core
+    ../../modules/nixos/core
   ];
-
-  # Disable non-core modules for cuscuta
-  modules = {
-    applications.enable = false;
-    desktop.enable = false;
-    programming = {
-      enable = true;
-      analysis.enable = false;
-      cloud.enable = false;
-    };
-  };
 
   nix.settings.experimental-features = [
     "nix-command"

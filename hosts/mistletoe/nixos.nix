@@ -9,19 +9,8 @@
 {
   imports = [
     inputs.nixos-wsl.nixosModules.wsl
-    ../../../modules/nixos/core
+    ../../modules/nixos/core
   ];
-
-  # Disable non-core modules for mistletoe
-  modules = {
-    applications.enable = false;
-    desktop.enable = false;
-    programming = {
-      enable = true;
-      analysis.enable = true;
-      cloud.enable = true;
-    };
-  };
 
   nix.settings.experimental-features = [
     "nix-command"

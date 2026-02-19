@@ -8,12 +8,12 @@
   inputs,
 
   # Additional metadata is provided by Snowfall Lib.
-  namespace, # The namespace used for your flake, defaulting to "internal" if not set.
-  home, # The home architecture for this host (eg. `x86_64-linux`).
-  target, # The Snowfall Lib target for this home (eg. `x86_64-home`).
-  format, # A normalized name for the home target (eg. `home`).
-  virtual, # A boolean to determine whether this home is a virtual target using nixos-generators.
-  host, # The host name for this home.
+  namespace ? "internal", # The namespace used for your flake, defaulting to "internal" if not set.
+  home ? null, # The home architecture for this host (eg. `x86_64-linux`).
+  target ? null, # The Snowfall Lib target for this home (eg. `x86_64-home`).
+  format ? null, # A normalized name for the home target (eg. `home`).
+  virtual ? false, # A boolean to determine whether this home is a virtual target using nixos-generators.
+  host ? null, # The host name for this home.
 
   # All other arguments come from the home home.
   config,
