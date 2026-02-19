@@ -12,5 +12,6 @@
 
   imports = [
     ./floorp
+    ./kdenlive
   ];
 }
