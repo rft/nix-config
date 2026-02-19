@@ -18,6 +18,9 @@
         confirm_os_window_close = 0;
         confirm_on_quit = 0;
       };
+      extraConfig = ''
+        map ctrl+shift+h kitten hints
+      '';
     };
   };
 }

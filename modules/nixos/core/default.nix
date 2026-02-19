@@ -65,7 +65,6 @@
     tcpdump
     tealdeer
     tio
-    tiptop
     tokei
     trippy
     util-linux
