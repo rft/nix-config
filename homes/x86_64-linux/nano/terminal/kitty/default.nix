@@ -20,10 +20,9 @@
       };
       extraConfig = ''
         map ctrl+shift+h kitten hints
-        map ctrl+shift+i kitten icat
+        map ctrl+shift+i launch --type=overlay --cwd=current sh -lc 'file=$(rg --files --hidden --follow -g "!**/.git/**" . | fzf --height 80% --reverse --prompt "icat> "); [ -n "$file" ] && kitty +kitten icat "$file"'
         map ctrl+shift+c kitten clipboard
         map ctrl+shift+g kitten hyperlinked_grep
-        map ctrl+shift+r kitten remote_file
       '';
     };
   };
