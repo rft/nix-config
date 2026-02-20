@@ -6,11 +6,9 @@ My NixOS flake
 - sequoia 
 - redwood
 - Mistletoe (WSL)
-- Cuscuta (WSL)
 
 # Commands
 `sudo nixos-rebuild switch --flake .#mistletoe`
-`sudo nixos-rebuild switch --flake .#cuscuta`
 
 ## Packages (grouped by folder/category)
 ### Core (modules/nixos/core)
