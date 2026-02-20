@@ -25,7 +25,7 @@
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       initExtra = ''
-        if [[ -n "''${KITTY_WINDOW_ID-}" ]]; then
+        if [[ "''${TERM-}" == xterm-kitty* ]]; then
           alias rg='rg --hyperlink-format=kitty'
         fi
       '';
@@ -35,7 +35,7 @@
       enable = true;
       enableCompletion = true;
       initExtra = ''
-        if [[ -n "''${KITTY_WINDOW_ID-}" ]]; then
+        if [[ "''${TERM-}" == xterm-kitty* ]]; then
           alias rg='rg --hyperlink-format=kitty'
         fi
       '';

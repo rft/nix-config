@@ -66,7 +66,7 @@ in
                }
              }
             }
-            if ($env.KITTY_WINDOW_ID? | is-not-empty) {
+            if (($env.TERM? | default "" | str starts-with "xterm-kitty")) {
               alias rg = rg --hyperlink-format=kitty
             }
             $env.PATH = ($env.PATH |
