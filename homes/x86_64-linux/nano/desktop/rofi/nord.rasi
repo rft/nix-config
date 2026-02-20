@@ -65,11 +65,14 @@ listview {
     columns:    1;
 
     fixed-height:   false;
+    spacing:    1px;
+    background-color: @nord2;
 }
 
 element {
     padding:    8px;
     spacing:    8px;
+    background-color: @nord0;
 }
 
 element normal urgent {
