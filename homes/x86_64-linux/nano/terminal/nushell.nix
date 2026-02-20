@@ -66,6 +66,9 @@ in
                }
              }
             }
+            if ($env.KITTY_WINDOW_ID? | is-not-empty) {
+              alias rg = rg --hyperlink-format=kitty
+            }
             $env.PATH = ($env.PATH |
             split row (char esep) |
             prepend /home/myuser/.apps |

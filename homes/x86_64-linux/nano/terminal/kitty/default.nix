@@ -18,12 +18,6 @@
         confirm_os_window_close = 0;
         confirm_on_quit = 0;
       };
-      extraConfig = ''
-        map ctrl+shift+h kitten hints
-        map ctrl+shift+i launch --type=overlay --cwd=current sh -lc 'file=$(rg --files --hidden --follow -g "!**/.git/**" . | fzf --height 80% --reverse --prompt "icat> "); [ -n "$file" ] && kitty +kitten icat "$file"'
-        map ctrl+shift+c kitten clipboard
-        map ctrl+shift+g kitten hyperlinked_grep
-      '';
     };
   };
 }

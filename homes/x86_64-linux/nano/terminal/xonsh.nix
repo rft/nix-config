@@ -21,6 +21,8 @@ in
 
     home.file.".config/xonsh/rc.xsh".text = ''
       $XONSH_SHOW_TRACEBACK = True
+      if $KITTY_WINDOW_ID:
+          aliases['rg'] = 'rg --hyperlink-format=kitty'
 
       try:
           execx($(atuin init xonsh))

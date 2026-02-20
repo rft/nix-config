@@ -24,11 +24,21 @@
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
+      initExtra = ''
+        if [[ -n "''${KITTY_WINDOW_ID-}" ]]; then
+          alias rg='rg --hyperlink-format=kitty'
+        fi
+      '';
     };
 
     programs.bash = {
       enable = true;
       enableCompletion = true;
+      initExtra = ''
+        if [[ -n "''${KITTY_WINDOW_ID-}" ]]; then
+          alias rg='rg --hyperlink-format=kitty'
+        fi
+      '';
     };
 
     programs.atuin = {
