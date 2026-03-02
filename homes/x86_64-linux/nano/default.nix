@@ -9,8 +9,7 @@
 let
   # Determine which modules to enable based on hostname
   hostname = osConfig.networking.hostName or "";
-  isHeadlessWsl = lib.elem hostname [ "mistletoe" "cuscuta" ];
-  isCuscuta = hostname == "cuscuta";
+  isHeadlessWsl = lib.elem hostname [ "mistletoe" ];
 in
 {
   imports = [
@@ -29,12 +28,6 @@ in
     desktop.enable = !isHeadlessWsl; # Disable desktop on headless WSL hosts
     applications.enable = !isHeadlessWsl; # Disable applications on headless WSL hosts
   };
-
-  modules.home.terminal.nushell.extraEnv =
-    lib.mkIf isCuscuta {
-      # Add Nushell environment variables here, e.g.
-      # MY_API_TOKEN = "abc123";
-    };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

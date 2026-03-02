@@ -24,7 +24,7 @@
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
-      initExtra = ''
+      initContent = ''
         if [[ "''${TERM-}" == xterm-kitty* ]]; then
           alias rg='rg --hyperlink-format=kitty'
         fi
