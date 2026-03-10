@@ -1,8 +1,8 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "core";
 
-  nixos.always = { pkgs, ... }: {
+  nixos.always = {
     home-manager.backupFileExtension = "backup";
 
     environment.systemPackages = with pkgs; [

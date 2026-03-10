@@ -1,10 +1,10 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "applications";
 
   options = delib.singleEnableOption false;
 
-  nixos.ifEnabled = { pkgs, lib, ... }: {
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       anki
       audacity

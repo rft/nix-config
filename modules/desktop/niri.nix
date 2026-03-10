@@ -1,16 +1,16 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "desktop.niri";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    desktop.niri.enable = myconfig.desktop.enable or false;
+    desktop.niri.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  home.ifEnabled = { config, pkgs, ... }: {
+  home.ifEnabled = {
     home.file.".config/niri".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/config/niri";
+      pkgs.runCommandLocal "niri-config-symlink" {} "ln -s /home/nano/nix-config/config/niri $out";
 
     home.packages = with pkgs; [
       niri

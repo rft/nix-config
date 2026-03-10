@@ -8,7 +8,7 @@ delib.host {
 
   nixos = {
     system.stateVersion = "24.11";
-    imports = [ ./hardware-configuration.nix ];
+    imports = [ ../../hardware/cottonwood.nix ];
 
     boot.loader = {
       efi.canTouchEfiVariables = true;

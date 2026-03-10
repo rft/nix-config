@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "applications.creative";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    applications.creative.enable = myconfig.applications.enable or false;
+    applications.creative.enable = lib.mkDefault (myconfig.applications.enable or false);
   };
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       aseprite
       blender

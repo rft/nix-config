@@ -1,7 +1,6 @@
 {
   lib,
   inputs,
-  namespace,
   pkgs,
   stdenvNoCC,
   fetchgit,

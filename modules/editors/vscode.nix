@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "editors.vscode";
 
   options = delib.singleEnableOption true;
 
   myconfig.always = { myconfig, ... }: {
-    editors.vscode.enable = myconfig.editors.enable or false;
+    editors.vscode.enable = lib.mkDefault (myconfig.editors.enable or false);
   };
 
-  home.ifEnabled = { pkgs, ... }:
+  home.ifEnabled =
     let
       marketplace = pkgs.vscode-marketplace;
       vscodium-wayland = pkgs.symlinkJoin {

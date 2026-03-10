@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "applications.kando";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    applications.kando.enable = myconfig.applications.enable or false;
+    applications.kando.enable = lib.mkDefault (myconfig.applications.enable or false);
   };
 
-  home.ifEnabled = { lib, pkgs, ... }: {
+  home.ifEnabled = {
     home.packages = [ pkgs.kando ];
 
     systemd.user.services.kando = {

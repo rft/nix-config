@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "applications.engineering";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    applications.engineering.enable = myconfig.applications.enable or false;
+    applications.engineering.enable = lib.mkDefault (myconfig.applications.enable or false);
   };
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       alloy6
       chirp

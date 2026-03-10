@@ -1,13 +1,12 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "applications.archiving";
 
   options = delib.singleEnableOption false;
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
-      archivebox
-      galllery-dl
+      gallery-dl
       hydrus
     ];
   };

@@ -5,7 +5,7 @@ delib.module {
   options = delib.singleEnableOption true;
 
   myconfig.always = { myconfig, ... }: {
-    editors.helix.enable = myconfig.editors.enable or false;
+    editors.helix.enable = lib.mkDefault (myconfig.editors.enable or false);
   };
 
   home.ifEnabled = {

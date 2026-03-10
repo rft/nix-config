@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "desktop.login";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    desktop.login.enable = myconfig.desktop.enable or false;
+    desktop.login.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     services.greetd = {
       enable = true;
       settings = {

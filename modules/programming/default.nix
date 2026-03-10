@@ -1,10 +1,10 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "programs.programming";
 
   options = delib.singleEnableOption false;
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     environment.systemPackages = with pkgs; [
       direnv

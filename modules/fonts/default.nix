@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "fonts";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    fonts.enable = myconfig.desktop.enable or false;
+    fonts.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  home.ifEnabled = { pkgs, ... }: {
+  home.ifEnabled = {
     home.packages = with pkgs; [
       fira-code-symbols
       inter

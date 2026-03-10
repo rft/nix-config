@@ -8,7 +8,7 @@ delib.host {
 
   nixos = {
     system.stateVersion = "25.11";
-    imports = [ ./hardware-configuration.nix ];
+    imports = [ ../../hardware/bristlecone.nix ];
 
     boot.loader.grub = {
       enable = true;

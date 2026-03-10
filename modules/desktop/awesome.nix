@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "desktop.awesome";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    desktop.awesome.enable = myconfig.desktop.enable or false;
+    desktop.awesome.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       autorandr
       arandr

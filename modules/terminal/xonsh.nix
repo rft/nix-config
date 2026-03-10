@@ -1,10 +1,10 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "terminal.xonsh";
 
   options = delib.singleEnableOption true;
 
-  home.ifEnabled = { config, pkgs, ... }:
+  home.ifEnabled =
   let
     xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
     xxh = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.xxh;

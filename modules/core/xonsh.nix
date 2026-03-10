@@ -1,8 +1,8 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "core.xonsh";
 
-  nixos.always = { pkgs, ... }:
+  nixos.always =
   let
     xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
   in

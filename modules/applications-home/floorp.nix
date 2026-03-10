@@ -1,14 +1,14 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "applications.floorp";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    applications.floorp.enable = myconfig.applications.enable or false;
+    applications.floorp.enable = lib.mkDefault (myconfig.applications.enable or false);
   };
 
-  home.ifEnabled = { pkgs, ... }: {
+  home.ifEnabled = {
     home.sessionVariables.BROWSER = "floorp";
 
     home.packages = [ pkgs.ff2mpv-rust ];

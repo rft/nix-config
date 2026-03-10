@@ -1,14 +1,14 @@
-{ delib, inputs, ... }:
+{ delib, inputs, lib, pkgs, ... }:
 delib.module {
   name = "desktop.rofi";
 
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    desktop.rofi.enable = myconfig.desktop.enable or false;
+    desktop.rofi.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  home.ifEnabled = { pkgs, ... }: {
+  home.ifEnabled = {
     programs.rofi = {
       enable = true;
       package = pkgs.rofi;

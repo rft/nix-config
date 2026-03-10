@@ -86,27 +86,32 @@
       nixosConfigurations = mkConfigurations "nixos";
       homeConfigurations = mkConfigurations "home";
 
-      packages.x86_64-linux = {
-        rofi-desktop = import ./packages/rofi-desktop {
-          inherit (inputs) nixpkgs;
-          inherit inputs;
-          pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
-          inherit (inputs.nixpkgs.legacyPackages.x86_64-linux)
-            lib
-            stdenvNoCC
-            fetchgit
-            makeWrapper
-            runtimeShell
-            python3
-            gtk3
-            glib
-            gdk-pixbuf
-            pango
-            atk
-            wrapGAppsHook3
-            ;
+      packages.x86_64-linux =
+        let
+          pkgs = import inputs.nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+          };
+        in
+        {
+          rofi-desktop = import ./packages/rofi-desktop {
+            inherit inputs pkgs;
+            inherit (pkgs)
+              lib
+              stdenvNoCC
+              fetchgit
+              makeWrapper
+              runtimeShell
+              python3
+              gtk3
+              glib
+              gdk-pixbuf
+              pango
+              atk
+              wrapGAppsHook3
+              ;
+          };
+          xxh = pkgs.callPackage ./packages/xxh { };
         };
-        xxh = inputs.nixpkgs.legacyPackages.x86_64-linux.callPackage ./packages/xxh { };
-      };
     };
 }

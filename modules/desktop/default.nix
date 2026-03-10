@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, inputs, pkgs, ... }:
 delib.module {
   name = "desktop";
 
@@ -7,7 +7,7 @@ delib.module {
   nixos.always.imports = [ inputs.noctalia.nixosModules.default ];
   home.always.imports = [ inputs.noctalia.homeModules.default ];
 
-  nixos.ifEnabled = { pkgs, ... }: {
+  nixos.ifEnabled = {
     services.noctalia-shell = {
       enable = true;
       package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
