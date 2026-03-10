@@ -1,0 +1,55 @@
+{ delib, ... }:
+delib.module {
+  name = "desktop.niri";
+
+  options = delib.singleEnableOption false;
+
+  myconfig.always = { myconfig, ... }: {
+    desktop.niri.enable = myconfig.desktop.enable or false;
+  };
+
+  home.ifEnabled = { config, pkgs, ... }: {
+    home.file.".config/niri".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-config/config/niri";
+
+    home.packages = with pkgs; [
+      niri
+      kanshi
+      wdisplays
+    ];
+
+    systemd.user.services.niri = {
+      Unit = {
+        Description = "Niri Wayland compositor";
+        BindsTo = [ "graphical-session.target" ];
+        Before = [ "graphical-session.target" ];
+        Wants = [
+          "graphical-session-pre.target"
+          "xdg-desktop-autostart.target"
+        ];
+        After = [ "graphical-session-pre.target" ];
+      };
+      Service = {
+        Slice = "session.slice";
+        Type = "notify";
+        ExecStart = "${pkgs.niri}/bin/niri --session";
+      };
+    };
+
+    systemd.user.targets."niri-shutdown" = {
+      Unit = {
+        Description = "Shutdown running niri session";
+        DefaultDependencies = false;
+        StopWhenUnneeded = true;
+        Conflicts = [
+          "graphical-session.target"
+          "graphical-session-pre.target"
+        ];
+        After = [
+          "graphical-session.target"
+          "graphical-session-pre.target"
+        ];
+      };
+    };
+  };
+}
