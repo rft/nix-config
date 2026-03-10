@@ -18,7 +18,7 @@ delib.module {
     fonts.fontconfig.defaultFonts = {
       serif = [ "Inter" ];
       sansSerif = [ "Inter" ];
-      monospace = [ "FiraCode Nerd Font" ];
+      monospace = [ "FiraCode Nerd Font Mono" ];
     };
   };
 

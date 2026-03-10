@@ -9,10 +9,10 @@ delib.module {
       enable = true;
       settings = {
         cursor_trail = 3;
-        font_family = "FiraCode Nerd Font";
-        bold_font = "FiraCode Bold Nerd Font";
-        italic_font = "FiraCode Italic Nerd Font";
-        bold_italic_font = "FiraCode Bold Italic Nerd Font";
+        font_family = "FiraCode Nerd Font Mono";
+        bold_font = "auto";
+        italic_font = "auto";
+        bold_italic_font = "auto";
         confirm_os_window_close = 0;
         confirm_on_quit = 0;
       };
