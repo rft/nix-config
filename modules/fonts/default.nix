@@ -8,21 +8,21 @@ delib.module {
     fonts.enable = lib.mkDefault (myconfig.desktop.enable or false);
   };
 
-  home.ifEnabled = {
-    home.packages = with pkgs; [
+  nixos.ifEnabled = {
+    fonts.packages = with pkgs; [
       fira-code-symbols
       inter
       nerd-fonts.fira-code
       nerd-fonts.jetbrains-mono
     ];
-
-    fonts.fontconfig = {
-      enable = true;
-      defaultFonts = {
-        serif = [ "inter" ];
-        sansSerif = [ "inter" ];
-        monospace = [ "fira-code" ];
-      };
+    fonts.fontconfig.defaultFonts = {
+      serif = [ "Inter" ];
+      sansSerif = [ "Inter" ];
+      monospace = [ "FiraCode Nerd Font" ];
     };
+  };
+
+  home.ifEnabled = {
+    fonts.fontconfig.enable = true;
   };
 }
