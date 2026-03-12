@@ -1,0 +1,196 @@
+@startuml nix-config-architecture
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Fira Code"
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam nodesep 20
+skinparam ranksep 40
+
+title rft's NixOS Flake Architecture
+header denix-based modular NixOS + Home Manager configuration
+
+' ═══════════════════════════════════════════════════
+' FLAKE OUTPUT ENGINE
+' ═══════════════════════════════════════════════════
+
+package "flake.nix" as flake #BBDEFB {
+  component "denix.lib.configurations" as mkConf
+  note bottom of mkConf
+    host types: desktop | server | wsl | installer
+    extensions: args, base
+    outputs: nixosConfigurations + homeConfigurations
+  end note
+}
+
+' ═══════════════════════════════════════════════════
+' HOST CONFIGURATIONS
+' ═══════════════════════════════════════════════════
+
+package "hosts/" as hosts #C8E6C9 {
+  component "bristlecone" as bristlecone
+  component "cottonwood" as cottonwood
+  component "redwood" as redwood
+  component "sequoia" as sequoia
+  component "myrtle" as myrtle
+  component "mistletoe" as mistletoe
+  component "installer" as installer
+}
+
+note bottom of hosts
+  |= Host |= Type |= apps |= desktop |= prog |= extras |
+  | bristlecone | Intel, Plasma 6 |  Y  |  Y  |  Y  | |
+  | cottonwood | AMD, X11 |  Y  |  Y  |  Y  | |
+  | redwood | Intel, X11 |  Y  |  Y  |  Y  | creative, engineering |
+  | sequoia | VMware, X11 |  Y  |  Y  |  Y  | creative, engineering |
+  | myrtle | VMware |  -  |  Y  |  -  | archiving |
+  | mistletoe | WSL |  -  |  -  |  Y  | cloud, analysis |
+  | installer | LiveCD ISO |  -  |  -  |  -  | fonts |
+end note
+
+mkConf --> hosts
+
+' ═══════════════════════════════════════════════════
+' MODULES — grouped with rectangle (lighter than
+' nested package, avoids overflow)
+' ═══════════════════════════════════════════════════
+
+rectangle "modules/" as mods #FFE0B2 {
+
+  package "config" as cfgMod {
+    component "constants" as constants
+    component "user" as userMod
+    component "home" as homeMod
+    component "overlays" as overlays
+  }
+
+  package "core" as coreMod {
+    component "~67 CLI packages\npodman, GC" as coreDefault
+    component "xonsh (system)" as coreXonsh
+  }
+
+  package "terminal" as termMod {
+    component "bash, zsh\natuin, zoxide" as termDefault
+    component "kitty" as termKitty
+    component "starship" as termStarship
+    component "nushell" as termNushell
+    component "xonsh (home)" as termXonsh
+    component "zellij" as termZellij
+  }
+
+  package "editors" as edMod {
+    component "doom-emacs\n(disabled)" as edDefault
+    component "helix" as edHelix
+    component "VSCodium\n37 extensions" as edVscode
+  }
+
+  package "applications" as appMod {
+    component "anki, mpv, obs\ndiscord, floorp..." as appDefault
+    component "engineering\nghidra, kicad, qemu" as appEng
+    component "creative\nblender, krita, reaper" as appCreative
+    component "archiving\ngallery-dl, hydrus" as appArchiving
+  }
+
+  package "applications-home" as appHomeMod {
+    component "floorp\n24 extensions" as appFloorp
+    component "kando\nradial menu" as appKando
+    component "kdenlive" as appKdenlive
+  }
+
+  package "programming" as progMod {
+    component "nixd, nodejs\npython, plantuml" as progDefault
+    component "cloud\ngcloud, terraform" as progCloud
+    component "analysis\naflplusplus, TLA+" as progAnalysis
+  }
+
+  package "desktop" as deskMod {
+    component "noctalia shell\n(Nord)" as deskDefault
+    component "niri (Wayland)" as deskNiri
+    component "awesome (X11)" as deskAwesome
+    component "rofi" as deskRofi
+    component "login (greetd)" as deskLogin
+  }
+
+  package "services" as svcMod {
+    component "borgmatic, jellyfin\nhome-assistant, n8n" as svcDefault
+  }
+
+  package "fonts" as fontMod {
+    component "FiraCode, Inter\nJetBrains Mono" as fontDefault
+  }
+}
+
+' ═══════════════════════════════════════════════════
+' LIB
+' ═══════════════════════════════════════════════════
+
+package "lib/" #F3E5F5 {
+  component "python-core-packages\nnumpy, pandas, jax..." as pyCore
+  component "xonsh-extra-packages\nxxh, xontribs" as xonshPkgs
+}
+
+' ═══════════════════════════════════════════════════
+' PACKAGES
+' ═══════════════════════════════════════════════════
+
+package "packages/" #FCE4EC {
+  component "xxh" as pkgXxh
+  component "rofi-desktop" as pkgRofi
+  component "installer-iso" as pkgISO
+}
+
+' ═══════════════════════════════════════════════════
+' CONFIG (dotfiles)
+' ═══════════════════════════════════════════════════
+
+package "config/" #E0F7FA {
+  component "awesome/" as cfgAwesome
+  component "niri/" as cfgNiri
+  component "kando/" as cfgKando
+}
+
+' ═══════════════════════════════════════════════════
+' RELATIONSHIPS — host feature flags
+' ═══════════════════════════════════════════════════
+
+hosts ..> mods : enable flags\n(see table)
+
+' ═══════════════════════════════════════════════════
+' RELATIONSHIPS — lib → modules
+' ═══════════════════════════════════════════════════
+
+xonshPkgs --> coreXonsh
+xonshPkgs --> termXonsh
+pyCore --> xonshPkgs
+pyCore --> progDefault
+
+' ═══════════════════════════════════════════════════
+' RELATIONSHIPS — packages → modules
+' ═══════════════════════════════════════════════════
+
+pkgXxh --> termXonsh
+pkgRofi --> deskRofi
+
+' ═══════════════════════════════════════════════════
+' RELATIONSHIPS — dotfiles → modules
+' ═══════════════════════════════════════════════════
+
+cfgAwesome --> deskAwesome
+cfgNiri --> deskNiri
+cfgKando --> appKando
+
+' ═══════════════════════════════════════════════════
+' LEGEND
+' ═══════════════════════════════════════════════════
+
+legend bottom right
+  |= Color |= Layer |
+  |<#BBDEFB> | Flake Engine |
+  |<#C8E6C9> | Host Configs |
+  |<#FFE0B2> | Modules (denix) |
+  |<#F3E5F5> | Lib (helpers) |
+  |<#FCE4EC> | Custom Packages |
+  |<#E0F7FA> | Dotfile Configs |
+endlegend
+
+@enduml

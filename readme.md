@@ -1,7 +1,11 @@
-# Yuki 
+# Yuki
 My NixOS flake
 
-# Systems
+## Architecture
+
+![Architecture diagram](docs/architecture.png)
+
+## Systems
 - cottonwood
 - sequoia 
 - redwood
