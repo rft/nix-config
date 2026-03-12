@@ -1,0 +1,41 @@
+{ delib, inputs, lib, pkgs, ... }:
+delib.module {
+  name = "desktop.rofi";
+
+  options = delib.singleEnableOption false;
+
+  myconfig.always = { myconfig, ... }: {
+    desktop.rofi.enable = lib.mkDefault (myconfig.desktop.enable or false);
+  };
+
+  home.ifEnabled = {
+    programs.rofi = {
+      enable = true;
+      package = pkgs.rofi;
+      theme = ./nord.rasi;
+    };
+
+    home.packages = [
+      inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rofi-desktop
+      pkgs.libdbusmenu
+    ];
+
+    systemd.user.services.rofi-appmenu-service = {
+      Unit = {
+        Description = "AppMenu registrar for rofi-desktop HUD";
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
+      };
+      Service = {
+        Type = "simple";
+        ExecStart = "${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.rofi-desktop}/bin/rofi-appmenu-service";
+        Restart = "on-failure";
+        RestartSec = 2;
+        Environment = "PYTHONUNBUFFERED=1";
+      };
+      Install = {
+        WantedBy = [ "graphical-session.target" ];
+      };
+    };
+  };
+}
