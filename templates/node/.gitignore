@@ -1,0 +1,13 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Node
+node_modules/
+dist/
+
+# Nix
+result

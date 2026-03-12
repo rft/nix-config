@@ -87,6 +87,53 @@
       nixosConfigurations = mkConfigurations "nixos";
       homeConfigurations = mkConfigurations "home";
 
+      templates = {
+        python = {
+          path = ./templates/python;
+          description = "Python development environment with devenv";
+        };
+        python-cad = {
+          path = ./templates/python-cad;
+          description = "Python CAD environment with build123d and cadquery";
+        };
+        python-electronics = {
+          path = ./templates/python-electronics;
+          description = "Python electronics environment with skidl";
+        };
+        python-datascience = {
+          path = ./templates/python-datascience;
+          description = "Python data science environment with devenv";
+        };
+        rust = {
+          path = ./templates/rust;
+          description = "Rust development environment with devenv";
+        };
+        node = {
+          path = ./templates/node;
+          description = "Node.js and TypeScript development environment with devenv";
+        };
+        gleam = {
+          path = ./templates/gleam;
+          description = "Gleam development environment with devenv";
+        };
+        haskell = {
+          path = ./templates/haskell;
+          description = "Haskell development environment with devenv";
+        };
+        veryl = {
+          path = ./templates/veryl;
+          description = "Veryl HDL development environment with devenv";
+        };
+        prolog = {
+          path = ./templates/prolog;
+          description = "Prolog development environment with SWI-Prolog";
+        };
+        ada = {
+          path = ./templates/ada;
+          description = "Ada development environment with GNAT and gprbuild";
+        };
+      };
+
       packages.x86_64-linux =
         let
           pkgs = import inputs.nixpkgs {

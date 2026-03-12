@@ -1,0 +1,15 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Ada
+obj/
+lib/
+*.ali
+*.o
+
+# Nix
+result

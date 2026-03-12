@@ -1,6 +1,13 @@
 # Yuki
 My NixOS flake
 
+## Documentation
+
+- [Architecture diagram](docs/architecture.png)
+- [Modules Reference](docs/MODULES.md)
+- [Setup Guide](docs/SETUP.md)
+- [Templates](docs/TEMPLATES.md)
+
 ## Architecture
 
 ![Architecture diagram](docs/architecture.png)

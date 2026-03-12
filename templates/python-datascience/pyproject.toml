@@ -1,0 +1,18 @@
+[project]
+name = "my-project"
+version = "0.1.0"
+description = ""
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "pandas",
+    "polars",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "plotly",
+    "jupyter",
+    "ipython",
+    "marimo",
+]

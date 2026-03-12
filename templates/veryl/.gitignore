@@ -1,0 +1,13 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Veryl
+obj/
+*.sv
+
+# Nix
+result

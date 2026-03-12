@@ -1,0 +1,16 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Haskell
+dist-newstyle/
+.stack-work/
+*.hi
+*.o
+*.cabal.bak
+
+# Nix
+result

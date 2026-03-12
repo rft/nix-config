@@ -1,0 +1,12 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Gleam
+build/
+
+# Nix
+result
