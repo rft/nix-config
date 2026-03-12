@@ -6,7 +6,7 @@ delib.module {
     overlays = [
       (final: prev: {
         unstable = import inputs.nixpkgs-unstable {
-          system = final.system;
+          system = final.stdenv.hostPlatform.system;
           config.allowUnfree = true;
         };
       })
@@ -33,7 +33,7 @@ delib.module {
     overlays = [
       (final: prev: {
         unstable = import inputs.nixpkgs-unstable {
-          system = final.system;
+          system = final.stdenv.hostPlatform.system;
           config.allowUnfree = true;
         };
       })
