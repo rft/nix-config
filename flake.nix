@@ -73,6 +73,7 @@
                   "desktop"
                   "server"
                   "wsl"
+                  "installer"
                 ];
               };
             })
@@ -112,6 +113,7 @@
               ;
           };
           xxh = pkgs.callPackage ./packages/xxh { };
+          installer-iso = inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
         };
     };
 }

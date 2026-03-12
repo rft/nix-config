@@ -29,9 +29,9 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 6 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 7 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
-extensions apply (host types: `desktop`, `server`, `wsl`).
+extensions apply (host types: `desktop`, `server`, `wsl`, `installer`).
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
@@ -41,23 +41,24 @@ extensions apply (host types: `desktop`, `server`, `wsl`).
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
+| **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe |
-|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|
-| desktop | yes | yes | yes | yes | yes | -- |
-| applications | yes | yes | yes | yes | yes | -- |
-| applications.creative | auto | auto | yes | yes | no | -- |
-| applications.engineering | auto | auto | yes | yes | no | -- |
-| applications.archiving | -- | -- | -- | -- | yes | -- |
-| programs.programming | yes | yes | yes | yes | no | yes |
-| programs.programming.analysis | auto | auto | auto | auto | -- | yes |
-| programs.programming.cloud | -- | -- | -- | -- | -- | yes |
-| services | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | -- |
+| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | installer |
+|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:---------:|
+| desktop | yes | yes | yes | yes | yes | -- | -- |
+| applications | yes | yes | yes | yes | yes | -- | -- |
+| applications.creative | auto | auto | yes | yes | no | -- | -- |
+| applications.engineering | auto | auto | yes | yes | no | -- | -- |
+| applications.archiving | -- | -- | -- | -- | yes | -- | -- |
+| programs.programming | yes | yes | yes | yes | no | yes | -- |
+| programs.programming.analysis | auto | auto | auto | auto | -- | yes | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | yes | -- |
+| services | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes |
+| editors | yes | yes | yes | yes | yes | yes | yes |
+| fonts | auto | auto | auto | auto | auto | -- | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -73,6 +74,56 @@ For example:
 
 ```bash
 sudo nixos-rebuild switch --flake .#bristlecone
+```
+
+## Installer ISO
+
+Build a custom NixOS installer ISO with KDE Plasma 6, Calamares, and your
+terminal tools (starship, kitty, helix, etc.) pre-configured.
+
+### Building
+
+```bash
+nix build .#installer-iso
+```
+
+The ISO is written to `result/iso/`. To reduce build time during development the
+default squashfs compression is zstd level 6. For a smaller release ISO, bump
+the level to 19 in `hosts/installer/default.nix`.
+
+### Writing to USB
+
+```bash
+sudo dd if=result/iso/*.iso of=/dev/sdX bs=4M status=progress oflag=sync
+```
+
+Replace `/dev/sdX` with your USB device (use `lsblk` to identify it).
+
+### Installing a host
+
+Boot the USB. KDE Plasma starts with auto-login as `nano`. The flake is
+embedded at `/etc/nixos-config`.
+
+1. Partition and mount disks (GParted is available, or use `parted`/`fdisk`).
+2. Mount the target root at `/mnt` (and EFI partition at `/mnt/boot` if applicable).
+3. Run the installer:
+
+```bash
+sudo nixos-install --flake /etc/nixos-config#HOSTNAME
+```
+
+For example, to install the bristlecone host:
+
+```bash
+sudo nixos-install --flake /etc/nixos-config#bristlecone
+```
+
+4. After installation completes, set the user password when prompted and reboot.
+
+### Testing in a VM
+
+```bash
+qemu-system-x86_64 -enable-kvm -m 4096 -cdrom result/iso/*.iso
 ```
 
 ## Standalone Home Manager
@@ -140,7 +191,7 @@ sudo nixos-rebuild switch --flake .#HOSTNAME
    `modules/CATEGORY/name.nix`:
 
 ```nix
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "CATEGORY.name";
 
@@ -148,18 +199,20 @@ delib.module {
 
   # Auto-enable when the parent module is enabled (optional)
   myconfig.always = { myconfig, ... }: {
-    CATEGORY.name.enable = myconfig.CATEGORY.enable or false;
+    CATEGORY.name.enable = lib.mkDefault (myconfig.CATEGORY.enable or false);
   };
 
   # NixOS-level configuration (applied when enabled)
-  nixos.ifEnabled = { pkgs, ... }: {
+  # NOTE: these are plain attrsets, NOT lambdas. Add pkgs/lib to the
+  # outer module function args instead.
+  nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       # packages here
     ];
   };
 
   # Home Manager configuration (applied when enabled)
-  home.ifEnabled = { pkgs, ... }: {
+  home.ifEnabled = {
     # HM config here
   };
 }
@@ -192,6 +245,46 @@ myconfig = {
 };
 ```
 
+## NixOS vs Home Manager Blocks
+
+Each `delib.module` can contain both `nixos.*` and `home.*` config blocks:
+
+- **`nixos.ifEnabled`** / **`nixos.always`** — NixOS-level config (system packages, services, boot, etc.). Only applied when building `nixosConfigurations` (i.e. `sudo nixos-rebuild switch --flake .#HOSTNAME`). Ignored in standalone Home Manager builds.
+- **`home.ifEnabled`** / **`home.always`** — Home Manager config (user programs, dotfiles, etc.). Applied in **both** modes: as part of NixOS rebuilds (via the HM NixOS module) and in standalone HM builds (`home-manager switch --flake .#nano`).
+- **`myconfig.always`** — Sets module option defaults. This is the only block that receives a lambda with `{ myconfig, ... }:` args. Use `lib.mkDefault` so host-level overrides take precedence.
+
+**Important:** `nixos.ifEnabled` and `home.ifEnabled` are **plain attrsets**, not lambdas. If you need `pkgs`, `lib`, `inputs`, etc., add them to the outer module function args:
+
+```nix
+# Correct:
+{ delib, pkgs, lib, ... }:
+delib.module {
+  name = "example";
+  nixos.ifEnabled = {
+    environment.systemPackages = [ pkgs.hello ];
+  };
+}
+
+# Wrong — will error:
+{ delib, ... }:
+delib.module {
+  name = "example";
+  nixos.ifEnabled = { pkgs, ... }: {  # DO NOT use a lambda here
+    environment.systemPackages = [ pkgs.hello ];
+  };
+}
+```
+
+### Building
+
+```bash
+# Full NixOS rebuild (applies both nixos.* and home.* blocks)
+sudo nixos-rebuild switch --flake .#HOSTNAME
+
+# Standalone Home Manager (applies only home.* blocks)
+home-manager switch --flake .#nano
+```
+
 ## Flake Architecture
 
 The flake uses `denix.lib.configurations` with the `base` extension:
@@ -205,7 +298,7 @@ denix.lib.configurations {
     (base.withConfig {
       args.enable = true;
       rices.enable = false;
-      hosts.type.types = [ "desktop" "server" "wsl" ];
+      hosts.type.types = [ "desktop" "server" "wsl" "installer" ];
     })
   ];
 };
