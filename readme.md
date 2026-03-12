@@ -1,234 +1,100 @@
 # Yuki
-My NixOS flake
+
+A modular NixOS flake using [denix](https://github.com/yunfachi/denix) for
+declarative host and module management. Each host picks from a shared set of
+toggleable modules covering desktop, applications, programming, services,
+terminal, and editors.
 
 ## Documentation
 
 - [Architecture diagram](docs/architecture.png)
-- [Modules Reference](docs/MODULES.md)
-- [Setup Guide](docs/SETUP.md)
-- [Templates](docs/TEMPLATES.md)
+- [Modules Reference](docs/MODULES.md) -- every module, its options, and default behavior
+- [Setup Guide](docs/SETUP.md) -- directory structure, rebuilding, adding hosts/modules
+- [Templates](docs/TEMPLATES.md) -- devenv project templates for Python, Rust, Node, etc.
+
+---
 
 ## Architecture
 
 ![Architecture diagram](docs/architecture.png)
 
-## Systems
-- cottonwood
-- sequoia 
-- redwood
-- Mistletoe (WSL)
+---
 
-# Commands
-`sudo nixos-rebuild switch --flake .#mistletoe`
+## Hosts
 
-## Packages (grouped by folder/category)
-### Core (modules/nixos/core)
-- atuin
-- bandwhich
-- bat
-- binsider
-- bottom
-- bpftrace
-- claude-code
-- codex
-- copilot-cli
-- cpuid
-- csvlens
-- difftastic
-- distrobox
-- dua
-- ethtool
-- fd
-- ffmpeg_7-full
-- fzf
-- gemini-cli
-- gh
-- git
-- hexyl
-- nixcats-nvim (inputs.nixcats-nvim)
-- iproute2
-- jq
-- lazygit
-- msr-tools
-- nicstat
-- numactl
-- oxker
-- pandoc
-- pass
-- picat
-- podman
-- podman-tui
-- procps
-- procs
-- rclone
-- rink
-- ripgrep
-- rr
-- rsync
-- syncthing
-- sysstat
-- tcpdump
-- tealdeer
-- tio
-- tiptop
-- tokei
-- trippy
-- util-linux
-- visidata
-- watchexec
-- wget
-- yazi
-- yq
-- yt-dlp
-- zellij
-- zoxide
+| Host | Type | Description |
+|------|------|-------------|
+| **bristlecone** | desktop | KDE Plasma 6 with SDDM |
+| **cottonwood** | desktop | Vertical screen rotation |
+| **redwood** | desktop | Full creative + engineering modules |
+| **sequoia** | desktop | VMware guest |
+| **myrtle** | desktop | VMware guest, archiving-focused |
+| **mistletoe** | wsl | Programming + analysis + cloud |
+| **installer** | installer | Live ISO with KDE Plasma 6 + Calamares |
 
-### Applications (modules/nixos/applications)
-#### Base (modules/nixos/applications/default.nix)
-- anki
-- audacity
-- calibre
-- discord
-- flameshot
-- floorp-bin
-- kdePackages.dolphin
-- kitty
-- mpv
-- nsxiv
-- obs-studio
-- ollama
-- pciutils
-- plover.dev
-- rofi
-- spotify
+See [SETUP.md](docs/SETUP.md#hosts) for module enablement per host.
 
-#### Creative (modules/nixos/applications/creative)
-- aseprite
-- blender
-- kdePackages.kdenlive
-- krita
-- reaper
+---
 
-#### Engineering (modules/nixos/applications/engineering)
-- alloy6
-- chirp
-- cutter
-- fiji
-- ghidra
-- imhex
-- kicad
-- pulseview
-- qemu
-- sdrangel
-- solvespace
-- virt-manager
+## Quick Start
 
-#### Archiving (modules/nixos/archiving)
-- archivebox
-- galllery-dl
-- hydrus
+Apply the NixOS configuration for a specific host:
 
-### Programming (modules/nixos/programming)
-#### Base (modules/nixos/programming/default.nix)
-- direnv
-- nixd
-- nixfmt-rfc-style
-- nodejs_22
-- plantuml-c4
-- swi-prolog
-- python312.withPackages(python-core-packages)
+```bash
+sudo nixos-rebuild switch --flake .#HOSTNAME
+```
 
-#### Analysis (modules/nixos/programming/analysis)
-- aflplusplus
-- binwalk
-- file
-- tlaplusToolbox
-- tlaps
+For example:
 
-#### Cloud (modules/nixos/programming/cloud)
-- google-cloud-sdk
-- terraform
+```bash
+sudo nixos-rebuild switch --flake .#mistletoe
+```
 
-#### Python core packages (lib/python-core-packages.nix)
-- beautifulsoup4
-- distributed
-- ipdb
-- ipython
-- jax
-- matplotlib
-- numpy
-- ortools
-- pandas
-- polars
-- qrcode
-- requests
-- scapy
-- scipy
-- seaborn
-- selenium
-- sympy
-- tqdm
-- wat
-- z3-solver
+Standalone Home Manager (user-level config only):
 
-### Services (modules/nixos/services)
-- borgmatic
-- home-assistant
-- jellyfin
-- kasmweb
-- n8n
-- ollama
-- paperless-ng
+```bash
+home-manager switch --flake .#nano
+```
 
-### Desktop (modules/nixos/desktop/awesome)
-- autorandr
-- arandr
+---
 
-### Home (homes/x86_64-linux/nano)
-#### Fonts (homes/x86_64-linux/nano/fonts)
-- fira-code-symbols
-- inter
-- nerd-fonts.fira-code
-- nerd-fonts.jetbrains-mono
+## Modules Overview
 
-#### Applications (homes/x86_64-linux/nano/applications/floorp)
-- ff2mpv-rust
-- floorp-bin
-- Floorp extensions (NUR): auto-tab-discard, bitwarden, clearurls, darkreader, dearrow, decentraleyes, gesturefy, multi-account-containers, old-reddit-redirect, privacy-badger, reddit-enhancement-suite, return-youtube-dislikes, sidebery, sponsorblock, stylus, temporary-containers, terms-of-service-didnt-read, videospeed, vimium-c, violentmonkey, ublock-origin
+Modules use `delib.module` with `singleEnableOption` for toggling. The
+`myconfig` block controls per-host defaults. See [MODULES.md](docs/MODULES.md)
+for the full reference.
 
-#### Desktop (homes/x86_64-linux/nano/desktop)
-- niri
-- kanshi
-- wdisplays
-- rofi
-- rofi-desktop (inputs.self.packages)
-- libdbusmenu
+| Category | Path | Description |
+|----------|------|-------------|
+| **Config** | `modules/config/` | Infrastructure: constants, user account, overlays (always active) |
+| **Core** | `modules/core/` | 60+ system packages, Podman, xonsh shell (always active) |
+| **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, AwesomeWM, Rofi, greetd login |
+| **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
+| **Applications (HM)** | `modules/applications-home/` | Floorp browser, Kando, KDEnlive configs |
+| **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
+| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless |
+| **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
+| **Editors** | `modules/editors/` | VSCodium, Helix, Doom Emacs |
+| **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |
 
-#### Terminal (homes/x86_64-linux/nano/terminal)
-- starship
-- xxh
-- python3.withPackages(xonsh + xonsh-extra-packages)
+---
 
-#### Editors (homes/x86_64-linux/nano/editors/vscode)
-- vscodium-wayland
-- VS Code extensions: aaron-bond.better-comments, brettm12345.nixfmt-vscode, github.copilot, github.copilot-chat, jebbs.plantuml, jnoortheen.nix-ide, mechatroner.rainbow-csv, mkhl.direnv, ms-toolsai.jupyter, ms-toolsai.jupyter-keymap, ms-toolsai.jupyter-renderers, ms-toolsai.vscode-jupyter-cell-tags, ms-toolsai.vscode-jupyter-slideshow, ms-vscode-remote.remote-ssh, ms-vscode.live-server, oderwat.indent-rainbow, usernamehw.errorlens, vscodevim.vim, vspacecode.vspacecode, vspacecode.whichkey, yzhang.markdown-all-in-one, svelte.svelte-vscode, streetsidesoftware.code-spell-checker, github.vscode-github-actions, charliermarsh.ruff, buenon.scratchpads, bodil.file-browser, jacobdufault.fuzzy-search, kahole.magit, maattdd.gitless, roipoussiere.cadquery, tonybaloney.vscode-pets, bernhard-42.ocp-cad-viewer, anthropic.claude-code, marimo-team.vscode-marimo, openai.chatgpt, astral-sh.ty
+## Templates
 
+Flake templates for bootstrapping new projects with
+[devenv](https://devenv.sh). See [TEMPLATES.md](docs/TEMPLATES.md) for details.
 
-### Packages (packages/)
-- rofi-desktop
-- xxh
+```bash
+nix flake init -t github:rft/nix-config#python
+```
 
-### Xonsh extras (lib/xonsh-extra-packages)
-#### Shared
-- python-core-packages
-- xxh
-#### Xontribs
-- xontrib-vox
-- xonsh-direnv
-- xontrib-whole-word-jumping
-- xontrib-bashisms
+Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
+`rust`, `node`, `gleam`, `haskell`, `veryl`, `prolog`, `ada`.
+
+---
 
 ## Niri Keybinds
+
 - `Mod+Shift+Slash` shows the built-in hotkey overlay.
 - `Mod+Return` launches `kitty`; `Mod+Space` opens rofi run; `Mod+P` raises the rofi window switcher; `Mod+Q` starts Floorp.
 - `Mod+Shift+C` closes the focused window; `Mod+Ctrl+Space` toggles floating; `Mod+Shift+Q` quits the session without confirmation.
