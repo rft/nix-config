@@ -18,7 +18,9 @@ delib.module {
       teammateMode = "auto";
     };
 
-    home.sessionVariables = { };
+    home.sessionVariables = {
+      EDITOR = "nvim";
+    };
 
     programs.git = {
       enable = true;
@@ -29,6 +31,7 @@ delib.module {
           email = myconfig.constants.useremail;
         };
         pull.rebase = false;
+        push.autoSetupRemote = true;
       };
     };
   };
