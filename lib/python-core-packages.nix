@@ -9,6 +9,7 @@ ps: with ps; [
   ortools
   pandas
   polars
+  python-sat
   qrcode
   requests
   scapy
