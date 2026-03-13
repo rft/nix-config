@@ -78,6 +78,96 @@ For example:
 sudo nixos-rebuild switch --flake .#bristlecone
 ```
 
+## Darwin (macOS)
+
+Darwin hosts use [nix-darwin](https://github.com/nix-darwin/nix-darwin) instead
+of NixOS. The flake produces `darwinConfigurations` alongside
+`nixosConfigurations` using the same denix module system.
+
+### Prerequisites
+
+1. Install Nix on macOS (the [Determinate Systems installer](https://zero-to-nix.com/start/install) is recommended).
+2. Install [Homebrew](https://brew.sh) -- needed for cask management of GUI `.app` bundles.
+
+### First-time setup
+
+Bootstrap nix-darwin (only needed once):
+
+```bash
+nix run nix-darwin -- switch --flake .#malus
+```
+
+### Rebuilding
+
+After the initial bootstrap, use `darwin-rebuild`:
+
+```bash
+darwin-rebuild switch --flake .#malus
+```
+
+### How modules work on Darwin
+
+Denix modules support `darwin.always` / `darwin.ifEnabled` / `darwin.ifDisabled`
+blocks alongside `nixos.*` blocks. The routing works as follows:
+
+- **`darwin.*`** blocks are applied only when building `darwinConfigurations`.
+- **`nixos.*`** blocks are skipped on Darwin.
+- **`home.*`** blocks are applied on both NixOS and Darwin (routed through
+  home-manager automatically).
+- **`myconfig.*`** blocks are applied on all platforms.
+
+For modules where the NixOS and Darwin config is identical (e.g. just
+`environment.systemPackages`), both blocks need to be defined. Modules that
+only use `home.*` blocks work on Darwin with zero changes.
+
+### Adding a new Darwin host
+
+1. Create `hosts/HOSTNAME/default.nix`:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "HOSTNAME";
+  type = "darwin";
+  system = "aarch64-darwin";
+
+  home.home.stateVersion = "24.05";
+
+  darwin = {
+    system.stateVersion = 6;
+    networking.hostName = "HOSTNAME";
+
+    # GUI apps via Homebrew casks
+    homebrew = {
+      enable = true;
+      onActivation.cleanup = "zap";
+      casks = [ "discord" "spotify" ];
+    };
+  };
+
+  myconfig = {
+    applications.enable = true;
+    programs.programming.enable = true;
+  };
+}
+```
+
+2. No `hardware-configuration.nix` is needed for Darwin hosts.
+
+3. Rebuild with `darwin-rebuild switch --flake .#HOSTNAME`.
+
+### Key differences from NixOS hosts
+
+| | NixOS | Darwin |
+|--|-------|--------|
+| Rebuild command | `sudo nixos-rebuild switch` | `darwin-rebuild switch` |
+| Home directory | `/home/username` | `/Users/username` |
+| Garbage collection | `nix.gc.dates` (systemd timer) | `nix.gc.interval` (launchd plist) |
+| Shell config | `programs.xonsh.enable` | `environment.systemPackages` with `pkgs.xonsh.override` |
+| GUI apps | Nix packages | Homebrew casks (better `.app` integration) |
+| User config | `isNormalUser`, `extraGroups` | `home`, `description` only |
+| Default shell | `users.defaultUserShell` | Not available |
+
 ## Installer ISO
 
 Build a custom NixOS installer ISO with KDE Plasma 6, Calamares, and your
