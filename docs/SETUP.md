@@ -10,6 +10,7 @@ hosts/                  Per-host configurations (delib.host)
   sequoia/              Desktop, VMware guest
   myrtle/               Desktop, archiving-focused, VMware guest
   mistletoe/            WSL, programming only
+  malus/                Darwin (macOS), Apple Silicon
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
@@ -29,9 +30,9 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 7 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 8 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
-extensions apply (host types: `desktop`, `server`, `wsl`, `installer`).
+extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`).
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
@@ -41,24 +42,25 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`).
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
+| **malus** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Homebrew casks for GUI apps, Touch ID sudo |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | installer |
-|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:---------:|
-| desktop | yes | yes | yes | yes | yes | -- | -- |
-| applications | yes | yes | yes | yes | yes | -- | -- |
-| applications.creative | auto | auto | yes | yes | no | -- | -- |
-| applications.engineering | auto | auto | yes | yes | no | -- | -- |
-| applications.archiving | -- | -- | -- | -- | yes | -- | -- |
-| programs.programming | yes | yes | yes | yes | no | yes | -- |
-| programs.programming.analysis | auto | auto | auto | auto | -- | yes | -- |
-| programs.programming.cloud | -- | -- | -- | -- | -- | yes | -- |
-| services | -- | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | -- | yes |
+| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | malus | installer |
+|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|
+| desktop | yes | yes | yes | yes | yes | -- | -- | -- |
+| applications | yes | yes | yes | yes | yes | -- | yes | -- |
+| applications.creative | auto | auto | yes | yes | no | -- | auto | -- |
+| applications.engineering | auto | auto | yes | yes | no | -- | auto | -- |
+| applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- |
+| programs.programming | yes | yes | yes | yes | no | yes | yes | -- |
+| programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | -- |
+| services | -- | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes | yes |
+| editors | yes | yes | yes | yes | yes | yes | yes | yes |
+| fonts | auto | auto | auto | auto | auto | -- | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -298,14 +300,14 @@ denix.lib.configurations {
     (base.withConfig {
       args.enable = true;
       rices.enable = false;
-      hosts.type.types = [ "desktop" "server" "wsl" "installer" ];
+      hosts.type.types = [ "desktop" "server" "wsl" "installer" "darwin" ];
     })
   ];
 };
 ```
 
-This generates both `nixosConfigurations` and `homeConfigurations` from the
-same host/module definitions. The `base` extension provides the host type
+This generates `nixosConfigurations`, `darwinConfigurations`, and
+`homeConfigurations` from the same host/module definitions. The `base` extension provides the host type
 system and `myconfig` option merging.
 
 ### Key inputs
@@ -322,4 +324,5 @@ system and `myconfig` option merging.
 | nur | Nix User Repository (Floorp addons) |
 | nix-doom-emacs-unstraightened | Doom Emacs for Nix |
 | nixos-wsl | NixOS on WSL support |
+| nix-darwin | macOS system configuration |
 | quickshell | Quickshell (available as input) |
