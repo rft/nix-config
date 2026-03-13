@@ -79,4 +79,60 @@ delib.module {
       options = "--delete-older-than 30d";
     };
   };
+
+  darwin.always = {
+    home-manager.backupFileExtension = "backup";
+
+    environment.systemPackages = with pkgs; [
+      atuin
+      bandwhich
+      bat
+      binsider
+      bottom
+      claude-code
+      codex
+      copilot-cli
+      csvlens
+      difftastic
+      dua
+      fd
+      ffmpeg_7-full
+      fzf
+      gemini-cli
+      gh
+      git
+      hexyl
+      inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
+      jq
+      lazygit
+      oxker
+      pandoc
+      pass
+      picat
+      procs
+      rclone
+      rink
+      ripgrep
+      rsync
+      syncthing
+      tealdeer
+      tio
+      tokei
+      trippy
+      visidata
+      watchexec
+      wget
+      yazi
+      yq
+      yt-dlp
+      zellij
+      zoxide
+    ];
+
+    nix.gc = {
+      automatic = true;
+      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      options = "--delete-older-than 30d";
+    };
+  };
 }

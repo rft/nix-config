@@ -5,7 +5,9 @@ delib.module {
   options = delib.singleEnableOption false;
 
   myconfig.always = { myconfig, ... }: {
-    applications.kando.enable = lib.mkDefault (myconfig.applications.enable or false);
+    applications.kando.enable = lib.mkDefault (
+      (myconfig.applications.enable or false) && !pkgs.stdenv.isDarwin
+    );
   };
 
   home.ifEnabled = {

@@ -17,4 +17,6 @@ delib.module {
       reaper
     ];
   };
+
+  darwin.ifEnabled = { };
 }

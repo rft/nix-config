@@ -24,4 +24,13 @@ delib.module {
       virt-manager
     ];
   };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = with pkgs; [
+      ghidra
+      imhex
+      kicad
+      qemu
+    ];
+  };
 }

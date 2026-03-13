@@ -10,4 +10,10 @@ delib.module {
       hydrus
     ];
   };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = with pkgs; [
+      gallery-dl
+    ];
+  };
 }

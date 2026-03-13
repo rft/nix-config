@@ -17,4 +17,13 @@ delib.module {
       tlaps
     ];
   };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = with pkgs; [
+      binwalk
+      file
+      tlaplusToolbox
+      tlaps
+    ];
+  };
 }

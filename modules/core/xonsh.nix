@@ -12,4 +12,14 @@ delib.module {
       extraPackages = xonshExtraPackages;
     };
   };
+
+  darwin.always =
+  let
+    xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
+  in
+  {
+    environment.systemPackages = [
+      (pkgs.xonsh.override { extraPackages = xonshExtraPackages; })
+    ];
+  };
 }

@@ -49,6 +49,11 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -74,6 +79,7 @@
                   "server"
                   "wsl"
                   "installer"
+                  "darwin"
                 ];
               };
             })
@@ -85,6 +91,7 @@
     in
     {
       nixosConfigurations = mkConfigurations "nixos";
+      darwinConfigurations = mkConfigurations "darwin";
       homeConfigurations = mkConfigurations "home";
 
       templates = {
@@ -161,6 +168,17 @@
           };
           xxh = pkgs.callPackage ./packages/xxh { };
           installer-iso = inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
+        };
+
+      packages.aarch64-darwin =
+        let
+          pkgs = import inputs.nixpkgs {
+            system = "aarch64-darwin";
+            config.allowUnfree = true;
+          };
+        in
+        {
+          xxh = pkgs.callPackage ./packages/xxh { };
         };
     };
 }

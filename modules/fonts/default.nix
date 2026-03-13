@@ -22,6 +22,15 @@ delib.module {
     };
   };
 
+  darwin.ifEnabled = {
+    fonts.packages = with pkgs; [
+      fira-code-symbols
+      inter
+      nerd-fonts.fira-code
+      nerd-fonts.jetbrains-mono
+    ];
+  };
+
   home.ifEnabled = {
     fonts.fontconfig.enable = true;
   };

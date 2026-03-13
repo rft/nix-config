@@ -24,4 +24,12 @@ delib.module {
       spotify
     ];
   };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = with pkgs; [
+      kitty
+      mpv
+      ollama
+    ];
+  };
 }

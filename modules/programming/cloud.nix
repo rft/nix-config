@@ -10,4 +10,11 @@ delib.module {
       terraform
     ];
   };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = with pkgs; [
+      google-cloud-sdk
+      terraform
+    ];
+  };
 }
