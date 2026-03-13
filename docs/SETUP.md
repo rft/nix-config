@@ -220,14 +220,66 @@ qemu-system-x86_64 -enable-kvm -m 4096 -cdrom result/iso/*.iso
 
 ## Standalone Home Manager
 
-Apply only the Home Manager configuration (useful on WSL or when you only want
-to update user-level config):
+Standalone Home Manager lets you apply user-level configuration (shells,
+editors, dotfiles, git, etc.) on any system with Nix installed -- even
+non-NixOS Linux distros, macOS without nix-darwin, or WSL. It uses only the
+`home.*` blocks from modules; `nixos.*` and `darwin.*` blocks are ignored.
+
+The `homeManagerUser` is set to `"nano"` in the flake.
+
+### Prerequisites
+
+1. Install Nix (the [Determinate Systems installer](https://zero-to-nix.com/start/install) is recommended).
+2. Enable flakes if not already (the Determinate installer does this by default):
+
+```bash
+mkdir -p ~/.config/nix
+echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+```
+
+### First-time bootstrap
+
+If Home Manager is not yet installed, run it directly from the flake:
+
+```bash
+nix run home-manager -- switch --flake .#nano
+```
+
+This builds and activates the Home Manager configuration, and installs the
+`home-manager` command into your profile.
+
+### Rebuilding
+
+After the initial bootstrap, use `home-manager` directly:
 
 ```bash
 home-manager switch --flake .#nano
 ```
 
-The `homeManagerUser` is set to `"nano"` in the flake.
+### What gets applied
+
+Standalone Home Manager applies all `home.always` and `home.ifEnabled` blocks
+from every module. This includes:
+
+- Shell configuration (xonsh, nushell, starship, zellij)
+- Terminal emulator config (kitty)
+- Editor config (VSCodium extensions/settings, Helix)
+- Git configuration
+- User packages installed via `home.packages`
+- Dotfiles managed via `home.file` and `xdg.configFile`
+
+System-level configuration (`environment.systemPackages`, services, boot,
+fonts, etc.) is **not** applied -- those require a full NixOS or Darwin rebuild.
+
+### Troubleshooting
+
+If you get a conflict with existing dotfiles, Home Manager will refuse to
+overwrite them. Either back up and remove the conflicting files, or check
+`result/` for the files Home Manager wants to write:
+
+```bash
+home-manager switch --flake .#nano 2>&1 | grep "Existing file"
+```
 
 ## How to Add a New Host
 
