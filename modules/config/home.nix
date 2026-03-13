@@ -26,6 +26,7 @@ delib.module {
       enable = true;
       lfs.enable = true;
       settings = {
+        core.editor = "nvim";
         user = {
           name = myconfig.constants.gitname;
           email = myconfig.constants.useremail;
