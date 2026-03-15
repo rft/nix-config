@@ -1,4 +1,12 @@
 { delib, lib, pkgs, ... }:
+let
+  sharedFonts = with pkgs; [
+    fira-code-symbols
+    inter
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+  ];
+in
 delib.module {
   name = "fonts";
 
@@ -9,12 +17,7 @@ delib.module {
   };
 
   nixos.ifEnabled = {
-    fonts.packages = with pkgs; [
-      fira-code-symbols
-      inter
-      nerd-fonts.fira-code
-      nerd-fonts.jetbrains-mono
-    ];
+    fonts.packages = sharedFonts;
     fonts.fontconfig.defaultFonts = {
       serif = [ "Inter" ];
       sansSerif = [ "Inter" ];
@@ -23,12 +26,7 @@ delib.module {
   };
 
   darwin.ifEnabled = {
-    fonts.packages = with pkgs; [
-      fira-code-symbols
-      inter
-      nerd-fonts.fira-code
-      nerd-fonts.jetbrains-mono
-    ];
+    fonts.packages = sharedFonts;
   };
 
   home.ifEnabled = {

@@ -1,4 +1,4 @@
-{ delib, pkgs, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "home";
 
@@ -6,10 +6,11 @@ delib.module {
     programs.home-manager.enable = true;
 
     home.username = myconfig.constants.username;
-    home.homeDirectory =
+    home.homeDirectory = lib.mkForce (
       if pkgs.stdenv.isDarwin
       then "/Users/${myconfig.constants.username}"
-      else "/home/${myconfig.constants.username}";
+      else "/home/${myconfig.constants.username}"
+    );
 
     home.file.".claude/settings.json".text = builtins.toJSON {
       env = {

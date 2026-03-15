@@ -88,9 +88,10 @@
             inherit inputs;
           };
         };
+      darwinHosts = [ "malus" ];
     in
     {
-      nixosConfigurations = mkConfigurations "nixos";
+      nixosConfigurations = builtins.removeAttrs (mkConfigurations "nixos") darwinHosts;
       darwinConfigurations = mkConfigurations "darwin";
       homeConfigurations = mkConfigurations "home";
 
