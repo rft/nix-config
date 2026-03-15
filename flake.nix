@@ -140,6 +140,10 @@
           path = ./templates/ada;
           description = "Ada development environment with GNAT and gprbuild";
         };
+        amaranth = {
+          path = ./templates/amaranth;
+          description = "Amaranth HDL development environment with yosys and surfer";
+        };
       };
 
       packages.x86_64-linux =

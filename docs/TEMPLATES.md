@@ -19,6 +19,7 @@ development shells. Each template provides a ready-to-use `flake.nix`,
 | `veryl`  | [Veryl](https://veryl-lang.org) HDL with Verilator and Surfer |
 | `prolog` | [SWI-Prolog](https://www.swi-prolog.org) |
 | `ada`    | [Ada](https://www.adacore.com) with GNAT and gprbuild |
+| `amaranth` | [Amaranth](https://amaranth-lang.org) HDL with yosys and Surfer |
 
 ## Usage
 
@@ -278,6 +279,25 @@ Sets up Ada with the GNAT compiler (GCC-based) and gprbuild project manager.
 **Included tools:**
 - `gnat` -- GNAT Ada compiler (part of GCC)
 - `gprbuild` -- GNAT project build tool
+
+### Amaranth
+
+Sets up [Amaranth HDL](https://amaranth-lang.org), a modern hardware definition
+language based on Python. Includes yosys for synthesis and Surfer for waveform
+viewing.
+
+**Files:**
+- `flake.nix` -- Flake with devenv integration
+- `devenv.nix` -- Python + uv + yosys + Surfer
+- `pyproject.toml` -- amaranth, amaranth-boards
+- `.envrc` -- direnv integration
+- `.gitignore` -- Ignores for devenv, direnv, Python, uv, Amaranth, and Nix artifacts
+
+**Included packages:**
+- `amaranth` -- Hardware definition language (via uv)
+- `amaranth-boards` -- Board definitions for common FPGA boards (via uv)
+- `yosys` -- Open-source synthesis suite (nix)
+- `surfer` -- Waveform viewer (nix)
 
 ---
 
