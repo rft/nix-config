@@ -1,0 +1,21 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# uv
+uv.lock
+
+# Amaranth
+build/
+
+# Nix
+result
