@@ -73,6 +73,10 @@ in
 delib.module {
   name = "core";
 
+  home.always = {
+    home.packages = with pkgs; [ ripgrep fd ];
+  };
+
   nixos.always = {
     home-manager.backupFileExtension = "backup";
 
