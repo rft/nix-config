@@ -18,6 +18,7 @@ delib.host {
   };
 
   myconfig = {
+    editors.enable = true;
     programs.programming.enable = true;
     programs.programming.analysis.enable = true;
     programs.programming.cloud.enable = true;
