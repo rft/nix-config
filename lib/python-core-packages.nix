@@ -4,6 +4,7 @@ ps: with ps; [
   ipdb
   ipython
   jax
+  marimo
   matplotlib
   numpy
   ortools

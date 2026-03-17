@@ -1,12 +1,19 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "editors.vscode";
 
   options = delib.singleEnableOption true;
 
-  myconfig.always = { myconfig, ... }: {
-    editors.vscode.enable = lib.mkDefault (myconfig.editors.enable or false);
-  };
+  myconfig.always =
+    { myconfig, ... }:
+    {
+      editors.vscode.enable = lib.mkDefault (myconfig.editors.enable or false);
+    };
 
   home.ifEnabled =
     let
@@ -149,6 +156,7 @@ delib.module {
               streetsidesoftware.code-spell-checker
               github.vscode-github-actions
               charliermarsh.ruff
+              rust-lang.rust-analyzer
             ])
             ++ (with marketplace; [
               buenon.scratchpads
@@ -163,6 +171,7 @@ delib.module {
               marimo-team.vscode-marimo
               openai.chatgpt
               astral-sh.ty
+              cmillsdev.strudelvs
             ]);
           userSettings = general // editor // git // languages;
           keybindings = [
