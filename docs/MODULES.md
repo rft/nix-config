@@ -14,13 +14,14 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/constants.nix`
 - **Name:** `constants`
-- **Description:** Read-only user constants shared across all modules via `myconfig.constants`.
+- **Description:** User constants shared across all modules via `myconfig.constants`. Defaults are set for the `nano` user but can be overridden per-host.
 - **Options:**
-  - `constants.username` -- `"nano"` (readOnly)
-  - `constants.userfullname` -- `"nano"` (readOnly)
-  - `constants.useremail` -- `"nano@nomolabs.net"` (readOnly)
-  - `constants.gitname` -- `"rft"` (readOnly)
+  - `constants.username` -- default `"nano"`
+  - `constants.userfullname` -- default `"nano"`
+  - `constants.useremail` -- default `"nano@nomolabs.net"`
+  - `constants.gitname` -- default `"rft"`
 - **Default behavior:** Always active. Values are published to `args.shared.constants`.
+- **Overriding:** Set any constant in a host's `myconfig` block, e.g. `constants.username = "astro"` for a machine with a different user.
 - **Dependencies:** None.
 
 ### home
