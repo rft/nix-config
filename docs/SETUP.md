@@ -291,6 +291,34 @@ After the initial bootstrap, use `home-manager` directly:
 home-manager switch --flake '.#nano@HOSTNAME'
 ```
 
+### Setting environment variables
+
+Host-level environment variables (e.g. proxy settings) can be set via
+`home.home.sessionVariables` in the host config:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "dandelion";
+  type = "desktop";
+  system = "x86_64-linux";
+
+  home.home.stateVersion = "25.05";
+
+  home.home.sessionVariables = {
+    http_proxy = "http://proxy.example.com:8080";
+    https_proxy = "http://proxy.example.com:8080";
+    no_proxy = "localhost,127.0.0.1";
+  };
+
+  myconfig = {
+    constants.username = "astro";
+    constants.userfullname = "astro";
+    programs.programming.enable = true;
+  };
+}
+```
+
 ### What gets applied
 
 Standalone Home Manager applies all `home.always` and `home.ifEnabled` blocks
