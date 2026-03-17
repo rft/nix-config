@@ -1,4 +1,9 @@
-{ delib, inputs, pkgs, ... }:
+{
+  delib,
+  inputs,
+  pkgs,
+  ...
+}:
 let
   sharedPackages = with pkgs; [
     atuin
@@ -62,6 +67,7 @@ let
     sysstat
     tcpdump
     util-linux
+    wl-clipboard
   ];
 in
 delib.module {
@@ -93,7 +99,11 @@ delib.module {
 
     nix.gc = {
       automatic = true;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      interval = {
+        Weekday = 0;
+        Hour = 2;
+        Minute = 0;
+      };
       options = "--delete-older-than 30d";
     };
   };

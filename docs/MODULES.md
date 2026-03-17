@@ -60,9 +60,9 @@ System-level packages and shell configuration. Always enabled, no toggle.
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs 60+ system packages (bat, ripgrep, fd, fzf, git, claude-code, codex, podman, yazi, yt-dlp, zellij, etc.). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
+- **Description:** Installs 60+ system packages shared across platforms (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, yt-dlp, zellij, etc.) plus Linux-only packages (bpftrace, podman, wl-clipboard, tcpdump, util-linux, etc.). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
 - **Options:** None (always active).
-- **Default behavior:** Always active for all NixOS hosts.
+- **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
 
 ### core.xonsh

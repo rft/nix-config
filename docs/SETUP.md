@@ -42,7 +42,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **malus** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Homebrew casks for GUI apps, Touch ID sudo |
+| **malus** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
@@ -227,6 +227,12 @@ non-NixOS Linux distros, macOS without nix-darwin, or WSL. It uses only the
 
 The `homeManagerUser` is set to `"nano"` in the flake.
 
+### Flake attribute naming
+
+Denix keys standalone home configurations as `"<user>@<hostname>"`, so the
+flake attribute is `homeConfigurations."nano@HOSTNAME"` (not `"nano"` or
+`"HOSTNAME"` alone). Use this format in all `--flake` arguments.
+
 ### Prerequisites
 
 1. Install Nix (the [Determinate Systems installer](https://zero-to-nix.com/start/install) is recommended).
@@ -242,7 +248,14 @@ echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 If Home Manager is not yet installed, run it directly from the flake:
 
 ```bash
-nix run home-manager -- switch --flake .#nano
+nix run home-manager -- switch --flake '.#nano@HOSTNAME'
+```
+
+Replace `HOSTNAME` with the name of the host directory. For example, using the
+`mistletoe` host:
+
+```bash
+nix run home-manager -- switch --flake '.#nano@mistletoe'
 ```
 
 This builds and activates the Home Manager configuration, and installs the
@@ -253,7 +266,13 @@ This builds and activates the Home Manager configuration, and installs the
 After the initial bootstrap, use `home-manager` directly:
 
 ```bash
-home-manager switch --flake .#nano
+home-manager switch --flake '.#nano@HOSTNAME'
+```
+
+For example:
+
+```bash
+home-manager switch --flake '.#nano@mistletoe'
 ```
 
 ### What gets applied
@@ -278,7 +297,7 @@ overwrite them. Either back up and remove the conflicting files, or check
 `result/` for the files Home Manager wants to write:
 
 ```bash
-home-manager switch --flake .#nano 2>&1 | grep "Existing file"
+home-manager switch --flake '.#nano@HOSTNAME' 2>&1 | grep "Existing file"
 ```
 
 ## How to Add a New Host
@@ -394,7 +413,7 @@ myconfig = {
 Each `delib.module` can contain both `nixos.*` and `home.*` config blocks:
 
 - **`nixos.ifEnabled`** / **`nixos.always`** — NixOS-level config (system packages, services, boot, etc.). Only applied when building `nixosConfigurations` (i.e. `sudo nixos-rebuild switch --flake .#HOSTNAME`). Ignored in standalone Home Manager builds.
-- **`home.ifEnabled`** / **`home.always`** — Home Manager config (user programs, dotfiles, etc.). Applied in **both** modes: as part of NixOS rebuilds (via the HM NixOS module) and in standalone HM builds (`home-manager switch --flake .#nano`).
+- **`home.ifEnabled`** / **`home.always`** — Home Manager config (user programs, dotfiles, etc.). Applied in **both** modes: as part of NixOS rebuilds (via the HM NixOS module) and in standalone HM builds (`home-manager switch --flake '.#nano@HOSTNAME'`).
 - **`myconfig.always`** — Sets module option defaults. This is the only block that receives a lambda with `{ myconfig, ... }:` args. Use `lib.mkDefault` so host-level overrides take precedence.
 
 **Important:** `nixos.ifEnabled` and `home.ifEnabled` are **plain attrsets**, not lambdas. If you need `pkgs`, `lib`, `inputs`, etc., add them to the outer module function args:
@@ -426,7 +445,7 @@ delib.module {
 sudo nixos-rebuild switch --flake .#HOSTNAME
 
 # Standalone Home Manager (applies only home.* blocks)
-home-manager switch --flake .#nano
+home-manager switch --flake '.#nano@HOSTNAME'
 ```
 
 ## Flake Architecture

@@ -3,10 +3,10 @@ delib.module {
   name = "constants";
 
   options.constants = with delib; {
-    username = readOnly (strOption "nano");
-    userfullname = readOnly (strOption "nano");
-    useremail = readOnly (strOption "nano@nomolabs.net");
-    gitname = readOnly (strOption "rft");
+    username = strOption "nano";
+    userfullname = strOption "nano";
+    useremail = strOption "nano@nomolabs.net";
+    gitname = strOption "rft";
   };
 
   myconfig.always = { cfg, ... }: {

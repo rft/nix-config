@@ -26,7 +26,16 @@ delib.host {
         "blender"
         "krita"
         "reaper"
+        "raycast"
+        "shortcat"
+        "linearmouse"
+        "orion"
+        "karabiner-elements"
+        "iina"
       ];
+      masApps = {
+        "Amphetamine" = 937984704;
+      };
     };
 
     system.defaults = {
