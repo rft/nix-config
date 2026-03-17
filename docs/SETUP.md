@@ -243,19 +243,41 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
+### Adding a host for a non-nano user
+
+If the system user differs from `nano`, create a host entry that overrides the
+username. For example, for a machine named `dandelion` with user `astro`:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "dandelion";
+  type = "desktop";
+  system = "x86_64-linux";
+
+  home.home.stateVersion = "25.05";
+
+  myconfig = {
+    constants.username = "astro";
+    constants.userfullname = "astro";
+    programs.programming.enable = true;
+  };
+}
+```
+
+Note: the flake attribute key is always `nano@<hostname>` (from `homeManagerUser`
+in the flake), regardless of `constants.username`. So the switch command is:
+
+```bash
+home-manager switch --flake '.#nano@dandelion'
+```
+
 ### First-time bootstrap
 
 If Home Manager is not yet installed, run it directly from the flake:
 
 ```bash
 nix run home-manager -- switch --flake '.#nano@HOSTNAME'
-```
-
-Replace `HOSTNAME` with the name of the host directory. For example, using the
-`mistletoe` host:
-
-```bash
-nix run home-manager -- switch --flake '.#nano@mistletoe'
 ```
 
 This builds and activates the Home Manager configuration, and installs the
@@ -267,12 +289,6 @@ After the initial bootstrap, use `home-manager` directly:
 
 ```bash
 home-manager switch --flake '.#nano@HOSTNAME'
-```
-
-For example:
-
-```bash
-home-manager switch --flake '.#nano@mistletoe'
 ```
 
 ### What gets applied
