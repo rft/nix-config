@@ -7,7 +7,14 @@ let
     nodejs_22
     plantuml-c4
     swi-prolog
+    texlab
     (python312.withPackages (ps: import ../../lib/python-core-packages.nix ps))
+    (texlive.combine {
+      inherit (texlive)
+        scheme-medium
+        latexmk
+        ;
+    })
   ];
 in
 delib.module {
