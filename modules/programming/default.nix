@@ -8,7 +8,7 @@ let
     plantuml-c4
     swi-prolog
     texlab
-    (python312.withPackages (ps: import ../../lib/python-core-packages.nix ps))
+    (python313.withPackages (ps: import ../../lib/python-core-packages.nix ps))
     (texlive.combine {
       inherit (texlive)
         scheme-medium
