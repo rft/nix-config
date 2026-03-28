@@ -1,4 +1,4 @@
-{ delib, lib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "config.darwin";
 
