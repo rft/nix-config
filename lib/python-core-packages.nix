@@ -7,7 +7,7 @@ ps: with ps; [
   marimo
   matplotlib
   numpy
-  ortools
+  # ortools  # temporarily disabled: scipopt-zimpl test failure in nixpkgs
   pandas
   polars
   python-sat

@@ -5,7 +5,7 @@ delib.module {
   home.always = { myconfig, ... }: {
     programs.home-manager.enable = true;
 
-    home.username = myconfig.constants.username;
+    home.username = lib.mkForce myconfig.constants.username;
     home.homeDirectory = lib.mkForce (
       if pkgs.stdenv.isDarwin
       then "/Users/${myconfig.constants.username}"

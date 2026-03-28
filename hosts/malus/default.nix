@@ -7,15 +7,22 @@ delib.host {
   home.home.stateVersion = "24.05";
 
   darwin = {
+    nix.enable = false;
+    nix.gc.automatic = lib.mkForce false;
     system.primaryUser = "astro";
     system.stateVersion = 6;
-    networking.hostName = "malus";
+    networking.hostName = "lemon";
+
+    users.users.nano = {
+      home = "/Users/astro";
+    };
 
     security.pam.services.sudo_local.touchIdAuth = true;
 
     homebrew = {
       enable = true;
       onActivation.cleanup = "zap";
+      brews = [ "mas" ];
       casks = [
         "discord"
         "spotify"
@@ -65,9 +72,11 @@ delib.host {
   };
 
   myconfig = {
-    #applications.enable = true;
-    #programs.programming.enable = true;
-    #programs.programming.cloud.enable = true;
+    constants.username = "astro";
+
+    applications.enable = true;
+    programs.programming.enable = true;
+    programs.programming.cloud.enable = true;
     fonts.enable = true;
   };
 }
