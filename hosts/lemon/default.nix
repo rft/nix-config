@@ -55,6 +55,7 @@ delib.host {
   darwin = {
     networking.hostName = "lemon";
     homebrew.casks = [ "topnotch" ];
+    system.defaults.dock.autohide = true;
   };
 
   myconfig = {
