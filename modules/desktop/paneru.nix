@@ -19,10 +19,10 @@ delib.module {
           window_focus_east = "cmd - l";
           window_focus_north = "cmd - k";
           window_focus_south = "cmd - j";
-          window_swap_west = "alt - h";
-          window_swap_east = "alt - l";
-          window_swap_north = "alt - k";
-          window_swap_south = "alt - j";
+          window_swap_west = "shift + cmd - h";
+          window_swap_east = "shift + cmd - l";
+          window_swap_north = "shift + cmd - k";
+          window_swap_south = "shift + cmd - j";
           window_resize = "alt - r";
           window_shrink = "alt - s";
           window_fullwidth = "alt - f";
