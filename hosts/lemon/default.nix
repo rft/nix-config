@@ -48,6 +48,7 @@ delib.host {
 
     system.defaults = {
       dock = {
+        autohide = false;
         mru-spaces = false;
         minimize-to-application = true;
         show-recents = false;
