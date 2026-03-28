@@ -13,6 +13,7 @@ delib.module {
         bold_font = "FiraCode Bold Nerd Font";
         italic_font = "FiraCode Italic Nerd Font";
         bold_italic_font = "FiraCode Bold Italic Nerd Font";
+        macos_option_as_alt = true;
         confirm_os_window_close = 0;
         confirm_on_quit = 0;
       };
