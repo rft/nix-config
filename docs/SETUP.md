@@ -11,6 +11,7 @@ hosts/                  Per-host configurations (delib.host)
   myrtle/               Desktop, archiving-focused, VMware guest
   mistletoe/            WSL, programming only
   lemon/                Darwin (macOS), Apple Silicon
+  pineapple/            Darwin (macOS), Apple Silicon
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
@@ -30,7 +31,7 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 8 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 9 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
 extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`).
 
@@ -43,24 +44,25 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
 | **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
+| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | installer |
-|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|
-| desktop | yes | yes | yes | yes | yes | -- | -- | -- |
-| applications | yes | yes | yes | yes | yes | -- | yes | -- |
-| applications.creative | auto | auto | yes | yes | no | -- | auto | -- |
-| applications.engineering | auto | auto | yes | yes | no | -- | auto | -- |
-| applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- |
-| programs.programming | yes | yes | yes | yes | no | yes | yes | -- |
-| programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | -- |
-| programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | -- |
-| services | -- | -- | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | -- | yes | yes |
+| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
+|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
+| desktop | yes | yes | yes | yes | yes | -- | -- | -- | -- |
+| applications | yes | yes | yes | yes | yes | -- | yes | yes | -- |
+| applications.creative | auto | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.engineering | auto | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- | -- |
+| programs.programming | yes | yes | yes | yes | no | yes | yes | yes | -- |
+| programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | auto | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | yes | -- |
+| services | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| editors | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| fonts | auto | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -120,6 +122,34 @@ For modules where the NixOS and Darwin config is identical (e.g. just
 `environment.systemPackages`), both blocks need to be defined. Modules that
 only use `home.*` blocks work on Darwin with zero changes.
 
+### Shared Darwin defaults (`modules/config/darwin.nix`)
+
+All Darwin hosts automatically receive shared defaults from
+`modules/config/darwin.nix`. This module uses `darwin.always` with
+`lib.mkDefault`, so every setting can be overridden per-host by setting the
+value directly in the host's `darwin` block (direct values take priority over
+`mkDefault`).
+
+The shared module provides: Homebrew casks and App Store apps, system defaults
+(dock, finder, trackpad, dark mode), Touch ID sudo, Nix GC settings, and
+`system.stateVersion`.
+
+To override a shared setting for a single host, set it in the host's `darwin`
+block:
+
+```nix
+darwin = {
+  networking.hostName = "pineapple";
+
+  # Override shared defaults
+  system.defaults.dock.autohide = true;
+  homebrew.casks = [ "discord" "spotify" ];  # replaces the full list
+};
+```
+
+To add extra Homebrew casks without replacing the shared list, use `lib.mkAfter`
+or append via `++` in a `darwin.always` lambda in the host file.
+
 ### Adding a new Darwin host
 
 1. Create `hosts/HOSTNAME/default.nix`:
@@ -134,23 +164,20 @@ delib.host {
   home.home.stateVersion = "24.05";
 
   darwin = {
-    system.stateVersion = 6;
     networking.hostName = "HOSTNAME";
-
-    # GUI apps via Homebrew casks
-    homebrew = {
-      enable = true;
-      onActivation.cleanup = "zap";
-      casks = [ "discord" "spotify" ];
-    };
   };
 
   myconfig = {
+    constants.username = "yourusername";
     applications.enable = true;
     programs.programming.enable = true;
   };
 }
 ```
+
+Shared settings (Homebrew, system defaults, Touch ID, etc.) are applied
+automatically by `modules/config/darwin.nix`. Only add host-specific overrides
+to the `darwin` block.
 
 2. No `hardware-configuration.nix` is needed for Darwin hosts.
 

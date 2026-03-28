@@ -31,6 +31,7 @@ terminal, and editors.
 | **myrtle** | desktop | VMware guest, archiving-focused |
 | **mistletoe** | wsl | Programming + analysis + cloud |
 | **lemon** | darwin | Apple Silicon Mac with Homebrew casks |
+| **pineapple** | darwin | Apple Silicon Mac with Homebrew casks |
 | **installer** | installer | Live ISO with KDE Plasma 6 + Calamares |
 
 See [SETUP.md](docs/SETUP.md#hosts) for module enablement per host.
