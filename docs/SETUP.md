@@ -43,7 +43,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, paneru tiling WM. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
 | **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
@@ -56,6 +56,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | applications.creative | auto | auto | yes | yes | no | -- | auto | auto | -- |
 | applications.engineering | auto | auto | yes | yes | no | -- | auto | auto | -- |
 | applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- | -- |
+| desktop.paneru | -- | -- | -- | -- | -- | -- | yes | -- | -- |
 | programs.programming | yes | yes | yes | yes | no | yes | yes | yes | -- |
 | programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | auto | -- |
 | programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | yes | -- |
@@ -591,4 +592,5 @@ system and `myconfig` option merging.
 | nix-doom-emacs-unstraightened | Doom Emacs for Nix |
 | nixos-wsl | NixOS on WSL support |
 | nix-darwin | macOS system configuration |
+| paneru | macOS tiling window manager |
 | quickshell | Quickshell (available as input) |

@@ -90,6 +90,35 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Default behavior:** Disabled by default. Enabled in desktop-type hosts via `myconfig.desktop.enable = true`.
 - **Dependencies:** `noctalia` flake input.
 
+### desktop.paneru
+
+- **Path:** `modules/desktop/paneru.nix`
+- **Name:** `desktop.paneru`
+- **Enable option:** `myconfig.desktop.paneru.enable` (default: `false`)
+- **Description:** Installs and configures paneru, a sliding tiling window manager for macOS. Manages windows on an infinite horizontal strip — opening new windows never resizes existing ones. Configured via Home Manager with a launchd agent for automatic startup.
+- **Default behavior:** Does NOT auto-enable with `desktop`. Must be explicitly enabled per-host. Darwin only.
+- **Dependencies:** `paneru` flake input.
+- **Keybindings:**
+
+| Action | Binding |
+|--------|---------|
+| Focus west | `Cmd + H` |
+| Focus east | `Cmd + L` |
+| Focus north | `Cmd + K` |
+| Focus south | `Cmd + J` |
+| Swap west | `Alt + H` |
+| Swap east | `Alt + L` |
+| Swap north | `Alt + K` |
+| Swap south | `Alt + J` |
+| Resize (grow) | `Alt + R` |
+| Shrink | `Alt + S` |
+| Full width | `Alt + F` |
+| Center | `Alt + C` |
+| Toggle tiled/floating | `Ctrl + Alt + T` |
+| Stack | `Alt + ]` |
+| Unstack | `Alt + [` |
+| Quit | `Ctrl + Alt + Q` |
+
 ### desktop.awesome
 
 - **Path:** `modules/desktop/awesome.nix`
