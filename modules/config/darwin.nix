@@ -35,9 +35,15 @@ delib.module {
         "orion"
         "karabiner-elements"
         "iina"
+        "plover"
+        "utm"
+        "espanso"
+        "obsidian"
+        "claude"
       ];
       masApps = {
         "Amphetamine" = 937984704;
+        "ProDrafts" = 1545810067;
       };
     };
 

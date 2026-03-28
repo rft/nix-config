@@ -43,8 +43,8 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
-| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
@@ -133,6 +133,23 @@ value directly in the host's `darwin` block (direct values take priority over
 The shared module provides: Homebrew casks and App Store apps, system defaults
 (dock, finder, trackpad, dark mode), Touch ID sudo, Nix GC settings, and
 `system.stateVersion`.
+
+### Finding Mac App Store IDs
+
+To add a new App Store app to `masApps`, you need its numeric ID. Use the `mas`
+CLI (installed via Homebrew brews in the shared Darwin config) to search:
+
+```bash
+mas search "App Name"
+```
+
+This returns matching apps with their IDs. Use the ID in the `masApps` attrset:
+
+```nix
+masApps = {
+  "App Name" = 123456789;
+};
+```
 
 To override a shared setting for a single host, set it in the host's `darwin`
 block:
