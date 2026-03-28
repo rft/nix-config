@@ -1,6 +1,6 @@
 { delib, lib, pkgs, config, ... }:
 delib.host {
-  name = "lemon";
+  name = "pineapple";
   type = "darwin";
   system = "aarch64-darwin";
 
@@ -11,7 +11,7 @@ delib.host {
     nix.gc.automatic = lib.mkForce false;
     system.primaryUser = "astro";
     system.stateVersion = 6;
-    networking.hostName = "lemon";
+    networking.hostName = "pineapple";
 
     users.users.nano = {
       home = "/Users/astro";
