@@ -134,6 +134,23 @@ The shared module provides: Homebrew casks and App Store apps, system defaults
 (dock, finder, trackpad, dark mode), Touch ID sudo, Nix GC settings, and
 `system.stateVersion`.
 
+### Homebrew cask updates
+
+`darwin-rebuild switch` installs missing casks and removes unlisted ones (via
+`onActivation.cleanup = "zap"`), but it does **not** upgrade already-installed
+casks by default. To upgrade casks during rebuild, add to the shared or
+per-host config:
+
+```nix
+homebrew.onActivation.upgrade = true;
+```
+
+Alternatively, upgrade casks manually at any time:
+
+```bash
+brew upgrade --cask
+```
+
 ### Finding Mac App Store IDs
 
 To add a new App Store app to `masApps`, you need its numeric ID. Use the `mas`
