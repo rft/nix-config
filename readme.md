@@ -30,7 +30,7 @@ terminal, and editors.
 | **sequoia** | desktop | VMware guest |
 | **myrtle** | desktop | VMware guest, archiving-focused |
 | **mistletoe** | wsl | Programming + analysis + cloud |
-| **malus** | darwin | Apple Silicon Mac with Homebrew casks |
+| **lemon** | darwin | Apple Silicon Mac with Homebrew casks |
 | **installer** | installer | Live ISO with KDE Plasma 6 + Calamares |
 
 See [SETUP.md](docs/SETUP.md#hosts) for module enablement per host.

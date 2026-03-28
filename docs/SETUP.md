@@ -10,7 +10,7 @@ hosts/                  Per-host configurations (delib.host)
   sequoia/              Desktop, VMware guest
   myrtle/               Desktop, archiving-focused, VMware guest
   mistletoe/            WSL, programming only
-  malus/                Darwin (macOS), Apple Silicon
+  lemon/                Darwin (macOS), Apple Silicon
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
@@ -42,12 +42,12 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **malus** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina. App Store: Amphetamine |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | malus | installer |
+| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | installer |
 |--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|
 | desktop | yes | yes | yes | yes | yes | -- | -- | -- |
 | applications | yes | yes | yes | yes | yes | -- | yes | -- |
@@ -94,7 +94,7 @@ of NixOS. The flake produces `darwinConfigurations` alongside
 Bootstrap nix-darwin (only needed once):
 
 ```bash
-nix run nix-darwin -- switch --flake .#malus
+nix run nix-darwin -- switch --flake .#lemon
 ```
 
 ### Rebuilding
@@ -102,7 +102,7 @@ nix run nix-darwin -- switch --flake .#malus
 After the initial bootstrap, use `darwin-rebuild`:
 
 ```bash
-darwin-rebuild switch --flake .#malus
+darwin-rebuild switch --flake .#lemon
 ```
 
 ### How modules work on Darwin

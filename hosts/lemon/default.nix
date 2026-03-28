@@ -1,6 +1,6 @@
 { delib, lib, pkgs, config, ... }:
 delib.host {
-  name = "malus";
+  name = "lemon";
   type = "darwin";
   system = "aarch64-darwin";
 

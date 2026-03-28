@@ -89,7 +89,7 @@
             inherit inputs;
           };
         };
-      darwinHosts = [ "malus" ];
+      darwinHosts = [ "lemon" ];
     in
     {
       nixosConfigurations = builtins.removeAttrs (mkConfigurations "nixos") darwinHosts;
