@@ -18,19 +18,23 @@ delib.module {
   home.ifEnabled =
     let
       marketplace = pkgs.vscode-marketplace;
-      vscodium-wayland = pkgs.symlinkJoin {
-        name = "${pkgs.vscodium.name}-wayland";
-        pname = pkgs.vscodium.pname;
-        version = pkgs.vscodium.version;
-        meta = pkgs.vscodium.meta;
-        paths = [ pkgs.vscodium ];
-        nativeBuildInputs = [ pkgs.makeWrapper ];
-        postBuild = ''
-          wrapProgram $out/bin/codium \
-            --set ELECTRON_OZONE_PLATFORM_HINT auto \
-            --set NIXOS_OZONE_WL 1
-        '';
-      };
+      package =
+        if pkgs.stdenv.isDarwin then
+          pkgs.vscodium
+        else
+          pkgs.symlinkJoin {
+            name = "${pkgs.vscodium.name}-wayland";
+            pname = pkgs.vscodium.pname;
+            version = pkgs.vscodium.version;
+            meta = pkgs.vscodium.meta;
+            paths = [ pkgs.vscodium ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/codium \
+                --set ELECTRON_OZONE_PLATFORM_HINT auto \
+                --set NIXOS_OZONE_WL 1
+            '';
+          };
 
       general = {
         "vim.easymotion" = true;
@@ -121,7 +125,7 @@ delib.module {
     in
     {
       programs.vscode = {
-        package = vscodium-wayland;
+        package = package;
         enable = true;
         mutableExtensionsDir = true;
         profiles.default = {
@@ -169,7 +173,6 @@ delib.module {
               marimo-team.vscode-marimo
               openai.chatgpt
               astral-sh.ty
-              cmillsdev.strudelvs
             ]);
           userSettings = general // editor // git // languages;
           keybindings = [

@@ -1,4 +1,15 @@
 { delib, lib, pkgs, ... }:
+let
+  sharedPackages = with pkgs; [
+    binwalk
+    file
+    tlaps
+  ];
+  linuxPackages = with pkgs; [
+    aflplusplus
+    tlaplusToolbox
+  ];
+in
 delib.module {
   name = "programs.programming.analysis";
 
@@ -9,12 +20,10 @@ delib.module {
   };
 
   nixos.ifEnabled = {
-    environment.systemPackages = with pkgs; [
-      aflplusplus
-      binwalk
-      file
-      tlaplusToolbox
-      tlaps
-    ];
+    environment.systemPackages = sharedPackages ++ linuxPackages;
+  };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = sharedPackages;
   };
 }

@@ -17,4 +17,16 @@ delib.module {
       "flakes"
     ];
   };
+
+  darwin.always = { myconfig, ... }: {
+    users.users.${myconfig.constants.username} = {
+      home = "/Users/${myconfig.constants.username}";
+      description = myconfig.constants.username;
+    };
+
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
 }

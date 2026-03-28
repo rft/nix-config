@@ -10,6 +10,8 @@ hosts/                  Per-host configurations (delib.host)
   sequoia/              Desktop, VMware guest
   myrtle/               Desktop, archiving-focused, VMware guest
   mistletoe/            WSL, programming only
+  lemon/                Darwin (macOS), Apple Silicon
+  pineapple/            Darwin (macOS), Apple Silicon
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
@@ -29,9 +31,9 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 7 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 9 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
-extensions apply (host types: `desktop`, `server`, `wsl`, `installer`).
+extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`).
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
@@ -41,24 +43,27 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`).
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, paneru tiling WM. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | installer |
-|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:---------:|
-| desktop | yes | yes | yes | yes | yes | -- | -- |
-| applications | yes | yes | yes | yes | yes | -- | -- |
-| applications.creative | auto | auto | yes | yes | no | -- | -- |
-| applications.engineering | auto | auto | yes | yes | no | -- | -- |
-| applications.archiving | -- | -- | -- | -- | yes | -- | -- |
-| programs.programming | yes | yes | yes | yes | no | yes | -- |
-| programs.programming.analysis | auto | auto | auto | auto | -- | yes | -- |
-| programs.programming.cloud | -- | -- | -- | -- | -- | yes | -- |
-| services | -- | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | -- | yes |
+| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
+|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
+| desktop | yes | yes | yes | yes | yes | -- | -- | -- | -- |
+| applications | yes | yes | yes | yes | yes | -- | yes | yes | -- |
+| applications.creative | auto | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.engineering | auto | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- | -- |
+| desktop.paneru | -- | -- | -- | -- | -- | -- | yes | -- | -- |
+| programs.programming | yes | yes | yes | yes | no | yes | yes | yes | -- |
+| programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | auto | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | yes | -- |
+| services | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| editors | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| fonts | auto | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -75,6 +80,155 @@ For example:
 ```bash
 sudo nixos-rebuild switch --flake .#bristlecone
 ```
+
+## Darwin (macOS)
+
+Darwin hosts use [nix-darwin](https://github.com/nix-darwin/nix-darwin) instead
+of NixOS. The flake produces `darwinConfigurations` alongside
+`nixosConfigurations` using the same denix module system.
+
+### Prerequisites
+
+1. Install Nix on macOS (the [Determinate Systems installer](https://zero-to-nix.com/start/install) is recommended).
+2. Install [Homebrew](https://brew.sh) -- needed for cask management of GUI `.app` bundles.
+
+### First-time setup
+
+Bootstrap nix-darwin (only needed once):
+
+```bash
+nix run nix-darwin -- switch --flake .#lemon
+```
+
+### Rebuilding
+
+After the initial bootstrap, use `darwin-rebuild`:
+
+```bash
+darwin-rebuild switch --flake .#lemon
+```
+
+### How modules work on Darwin
+
+Denix modules support `darwin.always` / `darwin.ifEnabled` / `darwin.ifDisabled`
+blocks alongside `nixos.*` blocks. The routing works as follows:
+
+- **`darwin.*`** blocks are applied only when building `darwinConfigurations`.
+- **`nixos.*`** blocks are skipped on Darwin.
+- **`home.*`** blocks are applied on both NixOS and Darwin (routed through
+  home-manager automatically).
+- **`myconfig.*`** blocks are applied on all platforms.
+
+For modules where the NixOS and Darwin config is identical (e.g. just
+`environment.systemPackages`), both blocks need to be defined. Modules that
+only use `home.*` blocks work on Darwin with zero changes.
+
+### Shared Darwin defaults (`modules/config/darwin.nix`)
+
+All Darwin hosts automatically receive shared defaults from
+`modules/config/darwin.nix`. This module uses `darwin.always` with
+`lib.mkDefault`, so every setting can be overridden per-host by setting the
+value directly in the host's `darwin` block (direct values take priority over
+`mkDefault`).
+
+The shared module provides: Homebrew casks and App Store apps, system defaults
+(dock, finder, trackpad, dark mode), Touch ID sudo, Nix GC settings, and
+`system.stateVersion`.
+
+### Homebrew cask updates
+
+`darwin-rebuild switch` installs missing casks and removes unlisted ones (via
+`onActivation.cleanup = "zap"`), but it does **not** upgrade already-installed
+casks by default. To upgrade casks during rebuild, add to the shared or
+per-host config:
+
+```nix
+homebrew.onActivation.upgrade = true;
+```
+
+Alternatively, upgrade casks manually at any time:
+
+```bash
+brew upgrade --cask
+```
+
+### Finding Mac App Store IDs
+
+To add a new App Store app to `masApps`, you need its numeric ID. Use the `mas`
+CLI (installed via Homebrew brews in the shared Darwin config) to search:
+
+```bash
+mas search "App Name"
+```
+
+This returns matching apps with their IDs. Use the ID in the `masApps` attrset:
+
+```nix
+masApps = {
+  "App Name" = 123456789;
+};
+```
+
+To override a shared setting for a single host, set it in the host's `darwin`
+block:
+
+```nix
+darwin = {
+  networking.hostName = "pineapple";
+
+  # Override shared defaults
+  system.defaults.dock.autohide = true;
+  homebrew.casks = [ "discord" "spotify" ];  # replaces the full list
+};
+```
+
+To add extra Homebrew casks without replacing the shared list, use `lib.mkAfter`
+or append via `++` in a `darwin.always` lambda in the host file.
+
+### Adding a new Darwin host
+
+1. Create `hosts/HOSTNAME/default.nix`:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "HOSTNAME";
+  type = "darwin";
+  system = "aarch64-darwin";
+
+  home.home.stateVersion = "24.05";
+
+  darwin = {
+    networking.hostName = "HOSTNAME";
+  };
+
+  myconfig = {
+    constants.username = "yourusername";
+    applications.enable = true;
+    programs.programming.enable = true;
+  };
+}
+```
+
+Shared settings (Homebrew, system defaults, Touch ID, etc.) are applied
+automatically by `modules/config/darwin.nix`. Only add host-specific overrides
+to the `darwin` block.
+
+2. No `hardware-configuration.nix` is needed for Darwin hosts.
+
+3. Rebuild with `darwin-rebuild switch --flake .#HOSTNAME`.
+
+### Key differences from NixOS hosts
+
+| | NixOS | Darwin |
+|--|-------|--------|
+| Rebuild command | `sudo nixos-rebuild switch` | `darwin-rebuild switch` |
+| Home directory | `/home/username` | `/Users/username` |
+| Garbage collection | `nix.gc.dates` (systemd timer) | `nix.gc.interval` (launchd plist) |
+| Shell config | `programs.xonsh.enable` | `environment.systemPackages` with `pkgs.xonsh.override` |
+| GUI apps | Nix packages | Homebrew casks (better `.app` integration) |
+| User config | `isNormalUser`, `extraGroups` | `home`, `description` only |
+| Default shell | `users.defaultUserShell` | Not available |
 
 ## Installer ISO
 
@@ -135,6 +289,12 @@ non-NixOS Linux distros, macOS without nix-darwin, or WSL. It uses only the
 
 The `homeManagerUser` is set to `"nano"` in the flake.
 
+### Flake attribute naming
+
+Denix keys standalone home configurations as `"<user>@<hostname>"`, so the
+flake attribute is `homeConfigurations."nano@HOSTNAME"` (not `"nano"` or
+`"HOSTNAME"` alone). Use this format in all `--flake` arguments.
+
 ### Prerequisites
 
 1. Install Nix (the [Determinate Systems installer](https://zero-to-nix.com/start/install) is recommended).
@@ -145,12 +305,41 @@ mkdir -p ~/.config/nix
 echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
 ```
 
+### Adding a host for a non-nano user
+
+If the system user differs from `nano`, create a host entry that overrides the
+username. For example, for a machine named `dandelion` with user `astro`:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "dandelion";
+  type = "desktop";
+  system = "x86_64-linux";
+
+  home.home.stateVersion = "25.05";
+
+  myconfig = {
+    constants.username = "astro";
+    constants.userfullname = "astro";
+    programs.programming.enable = true;
+  };
+}
+```
+
+Note: the flake attribute key is always `nano@<hostname>` (from `homeManagerUser`
+in the flake), regardless of `constants.username`. So the switch command is:
+
+```bash
+home-manager switch --flake '.#nano@dandelion'
+```
+
 ### First-time bootstrap
 
 If Home Manager is not yet installed, run it directly from the flake:
 
 ```bash
-nix run home-manager -- switch --flake .#nano
+nix run home-manager -- switch --flake '.#nano@HOSTNAME'
 ```
 
 This builds and activates the Home Manager configuration, and installs the
@@ -161,7 +350,35 @@ This builds and activates the Home Manager configuration, and installs the
 After the initial bootstrap, use `home-manager` directly:
 
 ```bash
-home-manager switch --flake .#nano
+home-manager switch --flake '.#nano@HOSTNAME'
+```
+
+### Setting environment variables
+
+Host-level environment variables (e.g. proxy settings) can be set via
+`home.home.sessionVariables` in the host config:
+
+```nix
+{ delib, ... }:
+delib.host {
+  name = "dandelion";
+  type = "desktop";
+  system = "x86_64-linux";
+
+  home.home.stateVersion = "25.05";
+
+  home.home.sessionVariables = {
+    http_proxy = "http://proxy.example.com:8080";
+    https_proxy = "http://proxy.example.com:8080";
+    no_proxy = "localhost,127.0.0.1";
+  };
+
+  myconfig = {
+    constants.username = "astro";
+    constants.userfullname = "astro";
+    programs.programming.enable = true;
+  };
+}
 ```
 
 ### What gets applied
@@ -186,7 +403,7 @@ overwrite them. Either back up and remove the conflicting files, or check
 `result/` for the files Home Manager wants to write:
 
 ```bash
-home-manager switch --flake .#nano 2>&1 | grep "Existing file"
+home-manager switch --flake '.#nano@HOSTNAME' 2>&1 | grep "Existing file"
 ```
 
 ## How to Add a New Host
@@ -302,7 +519,7 @@ myconfig = {
 Each `delib.module` can contain both `nixos.*` and `home.*` config blocks:
 
 - **`nixos.ifEnabled`** / **`nixos.always`** — NixOS-level config (system packages, services, boot, etc.). Only applied when building `nixosConfigurations` (i.e. `sudo nixos-rebuild switch --flake .#HOSTNAME`). Ignored in standalone Home Manager builds.
-- **`home.ifEnabled`** / **`home.always`** — Home Manager config (user programs, dotfiles, etc.). Applied in **both** modes: as part of NixOS rebuilds (via the HM NixOS module) and in standalone HM builds (`home-manager switch --flake .#nano`).
+- **`home.ifEnabled`** / **`home.always`** — Home Manager config (user programs, dotfiles, etc.). Applied in **both** modes: as part of NixOS rebuilds (via the HM NixOS module) and in standalone HM builds (`home-manager switch --flake '.#nano@HOSTNAME'`).
 - **`myconfig.always`** — Sets module option defaults. This is the only block that receives a lambda with `{ myconfig, ... }:` args. Use `lib.mkDefault` so host-level overrides take precedence.
 
 **Important:** `nixos.ifEnabled` and `home.ifEnabled` are **plain attrsets**, not lambdas. If you need `pkgs`, `lib`, `inputs`, etc., add them to the outer module function args:
@@ -334,7 +551,7 @@ delib.module {
 sudo nixos-rebuild switch --flake .#HOSTNAME
 
 # Standalone Home Manager (applies only home.* blocks)
-home-manager switch --flake .#nano
+home-manager switch --flake '.#nano@HOSTNAME'
 ```
 
 ## Flake Architecture
@@ -350,14 +567,14 @@ denix.lib.configurations {
     (base.withConfig {
       args.enable = true;
       rices.enable = false;
-      hosts.type.types = [ "desktop" "server" "wsl" "installer" ];
+      hosts.type.types = [ "desktop" "server" "wsl" "installer" "darwin" ];
     })
   ];
 };
 ```
 
-This generates both `nixosConfigurations` and `homeConfigurations` from the
-same host/module definitions. The `base` extension provides the host type
+This generates `nixosConfigurations`, `darwinConfigurations`, and
+`homeConfigurations` from the same host/module definitions. The `base` extension provides the host type
 system and `myconfig` option merging.
 
 ### Key inputs
@@ -374,4 +591,6 @@ system and `myconfig` option merging.
 | nur | Nix User Repository (Floorp addons) |
 | nix-doom-emacs-unstraightened | Doom Emacs for Nix |
 | nixos-wsl | NixOS on WSL support |
+| nix-darwin | macOS system configuration |
+| paneru | macOS tiling window manager |
 | quickshell | Quickshell (available as input) |

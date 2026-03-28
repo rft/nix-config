@@ -14,6 +14,7 @@
       url = "github:yunfachi/denix";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
+      inputs.nix-darwin.follows = "nix-darwin";
     };
 
     nix-doom-emacs-unstraightened = {
@@ -49,6 +50,16 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    paneru = {
+      url = "github:karinushka/paneru";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -74,6 +85,7 @@
                   "server"
                   "wsl"
                   "installer"
+                  "darwin"
                 ];
               };
             })
@@ -82,9 +94,11 @@
             inherit inputs;
           };
         };
+      darwinHosts = [ "lemon" ];
     in
     {
-      nixosConfigurations = mkConfigurations "nixos";
+      nixosConfigurations = builtins.removeAttrs (mkConfigurations "nixos") darwinHosts;
+      darwinConfigurations = mkConfigurations "darwin";
       homeConfigurations = mkConfigurations "home";
 
       templates = {
@@ -165,6 +179,17 @@
           };
           xxh = pkgs.callPackage ./packages/xxh { };
           installer-iso = inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
+        };
+
+      packages.aarch64-darwin =
+        let
+          pkgs = import inputs.nixpkgs {
+            system = "aarch64-darwin";
+            config.allowUnfree = true;
+          };
+        in
+        {
+          xxh = pkgs.callPackage ./packages/xxh { };
         };
     };
 }

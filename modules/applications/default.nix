@@ -1,27 +1,37 @@
 { delib, pkgs, ... }:
+let
+  sharedPackages = with pkgs; [
+    kitty
+    mpv
+    ollama
+  ];
+
+  linuxOnlyPackages = with pkgs; [
+    anki
+    audacity
+    calibre
+    discord
+    flameshot
+    floorp-bin
+    kdePackages.dolphin
+    nsxiv
+    obs-studio
+    pciutils
+    plover.dev
+    rofi
+    spotify
+  ];
+in
 delib.module {
   name = "applications";
 
   options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
-    environment.systemPackages = with pkgs; [
-      anki
-      audacity
-      calibre
-      discord
-      flameshot
-      floorp-bin
-      kdePackages.dolphin
-      kitty
-      mpv
-      nsxiv
-      obs-studio
-      ollama
-      pciutils
-      plover.dev
-      rofi
-      spotify
-    ];
+    environment.systemPackages = sharedPackages ++ linuxOnlyPackages;
+  };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = sharedPackages;
   };
 }

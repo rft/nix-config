@@ -1,19 +1,27 @@
-{ delib, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "home";
 
   home.always = { myconfig, ... }: {
     programs.home-manager.enable = true;
 
-    home.username = myconfig.constants.username;
-    home.homeDirectory = "/home/${myconfig.constants.username}";
+    home.username = lib.mkForce myconfig.constants.username;
+    home.homeDirectory = lib.mkForce (
+      if pkgs.stdenv.isDarwin
+      then "/Users/${myconfig.constants.username}"
+      else "/home/${myconfig.constants.username}"
+    );
 
-    home.file.".claude/settings.json".text = builtins.toJSON {
-      env = {
-        CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
-      };
-      teammateMode = "auto";
-    };
+    # Claude Code settings.json is not managed by Nix because home.file creates
+    # a read-only symlink to the Nix store, which prevents Claude Code from
+    # persisting runtime state (model preference, recent activity, etc.).
+    # Manage ~/.claude/settings.json manually instead.
+    # home.file.".claude/settings.json".text = builtins.toJSON {
+    #   env = {
+    #     CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS = "1";
+    #   };
+    #   teammateMode = "auto";
+    # };
 
     home.sessionVariables = {
       EDITOR = "nvim";

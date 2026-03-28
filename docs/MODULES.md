@@ -14,13 +14,14 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/constants.nix`
 - **Name:** `constants`
-- **Description:** Read-only user constants shared across all modules via `myconfig.constants`.
+- **Description:** User constants shared across all modules via `myconfig.constants`. Defaults are set for the `nano` user but can be overridden per-host.
 - **Options:**
-  - `constants.username` -- `"nano"` (readOnly)
-  - `constants.userfullname` -- `"nano"` (readOnly)
-  - `constants.useremail` -- `"nano@nomolabs.net"` (readOnly)
-  - `constants.gitname` -- `"rft"` (readOnly)
+  - `constants.username` -- default `"nano"`
+  - `constants.userfullname` -- default `"nano"`
+  - `constants.useremail` -- default `"nano@nomolabs.net"`
+  - `constants.gitname` -- default `"rft"`
 - **Default behavior:** Always active. Values are published to `args.shared.constants`.
+- **Overriding:** Set any constant in a host's `myconfig` block, e.g. `constants.username = "astro"` for a machine with a different user.
 - **Dependencies:** None.
 
 ### home
@@ -60,9 +61,9 @@ System-level packages and shell configuration. Always enabled, no toggle.
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs 60+ system packages (bat, ripgrep, fd, fzf, git, claude-code, codex, podman, yazi, yt-dlp, zellij, etc.). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
+- **Description:** Installs 60+ system packages shared across platforms (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, yt-dlp, zellij, etc.) plus Linux-only packages (bpftrace, podman, wl-clipboard, tcpdump, util-linux, etc.). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
 - **Options:** None (always active).
-- **Default behavior:** Always active for all NixOS hosts.
+- **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
 
 ### core.xonsh
@@ -88,6 +89,35 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Description:** Imports and enables Noctalia shell (both NixOS service and HM program). Sets Noctalia color scheme to Nord.
 - **Default behavior:** Disabled by default. Enabled in desktop-type hosts via `myconfig.desktop.enable = true`.
 - **Dependencies:** `noctalia` flake input.
+
+### desktop.paneru
+
+- **Path:** `modules/desktop/paneru.nix`
+- **Name:** `desktop.paneru`
+- **Enable option:** `myconfig.desktop.paneru.enable` (default: `false`)
+- **Description:** Installs and configures paneru, a sliding tiling window manager for macOS. Manages windows on an infinite horizontal strip — opening new windows never resizes existing ones. Configured via Home Manager with a launchd agent for automatic startup.
+- **Default behavior:** Does NOT auto-enable with `desktop`. Must be explicitly enabled per-host. Darwin only.
+- **Dependencies:** `paneru` flake input.
+- **Keybindings:**
+
+| Action | Binding |
+|--------|---------|
+| Focus west | `Cmd + H` |
+| Focus east | `Cmd + L` |
+| Focus north | `Cmd + K` |
+| Focus south | `Cmd + J` |
+| Swap west | `Alt + H` |
+| Swap east | `Alt + L` |
+| Swap north | `Alt + K` |
+| Swap south | `Alt + J` |
+| Resize (grow) | `Alt + R` |
+| Shrink | `Alt + S` |
+| Full width | `Alt + F` |
+| Center | `Alt + C` |
+| Toggle tiled/floating | `Ctrl + Alt + T` |
+| Stack | `Alt + ]` |
+| Unstack | `Alt + [` |
+| Quit | `Ctrl + Alt + Q` |
 
 ### desktop.awesome
 

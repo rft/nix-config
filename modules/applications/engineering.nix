@@ -1,4 +1,23 @@
 { delib, lib, pkgs, ... }:
+let
+  sharedPackages = with pkgs; [
+    ghidra
+    imhex
+    qemu
+  ];
+
+  linuxOnlyPackages = with pkgs; [
+    alloy6
+    chirp
+    cutter
+    fiji
+    pulseview
+    sdrangel
+    solvespace
+    virt-manager
+    kicad
+  ];
+in
 delib.module {
   name = "applications.engineering";
 
@@ -9,19 +28,10 @@ delib.module {
   };
 
   nixos.ifEnabled = {
-    environment.systemPackages = with pkgs; [
-      alloy6
-      chirp
-      cutter
-      fiji
-      ghidra
-      imhex
-      kicad
-      pulseview
-      qemu
-      sdrangel
-      solvespace
-      virt-manager
-    ];
+    environment.systemPackages = sharedPackages ++ linuxOnlyPackages;
+  };
+
+  darwin.ifEnabled = {
+    environment.systemPackages = sharedPackages;
   };
 }
