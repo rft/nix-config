@@ -1,4 +1,4 @@
-{ delib, ... }:
+{ delib, lib, pkgs, config, ... }:
 delib.host {
   name = "malus";
   type = "darwin";
@@ -7,6 +7,7 @@ delib.host {
   home.home.stateVersion = "24.05";
 
   darwin = {
+    system.primaryUser = "astro";
     system.stateVersion = 6;
     networking.hostName = "malus";
 
@@ -64,9 +65,9 @@ delib.host {
   };
 
   myconfig = {
-    applications.enable = true;
-    programs.programming.enable = true;
-    programs.programming.cloud.enable = true;
+    #applications.enable = true;
+    #programs.programming.enable = true;
+    #programs.programming.cloud.enable = true;
     fonts.enable = true;
   };
 }

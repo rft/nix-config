@@ -3,7 +3,6 @@ let
   sharedPackages = with pkgs; [
     binwalk
     file
-    tlaplusToolbox
     tlaps
   ];
 in
@@ -19,6 +18,7 @@ delib.module {
   nixos.ifEnabled = {
     environment.systemPackages = sharedPackages ++ (with pkgs; [
       aflplusplus
+      tlaplusToolbox
     ]);
   };
 

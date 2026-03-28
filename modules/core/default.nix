@@ -30,7 +30,6 @@ let
     oxker
     pandoc
     pass
-    picat
     procs
     rclone
     rink
@@ -68,6 +67,7 @@ let
     tcpdump
     util-linux
     wl-clipboard
+    picat
   ];
 in
 delib.module {

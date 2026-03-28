@@ -3,7 +3,6 @@ let
   sharedPackages = with pkgs; [
     ghidra
     imhex
-    kicad
     qemu
   ];
 
@@ -16,6 +15,7 @@ let
     sdrangel
     solvespace
     virt-manager
+    kicad
   ];
 in
 delib.module {
