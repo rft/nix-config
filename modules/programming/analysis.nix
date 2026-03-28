@@ -5,6 +5,10 @@ let
     file
     tlaps
   ];
+  linuxPackages = with pkgs; [
+    aflplusplus
+    tlaplusToolbox
+  ];
 in
 delib.module {
   name = "programs.programming.analysis";
@@ -16,10 +20,7 @@ delib.module {
   };
 
   nixos.ifEnabled = {
-    environment.systemPackages = sharedPackages ++ (with pkgs; [
-      aflplusplus
-      tlaplusToolbox
-    ]);
+    environment.systemPackages = sharedPackages ++ linuxPackages;
   };
 
   darwin.ifEnabled = {
