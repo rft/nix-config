@@ -1,7 +1,7 @@
 { delib, ... }:
 delib.host {
   name = "bristlecone";
-  type = "desktop";
+  type = "server";
   system = "x86_64-linux";
 
   home.home.stateVersion = "24.05";
@@ -35,28 +35,27 @@ delib.host {
       LC_TIME = "en_US.UTF-8";
     };
 
-    # KDE Plasma 6
-    services.xserver.enable = true;
-    services.displayManager.sddm.enable = true;
-    services.desktopManager.plasma6.enable = true;
-    services.xserver.xkb = { layout = "us"; variant = ""; };
-    services.printing.enable = true;
-
-    services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-    services.pipewire = {
+    # SSH - key-only authentication
+    services.openssh = {
       enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "no";
+      };
     };
 
-    programs.firefox.enable = true;
+    # Netbird VPN
+    services.netbird.enable = true;
+
+    # Firewall - allow SSH
+    networking.firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 ];
+    };
   };
 
   myconfig = {
-    applications.enable = true;
-    desktop.enable = true;
-    programs.programming.enable = true;
+    services.enable = true;
   };
 }
