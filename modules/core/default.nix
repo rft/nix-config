@@ -27,6 +27,7 @@ let
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     lazygit
+    opencode
     oxker
     pandoc
     pass
