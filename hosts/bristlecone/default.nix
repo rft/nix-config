@@ -35,21 +35,8 @@ delib.host {
       LC_TIME = "en_US.UTF-8";
     };
 
-    # SSH - key-only authentication
-    services.openssh = {
-      enable = true;
-      settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "no";
-      };
-    };
-
-    # Firewall - allow SSH
-    networking.firewall = {
-      enable = true;
-      allowedTCPPorts = [ 22 ];
-    };
+    # Firewall
+    networking.firewall.enable = true;
   };
 
   myconfig = {

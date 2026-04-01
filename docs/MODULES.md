@@ -67,6 +67,15 @@ System-level packages and shell configuration. Always enabled, no toggle.
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
 
+### core.ssh
+
+- **Path:** `modules/core/ssh.nix`
+- **Name:** `core.ssh`
+- **Enable option:** `myconfig.core.ssh.enable` (default: `true`)
+- **Description:** Enables SSH key-only access across all hosts. On NixOS, enables the OpenSSH server with password authentication disabled, keyboard-interactive disabled, and root login prohibited. Opens firewall port 22. On all platforms (including Darwin), manages `~/.ssh/authorized_keys` via Home Manager using the public keys from `myconfig.constants.sshKeys`. On macOS, Remote Login must also be enabled manually in System Settings > General > Sharing.
+- **Default behavior:** Enabled by default for all hosts. Can be disabled per-host.
+- **Dependencies:** `constants` (reads `myconfig.constants.sshKeys`).
+
 ### core.xonsh
 
 - **Path:** `modules/core/xonsh.nix`
