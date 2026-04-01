@@ -105,9 +105,12 @@ delib.module {
 
     environment.systemPackages = sharedPackages;
 
+    # Netbird VPN client daemon
     launchd.daemons.netbird = {
       serviceConfig = {
         Label = "io.netbird.client";
+        # Create /var/run/netbird before starting — netbird needs this
+        # directory to create its Unix socket for client-daemon IPC
         ProgramArguments = [
           "/bin/sh" "-c"
           "/bin/mkdir -p /var/run/netbird && ${pkgs.netbird}/bin/netbird service run"
