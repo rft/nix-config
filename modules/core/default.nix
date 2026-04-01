@@ -85,6 +85,7 @@ delib.module {
     environment.systemPackages = sharedPackages ++ linuxOnlyPackages;
 
     services.netbird.enable = true;
+    services.resolved.enable = true;
 
     virtualisation = {
       podman.enable = true;
