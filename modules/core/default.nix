@@ -27,6 +27,7 @@ let
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     lazygit
+    netbird
     opencode
     oxker
     pandoc
@@ -83,6 +84,8 @@ delib.module {
 
     environment.systemPackages = sharedPackages ++ linuxOnlyPackages;
 
+    services.netbird.enable = true;
+
     virtualisation = {
       podman.enable = true;
       containers.registries.search = [ "docker.io" ];
@@ -101,6 +104,20 @@ delib.module {
     home-manager.backupFileExtension = "backup";
 
     environment.systemPackages = sharedPackages;
+
+    launchd.daemons.netbird = {
+      serviceConfig = {
+        Label = "io.netbird.client";
+        ProgramArguments = [
+          "/bin/sh" "-c"
+          "/bin/mkdir -p /var/run/netbird && ${pkgs.netbird}/bin/netbird service run"
+        ];
+        RunAtLoad = true;
+        KeepAlive = true;
+        StandardOutPath = "/var/log/netbird.out.log";
+        StandardErrorPath = "/var/log/netbird.err.log";
+      };
+    };
 
     nix.gc = {
       automatic = true;

@@ -45,9 +45,6 @@ delib.host {
       };
     };
 
-    # Netbird VPN
-    services.netbird.enable = true;
-
     # Firewall - allow SSH
     networking.firewall = {
       enable = true;
