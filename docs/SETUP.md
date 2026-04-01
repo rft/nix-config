@@ -4,7 +4,7 @@
 
 ```
 hosts/                  Per-host configurations (delib.host)
-  bristlecone/          Desktop, KDE Plasma 6
+  bristlecone/          Headless server, SSH + Netbird + self-hosted services
   cottonwood/           Desktop, vertical screen
   redwood/              Desktop, full creative+engineering
   sequoia/              Desktop, VMware guest
@@ -37,7 +37,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
-| **bristlecone** | desktop | America/Phoenix | KDE Plasma 6 with SDDM, GRUB+EFI |
+| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless), GRUB+EFI |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
@@ -51,16 +51,16 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
 |--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
-| desktop | yes | yes | yes | yes | yes | -- | -- | -- | -- |
-| applications | yes | yes | yes | yes | yes | -- | yes | yes | -- |
-| applications.creative | auto | auto | yes | yes | no | -- | auto | auto | -- |
-| applications.engineering | auto | auto | yes | yes | no | -- | auto | auto | -- |
+| desktop | -- | yes | yes | yes | yes | -- | -- | -- | -- |
+| applications | -- | yes | yes | yes | yes | -- | yes | yes | -- |
+| applications.creative | -- | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.engineering | -- | auto | yes | yes | no | -- | auto | auto | -- |
 | applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- | -- |
 | desktop.paneru | -- | -- | -- | -- | -- | -- | yes | -- | -- |
-| programs.programming | yes | yes | yes | yes | no | yes | yes | yes | -- |
-| programs.programming.analysis | auto | auto | auto | auto | -- | yes | auto | auto | -- |
+| programs.programming | -- | yes | yes | yes | no | yes | yes | yes | -- |
+| programs.programming.analysis | -- | auto | auto | auto | -- | yes | auto | auto | -- |
 | programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | yes | -- |
-| services | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| services | yes | -- | -- | -- | -- | -- | -- | -- | -- |
 | terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 | editors | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 | fonts | auto | auto | auto | auto | auto | -- | yes | yes | yes |
@@ -453,6 +453,75 @@ nixos-generate-config --show-hardware-config > hosts/HOSTNAME/hardware-configura
 ```bash
 sudo nixos-rebuild switch --flake .#HOSTNAME
 ```
+
+## SSH Keys
+
+SSH public keys are managed centrally in `modules/config/constants.nix` via the
+`constants.sshKeys` attrset. All keys are automatically added as authorized keys
+for the user on every NixOS host (via `modules/config/user.nix`).
+
+### Adding a key
+
+Add an entry to the `sshKeys` attrset in `modules/config/constants.nix`:
+
+```nix
+sshKeys = lib.mkOption {
+  type = lib.types.attrsOf lib.types.str;
+  default = {
+    lemon = "ssh-ed25519 AAAA... nano@nomolabs.net";
+    redwood = "ssh-ed25519 AAAA... nano@redwood";
+  };
+};
+```
+
+Keys are named by machine for easy identification. All keys in the attrset are
+authorized on all hosts — to restrict keys to specific hosts, override
+`users.users.<name>.openssh.authorizedKeys.keys` in the host's `nixos` block.
+
+### Selecting specific keys per host
+
+To allow only certain keys on a host, override in the host's `nixos` block:
+
+```nix
+nixos = { myconfig, ... }: {
+  users.users.${myconfig.constants.username}.openssh.authorizedKeys.keys = [
+    myconfig.constants.sshKeys.lemon
+  ];
+};
+```
+
+## Server Hosts
+
+Server hosts use `type = "server"` and are headless — no desktop environment,
+display manager, or audio. The bristlecone host is the reference server config.
+
+### What a server host includes
+
+- **SSH** with key-only authentication (passwords disabled, root login denied)
+- **Netbird** VPN for secure remote access
+- **Firewall** with only necessary ports open
+- **Self-hosted services** via `myconfig.services.enable = true`
+- All core packages (bat, ripgrep, git, claude-code, etc.) and terminal config
+  (starship, zellij, xonsh) are still applied
+
+### Netbird setup
+
+After the first rebuild, authenticate Netbird:
+
+```bash
+sudo netbird up
+```
+
+This opens a browser-based auth flow. Once authenticated, the machine joins your
+Netbird network and is reachable from other Netbird peers.
+
+### Adding a new server host
+
+1. Create `hosts/HOSTNAME/default.nix` with `type = "server"`.
+2. Enable SSH, Netbird, and services as needed (see `hosts/bristlecone/default.nix`
+   for a reference).
+3. Add your SSH public keys to `constants.sshKeys` if not already present.
+4. Rebuild: `sudo nixos-rebuild switch --flake .#HOSTNAME`.
 
 ## How to Add a New Module
 

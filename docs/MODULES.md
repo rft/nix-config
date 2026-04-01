@@ -20,8 +20,9 @@ Infrastructure modules that are always active. They have no enable option.
   - `constants.userfullname` -- default `"nano"`
   - `constants.useremail` -- default `"nano@nomolabs.net"`
   - `constants.gitname` -- default `"rft"`
+  - `constants.sshKeys` -- attrset of SSH public keys keyed by machine name (e.g. `{ lemon = "ssh-ed25519 ..."; }`). All keys are automatically authorized for the user on every NixOS host via the `user` module.
 - **Default behavior:** Always active. Values are published to `args.shared.constants`.
-- **Overriding:** Set any constant in a host's `myconfig` block, e.g. `constants.username = "astro"` for a machine with a different user.
+- **Overriding:** Set any constant in a host's `myconfig` block, e.g. `constants.username = "astro"` for a machine with a different user. To add SSH keys, extend the `sshKeys` attrset.
 - **Dependencies:** None.
 
 ### home
@@ -37,10 +38,10 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/user.nix`
 - **Name:** `user`
-- **Description:** Creates the NixOS user account with `networkmanager` and `wheel` groups. Enables flakes and nix-command experimental features.
+- **Description:** Creates the NixOS user account with `networkmanager` and `wheel` groups. Enables flakes and nix-command experimental features. Authorizes all SSH keys from `myconfig.constants.sshKeys` for the user.
 - **Options:** None (always active).
-- **Default behavior:** Always active for all NixOS hosts.
-- **Dependencies:** `constants` (reads `myconfig.constants.username`).
+- **Default behavior:** Always active for all NixOS hosts. All SSH public keys in `constants.sshKeys` are added to the user's `openssh.authorizedKeys.keys`.
+- **Dependencies:** `constants` (reads `myconfig.constants.username`, `myconfig.constants.sshKeys`).
 
 ### overlays
 
@@ -65,6 +66,15 @@ System-level packages and shell configuration. Always enabled, no toggle.
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
+
+### core.ssh
+
+- **Path:** `modules/core/ssh.nix`
+- **Name:** `core.ssh`
+- **Enable option:** `myconfig.core.ssh.enable` (default: `true`)
+- **Description:** Enables SSH key-only access across all hosts. On NixOS, enables the OpenSSH server with password authentication disabled, keyboard-interactive disabled, and root login prohibited. Opens firewall port 22. On all platforms (including Darwin), manages `~/.ssh/authorized_keys` via Home Manager using the public keys from `myconfig.constants.sshKeys`. On macOS, Remote Login must also be enabled manually in System Settings > General > Sharing.
+- **Default behavior:** Enabled by default for all hosts. Can be disabled per-host.
+- **Dependencies:** `constants` (reads `myconfig.constants.sshKeys`).
 
 ### core.xonsh
 
@@ -274,8 +284,14 @@ Self-hosted services. Gated by `services.enable`.
 - **Path:** `modules/services/default.nix`
 - **Name:** `services`
 - **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted service packages: borgmatic, home-assistant, jellyfin, kasmweb, n8n, ollama, paperless-ng.
-- **Default behavior:** Disabled by default. No host currently enables this.
+- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Ollama (LLM inference), Home Assistant (home automation), n8n (workflow automation), Paperless (document management). Also installs borgmatic for backup configuration.
+- **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
+- **Services and ports:**
+  - **Jellyfin** — media server (firewall auto-opened)
+  - **Ollama** — LLM inference (localhost:11434)
+  - **Home Assistant** — home automation (firewall auto-opened, default port 8123)
+  - **n8n** — workflow automation (firewall auto-opened, default port 5678)
+  - **Paperless** — document management (localhost:28981)
 - **Dependencies:** None.
 
 ---

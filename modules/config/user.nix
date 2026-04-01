@@ -10,6 +10,7 @@ delib.module {
         "networkmanager"
         "wheel"
       ];
+      openssh.authorizedKeys.keys = builtins.attrValues myconfig.constants.sshKeys;
     };
 
     nix.settings.experimental-features = [

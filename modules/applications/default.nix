@@ -19,6 +19,7 @@ let
     pciutils
     plover.dev
     rofi
+    rustdesk-flutter
     spotify
   ];
 in
