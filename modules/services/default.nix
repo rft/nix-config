@@ -1,4 +1,30 @@
-{ delib, pkgs, ... }:
+{ delib, pkgs, lib, ... }:
+let
+  # Shared baseline for all service sandboxes
+  hardenedServiceConfig = {
+    ProtectHome = true;
+    ProtectKernelTunables = true;
+    ProtectKernelModules = true;
+    ProtectKernelLogs = true;
+    ProtectControlGroups = true;
+    ProtectClock = true;
+    NoNewPrivileges = true;
+    PrivateTmp = true;
+    PrivateDevices = true;
+    RestrictRealtime = true;
+    RestrictSUIDSGID = true;
+    RestrictNamespaces = true;
+    LockPersonality = true;
+    MemoryDenyWriteExecute = false;
+    SystemCallArchitectures = "native";
+    SystemCallFilter = [
+      "@system-service"
+      "~@mount"
+      "~@reboot"
+      "~@swap"
+    ];
+  };
+in
 delib.module {
   name = "services";
 
@@ -44,5 +70,34 @@ delib.module {
     services.paperless = {
       enable = true;
     };
+
+    # ──────────────────────────────────────────────
+    # Systemd service hardening
+    # ──────────────────────────────────────────────
+
+    systemd.services.jellyfin.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
+    });
+
+    systemd.services.ollama.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      RestrictNamespaces = false;
+      ReadWritePaths = [ "/var/lib/ollama" ];
+    });
+
+    systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      PrivateDevices = false; # May need device access for integrations
+      RestrictNamespaces = false;
+    });
+
+    systemd.services.n8n.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      ReadWritePaths = [ "/var/lib/n8n" ];
+    });
+
+    systemd.services.paperless-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+    systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+    systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
   };
 }
