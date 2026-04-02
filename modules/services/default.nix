@@ -74,7 +74,21 @@ delib.module {
       enable = true;
       address = "0.0.0.0";
     };
-    networking.firewall.allowedTCPPorts = [ 28981 ];
+
+    # Kasm Workspaces (container-based browser/desktop streaming)
+    services.kasmweb = {
+      enable = true;
+      listenPort = 8443;
+    };
+
+    # changedetection.io (website change monitoring)
+    services.changedetection-io = {
+      enable = true;
+      listenAddress = "0.0.0.0";
+      behindProxy = true;
+    };
+
+    networking.firewall.allowedTCPPorts = [ 28981 8443 5000 ];
 
     # ──────────────────────────────────────────────
     # Systemd service hardening
@@ -107,5 +121,10 @@ delib.module {
     systemd.services.paperless-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
     systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
     systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+
+    systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      ReadWritePaths = [ "/var/lib/changedetection-io" ];
+    });
   };
 }
