@@ -124,6 +124,9 @@ delib.module {
     systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
     systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
 
+    # Fix upstream bug: init script missing hostname, systemctl, and coreutils in PATH
+    systemd.services.init-kasmweb.path = [ pkgs.inetutils pkgs.systemd pkgs.coreutils ];
+
     systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
       ReadWritePaths = [ "/var/lib/changedetection-io" ];
