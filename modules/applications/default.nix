@@ -7,6 +7,7 @@ let
   ];
 
   linuxOnlyPackages = with pkgs; [
+    rustdesk-flutter
     anki
     audacity
     calibre
@@ -19,7 +20,6 @@ let
     pciutils
     plover.dev
     rofi
-    rustdesk-flutter
     spotify
   ];
 in

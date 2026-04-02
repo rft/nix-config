@@ -29,6 +29,7 @@ delib.module {
         "blender"
         "krita"
         "reaper"
+        "rustdesk"
         "raycast"
         "shortcat"
         "linearmouse"
