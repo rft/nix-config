@@ -44,6 +44,8 @@ delib.module {
     # Ollama LLM inference
     services.ollama = {
       enable = true;
+      host = "0.0.0.0";
+      openFirewall = true;
     };
 
     # Home Assistant
@@ -64,12 +66,15 @@ delib.module {
     services.n8n = {
       enable = true;
       openFirewall = true;
+      environment.N8N_SECURE_COOKIE = "false";
     };
 
     # Paperless document management
     services.paperless = {
       enable = true;
+      address = "0.0.0.0";
     };
+    networking.firewall.allowedTCPPorts = [ 28981 ];
 
     # ──────────────────────────────────────────────
     # Systemd service hardening
@@ -79,6 +84,7 @@ delib.module {
       ProtectSystem = "strict";
       ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
     });
+    systemd.services.jellyfin.environment.JELLYFIN_HttpListenerHost__BindAddresses = "0.0.0.0";
 
     systemd.services.ollama.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
