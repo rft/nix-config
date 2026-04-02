@@ -1,4 +1,4 @@
-{ delib, pkgs, ... }:
+{ delib, pkgs, lib, ... }:
 let
   # Shared baseline for all service sandboxes
   hardenedServiceConfig = {
@@ -75,29 +75,29 @@ delib.module {
     # Systemd service hardening
     # ──────────────────────────────────────────────
 
-    systemd.services.jellyfin.serviceConfig = hardenedServiceConfig // {
+    systemd.services.jellyfin.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
       ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
-    };
+    });
 
-    systemd.services.ollama.serviceConfig = hardenedServiceConfig // {
+    systemd.services.ollama.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
       RestrictNamespaces = false;
       ReadWritePaths = [ "/var/lib/ollama" ];
-    };
+    });
 
-    systemd.services.home-assistant.serviceConfig = hardenedServiceConfig // {
+    systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       PrivateDevices = false; # May need device access for integrations
       RestrictNamespaces = false;
-    };
+    });
 
-    systemd.services.n8n.serviceConfig = hardenedServiceConfig // {
+    systemd.services.n8n.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
       ReadWritePaths = [ "/var/lib/n8n" ];
-    };
+    });
 
-    systemd.services.paperless-web.serviceConfig = hardenedServiceConfig;
-    systemd.services.paperless-scheduler.serviceConfig = hardenedServiceConfig;
-    systemd.services.paperless-consumer.serviceConfig = hardenedServiceConfig;
+    systemd.services.paperless-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+    systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+    systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
   };
 }

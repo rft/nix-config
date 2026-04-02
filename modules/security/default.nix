@@ -1,6 +1,7 @@
 {
   delib,
   inputs,
+  lib,
   ...
 }:
 delib.module {
@@ -8,11 +9,26 @@ delib.module {
 
   options = delib.singleEnableOption false;
 
-  nixos.ifEnabled = {
-    imports = [
-      inputs.nix-mineral.nixosModules.nix-mineral
-    ];
+  nixos.always.imports = [
+    inputs.nix-mineral.nixosModules.nix-mineral
 
+    # nix-mineral references services.resolved.settings which doesn't exist
+    # in NixOS 25.11 yet — define it here so the module can be imported
+    ({ lib, ... }: {
+      options.services.resolved.settings = lib.mkOption {
+        type = lib.types.anything;
+        default = {};
+        description = "Shim for nix-mineral compatibility";
+      };
+    })
+  ];
+
+  # Disable dnssec by default as it requires services.resolved.settings
+  nixos.always = {
+    nix-mineral.settings.misc.dnssec = false;
+  };
+
+  nixos.ifEnabled = {
     # Enable nix-mineral with default preset
     nix-mineral = {
       enable = true;
@@ -31,8 +47,6 @@ delib.module {
         };
       };
 
-      # Block process memory modification
-      settings.system.proc-mem-force = true;
-    };
+};
   };
 }
