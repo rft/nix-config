@@ -76,6 +76,8 @@ delib.module {
     };
 
     # Kasm Workspaces (container-based browser/desktop streaming)
+    # Requires Docker (upstream module hardcodes docker backend)
+    virtualisation.docker.enable = true;
     services.kasmweb = {
       enable = true;
       listenPort = 8443;
