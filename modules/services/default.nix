@@ -86,6 +86,7 @@ delib.module {
       ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
     });
     systemd.services.jellyfin.environment.JELLYFIN_HttpListenerHost__BindAddresses = "0.0.0.0";
+    systemd.tmpfiles.rules = [ "d /var/log/jellyfin 0750 jellyfin jellyfin -" ];
 
     systemd.services.ollama.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
