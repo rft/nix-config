@@ -87,6 +87,10 @@ delib.module {
     services.netbird.enable = true;
     services.resolved.enable = true;
 
+    programs.ssh.extraConfig = ''
+      Include /etc/ssh/ssh_config.d/*
+    '';
+
     virtualisation = {
       podman.enable = true;
       containers.registries.search = [ "docker.io" ];
