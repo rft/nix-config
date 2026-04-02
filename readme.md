@@ -24,7 +24,7 @@ terminal, and editors.
 
 | Host | Type | Description |
 |------|------|-------------|
-| **bristlecone** | desktop | KDE Plasma 6 with SDDM |
+| **bristlecone** | server | Self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless) with nix-mineral hardening |
 | **cottonwood** | desktop | Vertical screen rotation |
 | **redwood** | desktop | Full creative + engineering modules |
 | **sequoia** | desktop | VMware guest |
