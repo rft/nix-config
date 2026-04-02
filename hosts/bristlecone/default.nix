@@ -41,5 +41,6 @@ delib.host {
 
   myconfig = {
     services.enable = true;
+    security.enable = true;
   };
 }
