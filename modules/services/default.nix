@@ -124,8 +124,160 @@ delib.module {
     systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
     systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
 
-    # Fix upstream bug: init script missing hostname, systemctl, and coreutils in PATH
+    # Fix upstream bugs in kasmweb init:
+    # 1. Missing hostname, systemctl, and coreutils in PATH
+    # 2. Nix store symlinks for bin/www don't resolve inside Docker containers —
+    #    the upstream script uses `ln -sf` to Nix store paths, but Docker bind mounts
+    #    can't follow host-side symlinks. Override ExecStart with a patched version
+    #    that copies instead of symlinking.
     systemd.services.init-kasmweb.path = [ pkgs.inetutils pkgs.systemd pkgs.coreutils ];
+    systemd.services.init-kasmweb.serviceConfig.ExecStart = let
+      kasmDataDir = "/var/lib/kasmweb";
+      kasmPkg = pkgs.kasmweb;
+      cfg = {
+        datastorePath = kasmDataDir;
+        networkSubnet = "172.20.0.0/16";
+        sslCertificate = "null";
+        sslCertificateKey = "null";
+        redisPassword = "kasmweb";
+        defaultUserPassword = "kasmweb";
+        defaultAdminPassword = "kasmweb";
+        defaultManagerToken = "kasmweb";
+        defaultRegistrationToken = "kasmweb";
+        defaultGuacToken = "kasmweb";
+      };
+    in lib.mkForce (toString (pkgs.writeScript "initialize-kasmweb-patched" ''
+      #!${pkgs.runtimeShell}
+      export PATH=${lib.makeBinPath [ pkgs.docker pkgs.openssl pkgs.gnused pkgs.yq-go pkgs.inetutils pkgs.systemd pkgs.coreutils ]}:$PATH
+
+      mkdir -p ${kasmDataDir}/log
+      chmod -R a+rw ${kasmDataDir}
+
+      # Copy instead of symlink so Docker containers can access the files
+      rm -rf ${kasmDataDir}/bin
+      cp -rL ${kasmPkg}/bin ${kasmDataDir}/bin
+      chmod -R a+rw ${kasmDataDir}/bin
+
+      rm -rf ${kasmDataDir}/conf
+      cp -r ${kasmPkg}/conf ${kasmDataDir}/conf
+      mkdir -p ${kasmDataDir}/conf/nginx/containers.d
+      chmod -R a+rw ${kasmDataDir}/conf
+
+      rm -rf ${kasmDataDir}/www
+      cp -rL ${kasmPkg}/www ${kasmDataDir}/www
+      chmod -R a+rw ${kasmDataDir}/www
+
+      cat >${kasmDataDir}/init_seeds.sh <<SEEDEOF
+      #!/bin/bash
+      if [ ! -e /opt/kasm/current/.done_initing_data ]; then
+        while true; do
+            sleep 15;
+            /usr/bin/kasm_server.so --initialize-database --cfg \
+              /opt/kasm/current/conf/app/api.app.config.yaml \
+              --seed-file \
+              /opt/kasm/current/conf/database/seed_data/default_properties.yaml \
+              --populate-production \
+              && break
+        done  && /usr/bin/kasm_server.so --cfg \
+          /opt/kasm/current/conf/app/api.app.config.yaml \
+          --populate-production \
+          --seed-file \
+          /opt/kasm/current/conf/database/seed_data/default_agents.yaml \
+        && /usr/bin/kasm_server.so --cfg \
+          /opt/kasm/current/conf/app/api.app.config.yaml \
+          --populate-production \
+          --seed-file \
+          /opt/kasm/current/conf/database/seed_data/default_images_amd64.yaml \
+        && touch /opt/kasm/current/.done_initing_data
+
+        while true; do sleep 10 ; done
+      else
+       echo "skipping database init"
+        while true; do sleep 10 ; done
+      fi
+      SEEDEOF
+
+      docker network inspect kasm_default_network >/dev/null 2>&1 || docker network create kasm_default_network --subnet ${cfg.networkSubnet}
+      if [ -e ${kasmDataDir}/ids.env ]; then
+          source ${kasmDataDir}/ids.env
+      else
+          API_SERVER_ID=$(cat /proc/sys/kernel/random/uuid)
+          MANAGER_ID=$(cat /proc/sys/kernel/random/uuid)
+          SHARE_ID=$(cat /proc/sys/kernel/random/uuid)
+          SERVER_ID=$(cat /proc/sys/kernel/random/uuid)
+          echo "export API_SERVER_ID=$API_SERVER_ID" > ${kasmDataDir}/ids.env
+          echo "export MANAGER_ID=$MANAGER_ID" >> ${kasmDataDir}/ids.env
+          echo "export SHARE_ID=$SHARE_ID" >> ${kasmDataDir}/ids.env
+          echo "export SERVER_ID=$SERVER_ID" >> ${kasmDataDir}/ids.env
+
+          mkdir -p ${kasmDataDir}/certs
+          openssl req -x509 -nodes -days 1825 -newkey rsa:2048 -keyout ${kasmDataDir}/certs/kasm_nginx.key -out ${kasmDataDir}/certs/kasm_nginx.crt -subj "/C=US/ST=VA/L=None/O=None/OU=DoFu/CN=$(hostname)/emailAddress=none@none.none" 2> /dev/null
+
+          mkdir -p ${kasmDataDir}/file_mappings
+
+          docker volume create kasmweb_db || true
+          rm -f ${kasmDataDir}/.done_initing_data
+      fi
+
+      chmod +x ${kasmDataDir}/init_seeds.sh
+      chmod a+w ${kasmDataDir}/init_seeds.sh
+
+      if [ -e ${cfg.sslCertificate} ]; then
+          cp ${cfg.sslCertificate} ${kasmDataDir}/certs/kasm_nginx.crt
+          cp ${cfg.sslCertificateKey} ${kasmDataDir}/certs/kasm_nginx.key
+      fi
+
+      yq -i '.server.zone_name = "'default'"' ${kasmDataDir}/conf/app/api.app.config.yaml
+      yq -i '(.zones.[0]) .zone_name = "'default'"' ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      sed -i -e "s/username.*/username: postgres/g" \
+          -e "s/password.*/password: postgres/g" \
+          -e "s/host.*db/host: kasm_db/g" \
+          -e "s/ssl: true/ssl: false/g" \
+          -e "s/redis_password.*/redis_password: ${cfg.redisPassword}/g" \
+          -e "s/server_hostname.*/server_hostname: kasm_api/g" \
+          -e "s/server_id.*/server_id: $API_SERVER_ID/g" \
+          -e "s/manager_id.*/manager_id: $MANAGER_ID/g" \
+          -e "s/share_id.*/share_id: $SHARE_ID/g" \
+          ${kasmDataDir}/conf/app/api.app.config.yaml
+
+      sed -i -e "s/ token:.*/ token: \"${cfg.defaultManagerToken}\"/g" \
+          -e "s/hostnames: \['proxy.*/hostnames: \['kasm_proxy'\]/g" \
+          -e "s/server_id.*/server_id: $SERVER_ID/g" \
+          ${kasmDataDir}/conf/app/agent.app.config.yaml
+
+      # Generate password hashes
+      ADMIN_SALT=$(cat /proc/sys/kernel/random/uuid)
+      ADMIN_HASH=$(printf "${cfg.defaultAdminPassword}''${ADMIN_SALT}" | sha256sum | cut -c-64)
+      USER_SALT=$(cat /proc/sys/kernel/random/uuid)
+      USER_HASH=$(printf "${cfg.defaultUserPassword}''${USER_SALT}" | sha256sum | cut -c-64)
+
+      yq -i  '(.users.[] | select(.username=="admin@kasm.local") | .salt) = "'"''${ADMIN_SALT}"'"'  ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+      yq -i  '(.users.[] | select(.username=="admin@kasm.local") | .pw_hash) = "'"''${ADMIN_HASH}"'"'  ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      yq -i  '(.users.[] | select(.username=="user@kasm.local") | .salt) = "'"''${USER_SALT}"'"'  ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+      yq -i  '(.users.[] | select(.username=="user@kasm.local") | .pw_hash) = "'"''${USER_HASH}"'"'  ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      yq -i   '(.settings.[] | select(.name=="token") | select(.category == "manager")) .value = "'"${cfg.defaultManagerToken}"'"'   ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      yq -i   '(.settings.[] | select(.name=="registration_token") | select(.category == "auth")) .value = "'"${cfg.defaultRegistrationToken}"'"'   ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      sed -i -e "s/upstream_auth_address:.*/upstream_auth_address: 'proxy'/g" \
+          ${kasmDataDir}/conf/database/seed_data/default_properties.yaml
+
+      sed -i -e "s/GUACTOKEN/${cfg.defaultGuacToken}/g" \
+          -e "s/APIHOSTNAME/proxy/g" \
+          ${kasmDataDir}/conf/app/kasmguac.app.config.yaml
+
+      sed -i "s/00000000-0000-0000-0000-000000000000/$SERVER_ID/g" \
+          ${kasmDataDir}/conf/database/seed_data/default_agents.yaml
+
+      while [ ! -e ${kasmDataDir}/.done_initing_data ]; do
+          sleep 10;
+      done
+
+      systemctl restart docker-kasm_proxy.service
+    ''));
 
     systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
