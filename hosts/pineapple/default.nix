@@ -8,6 +8,7 @@ delib.host {
 
   darwin = {
     networking.hostName = "pineapple";
+    homebrew.casks = [ "ollama" ];
   };
 
   myconfig = {
