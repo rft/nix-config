@@ -124,12 +124,11 @@ delib.module {
     systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
     systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
 
-    # Fix upstream bugs in kasmweb init:
-    # 1. Missing hostname, systemctl, and coreutils in PATH
-    # 2. Nix store symlinks for bin/www don't resolve inside Docker containers —
-    #    the upstream script uses `ln -sf` to Nix store paths, but Docker bind mounts
-    #    can't follow host-side symlinks. Override ExecStart with a patched version
-    #    that copies instead of symlinking.
+    # Fix upstream kasmweb init bugs:
+    # 1. Missing hostname, systemctl, coreutils in PATH
+    # 2. ln -sf to /nix/store paths breaks inside Docker containers —
+    #    containers can't follow host symlinks into the store.
+    #    Override ExecStart to use cp -rL (copy, dereference) instead.
     systemd.services.init-kasmweb.path = [ pkgs.inetutils pkgs.systemd pkgs.coreutils ];
     systemd.services.init-kasmweb.serviceConfig.ExecStart = let
       kasmDataDir = "/var/lib/kasmweb";

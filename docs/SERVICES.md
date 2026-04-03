@@ -72,6 +72,67 @@ Enabled via `myconfig.services.enable = true` in the host config.
 
 ---
 
+## Kasm Workspaces — Upstream Bugs and Recovery
+
+### Known upstream nixpkgs bugs
+
+The NixOS kasmweb module has two bugs that are patched locally in `modules/services/default.nix`:
+
+1. **Missing tools in PATH** — The init script needs `hostname` (inetutils), `systemctl` (systemd), and `sha256sum` (coreutils) but the upstream `binPath` only includes docker, openssl, gnused, yq-go. Fixed with `systemd.services.init-kasmweb.path`.
+
+2. **Nix store symlinks break inside Docker** — The upstream init script uses `ln -sf /nix/store/.../bin /var/lib/kasmweb/bin` (and same for `www`). Docker containers mount `/var/lib/kasmweb` as `/opt/kasm/current`, but can't follow symlinks into `/nix/store` on the host. Fixed by overriding `ExecStart` with a patched script that uses `cp -rL` (copy, dereference) instead of `ln -sf`.
+
+**Upstream tracking:** [NixOS/nixpkgs#246884](https://github.com/NixOS/nixpkgs/issues/246884) (original package request). The PATH and symlink bugs have not been reported upstream yet.
+
+### Default credentials
+
+- Admin: `admin@kasm.local` / `kasmweb`
+- User: `user@kasm.local` / `kasmweb`
+
+### SSL warning
+
+Kasm generates a self-signed certificate. Browsers will show a security warning on first visit — click through "Advanced" > "Accept the Risk".
+
+### Recovery from bad state
+
+If Kasm containers are broken, the DB is corrupted, or the init service keeps timing out, do a full reset:
+
+```bash
+# 1. Stop all kasm systemd services
+sudo systemctl stop init-kasmweb \
+  docker-kasm_agent docker-kasm_api docker-kasm_db docker-kasm_db_init \
+  docker-kasm_guac docker-kasm_manager docker-kasm_redis docker-kasm_share \
+  docker-kasm_proxy
+
+# 2. Remove all kasm containers
+sudo docker rm -f kasm_guac kasm_agent kasm_manager kasm_share \
+  kasm_api kasm_db kasm_db_init kasm_redis kasm_proxy 2>/dev/null
+
+# 3. Remove volume and network
+sudo docker volume rm kasmweb_db 2>/dev/null
+sudo docker network rm kasm_default_network 2>/dev/null
+
+# 4. Wipe data directory (certs, configs, seed state)
+sudo rm -rf /var/lib/kasmweb
+
+# 5. Reload and restart
+sudo systemctl daemon-reload
+sudo systemctl start init-kasmweb &
+sudo journalctl -fu init-kasmweb
+
+# 6. Once init completes, start the proxy
+sudo systemctl start docker-kasm_proxy.service
+```
+
+The init takes 2–5 minutes (DB seeding). Once complete, start the proxy and Kasm is accessible at `https://bristlecone:8443`.
+
+If the init times out, check:
+- `sudo docker ps -a` — are the containers running?
+- `sudo docker logs kasm_db_init` — is the DB seeding progressing?
+- `sudo ls /var/lib/kasmweb/.done_initing_data` — has seeding completed?
+
+---
+
 ## Utilities
 
 ### borgmatic
