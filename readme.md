@@ -10,6 +10,7 @@ terminal, and editors.
 - [Architecture diagram](docs/architecture.png)
 - [Modules Reference](docs/MODULES.md) -- every module, its options, and default behavior
 - [Setup Guide](docs/SETUP.md) -- directory structure, rebuilding, adding hosts/modules
+- [Services Reference](docs/SERVICES.md) -- self-hosted services on bristlecone, ports, recovery procedures
 - [Templates](docs/TEMPLATES.md) -- devenv project templates for Python, Rust, Node, etc.
 
 ---
@@ -24,7 +25,7 @@ terminal, and editors.
 
 | Host | Type | Description |
 |------|------|-------------|
-| **bristlecone** | server | Self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless) with nix-mineral hardening |
+| **bristlecone** | server | Self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless, Kasm Workspaces, changedetection.io) with nix-mineral hardening |
 | **cottonwood** | desktop | Vertical screen rotation |
 | **redwood** | desktop | Full creative + engineering modules |
 | **sequoia** | desktop | VMware guest |
@@ -74,7 +75,7 @@ for the full reference.
 | **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
 | **Applications (HM)** | `modules/applications-home/` | Floorp browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
-| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless |
+| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless, kasm, changedetection.io |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
 | **Editors** | `modules/editors/` | VSCodium, Helix, Doom Emacs |
 | **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |
@@ -91,7 +92,7 @@ nix flake init -t github:rft/nix-config#python
 ```
 
 Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
-`rust`, `node`, `gleam`, `haskell`, `veryl`, `prolog`, `ada`.
+`rust`, `node`, `gleam`, `haskell`, `veryl`, `prolog`, `ada`, `amaranth`.
 
 ---
 
