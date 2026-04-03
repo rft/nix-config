@@ -4,180 +4,206 @@ skinparam backgroundColor #FAFAFA
 skinparam defaultFontName "Fira Code"
 skinparam packageStyle rectangle
 skinparam componentStyle rectangle
-skinparam nodesep 20
-skinparam ranksep 40
+skinparam nodesep 15
+skinparam ranksep 25
+skinparam padding 3
 
 title rft's NixOS Flake Architecture
-header denix-based modular NixOS + Home Manager configuration
+header denix-based modular NixOS + Darwin + Home Manager configuration
 
 ' ═══════════════════════════════════════════════════
-' FLAKE OUTPUT ENGINE
+' FLAKE — the entry point
 ' ═══════════════════════════════════════════════════
 
 package "flake.nix" as flake #BBDEFB {
-  component "denix.lib.configurations" as mkConf
-  note bottom of mkConf
-    host types: desktop | server | wsl | installer
-    extensions: args, base
-    outputs: nixosConfigurations + homeConfigurations
+  component "denix.lib.configurations" as engine
+  note bottom of engine
+    scans **paths**: ./hosts + ./modules
+    host types: desktop | server | wsl | installer | darwin
+    homeManagerUser: "nano"
   end note
 }
 
 ' ═══════════════════════════════════════════════════
-' HOST CONFIGURATIONS
+' HOSTS — delib.host declarations
+' Each host sets name, type, system, and myconfig
+' enable flags that activate modules
 ' ═══════════════════════════════════════════════════
 
-package "hosts/" as hosts #C8E6C9 {
-  component "bristlecone" as bristlecone
-  component "cottonwood" as cottonwood
-  component "redwood" as redwood
-  component "sequoia" as sequoia
-  component "myrtle" as myrtle
-  component "mistletoe" as mistletoe
-  component "installer" as installer
+package "hosts/ — delib.host" as hosts #C8E6C9 {
+
+  note as hostTable
+    |= Host |= Type |= System |
+    | bristlecone | server | x86_64-linux |
+    | cottonwood | desktop | x86_64-linux |
+    | redwood | desktop | x86_64-linux |
+    | sequoia | desktop | x86_64-linux |
+    | myrtle | desktop | x86_64-linux |
+    | mistletoe | wsl | x86_64-linux |
+    | lemon | darwin | aarch64-darwin |
+    | pineapple | darwin | aarch64-darwin |
+    | installer | installer | x86_64-linux |
+  end note
+
+  note as hostExample
+    **delib.host** example:
+    ....
+    name = "mistletoe";
+    type = "wsl";
+    system = "x86_64-linux";
+    myconfig = {
+      programs.programming.enable = true;
+      programs.programming.cloud.enable = true;
+    };
+    ....
+  end note
 }
 
-note bottom of hosts
-  |= Host |= Type |= apps |= desktop |= prog |= extras |
-  | bristlecone | Intel, Plasma 6 |  Y  |  Y  |  Y  | |
-  | cottonwood | AMD, X11 |  Y  |  Y  |  Y  | |
-  | redwood | Intel, X11 |  Y  |  Y  |  Y  | creative, engineering |
-  | sequoia | VMware, X11 |  Y  |  Y  |  Y  | creative, engineering |
-  | myrtle | VMware |  -  |  Y  |  -  | archiving |
-  | mistletoe | WSL |  -  |  -  |  Y  | cloud, analysis |
-  | installer | LiveCD ISO |  -  |  -  |  -  | fonts |
-end note
-
-mkConf --> hosts
+engine --> hosts : discovers
 
 ' ═══════════════════════════════════════════════════
-' MODULES — grouped with rectangle (lighter than
-' nested package, avoids overflow)
+' OUTPUTS — what denix produces
 ' ═══════════════════════════════════════════════════
 
-rectangle "modules/" as mods #FFE0B2 {
+component "nixosConfigurations" as nixOut #BBDEFB
+component "darwinConfigurations" as darwinOut #BBDEFB
+component "homeConfigurations" as homeOut #BBDEFB
 
-  package "config" as cfgMod {
-    component "constants" as constants
-    component "user" as userMod
-    component "home" as homeMod
-    component "overlays" as overlays
+engine -down-> nixOut : builds
+engine -down-> darwinOut : builds
+engine -down-> homeOut : builds
+
+nixOut -[hidden]right- darwinOut
+darwinOut -[hidden]right- homeOut
+
+' ═══════════════════════════════════════════════════
+' MODULES — delib.module declarations
+' Each module has enable option + platform blocks
+' ═══════════════════════════════════════════════════
+
+rectangle "modules/ — delib.module" as mods #FFE0B2 {
+
+  note as modPattern
+    **delib.module** pattern:
+    ....
+    name = "desktop.niri";
+    options = delib.singleEnableOption false;
+
+    myconfig.always — auto-enable from parent
+    nixos.ifEnabled — NixOS-only config
+    darwin.ifEnabled — macOS-only config
+    home.ifEnabled — both platforms (HM)
+    ....
+  end note
+
+  note as enableTable
+    **Module enablement by host**
+    |= Module |= bristlecone |= cottonwood |= redwood |= sequoia |= myrtle |= mistletoe |= lemon |= pineapple |
+    | config, core | all | all | all | all | all | all | all | all |
+    | terminal, editors | all | all | all | all | all | all | all | all |
+    | desktop |  -  | Y | Y | Y | Y |  -  |  -  |  -  |
+    | desktop.paneru |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
+    | applications |  -  | Y | Y | Y | Y |  -  | Y | Y |
+    | programming |  -  | Y | Y | Y |  -  | Y | Y | Y |
+    | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    | security | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+  end note
+
+  package "config //(always on)//" as cfgMod {
+    component "constants, user\nhome, overlays, darwin" as cfgAll
   }
 
-  package "core" as coreMod {
-    component "~67 CLI packages\npodman, GC" as coreDefault
-    component "xonsh (system)" as coreXonsh
+  package "core //(always on)//" as coreMod {
+    component "~60 CLI packages\npodman, GC, ssh\nxonsh (system)" as coreAll
   }
 
   package "terminal" as termMod {
-    component "bash, zsh\natuin, zoxide" as termDefault
-    component "kitty" as termKitty
-    component "starship" as termStarship
-    component "nushell" as termNushell
-    component "xonsh (home)" as termXonsh
-    component "zellij" as termZellij
+    component "bash, zsh, atuin, zoxide\nkitty, starship, nushell\nxonsh (home), zellij" as termAll
   }
 
   package "editors" as edMod {
-    component "doom-emacs\n(disabled)" as edDefault
-    component "helix" as edHelix
-    component "VSCodium\n37 extensions" as edVscode
-  }
-
-  package "applications" as appMod {
-    component "anki, mpv, obs\ndiscord, floorp..." as appDefault
-    component "engineering\nghidra, kicad, qemu" as appEng
-    component "creative\nblender, krita, reaper" as appCreative
-    component "archiving\ngallery-dl, hydrus" as appArchiving
-  }
-
-  package "applications-home" as appHomeMod {
-    component "floorp\n24 extensions" as appFloorp
-    component "kando\nradial menu" as appKando
-    component "kdenlive" as appKdenlive
-  }
-
-  package "programming" as progMod {
-    component "nixd, nodejs\npython, plantuml" as progDefault
-    component "cloud\ngcloud, terraform" as progCloud
-    component "analysis\naflplusplus, TLA+" as progAnalysis
+    component "VSCodium (30+ ext)\nhelix, doom-emacs" as edAll
   }
 
   package "desktop" as deskMod {
-    component "noctalia shell\n(Nord)" as deskDefault
-    component "niri (Wayland)" as deskNiri
-    component "awesome (X11)" as deskAwesome
-    component "rofi" as deskRofi
-    component "login (greetd)" as deskLogin
+    component "noctalia, niri\nawesome, rofi\ngreetd, paneru" as deskAll
+  }
+
+  package "applications" as appMod {
+    component "base, creative\nengineering, archiving\nfloorp, kando, kdenlive" as appAll
+  }
+
+  package "programming" as progMod {
+    component "nixd, nodejs, python\ncloud, analysis" as progAll
   }
 
   package "services" as svcMod {
-    component "borgmatic, jellyfin\nhome-assistant, n8n" as svcDefault
+    component "jellyfin, ollama\nhome-assistant, n8n\npaperless, kasm\nchangedetection\nborgmatic" as svcAll
+  }
+
+  package "security" as secMod {
+    component "nix-mineral" as secAll
   }
 
   package "fonts" as fontMod {
-    component "FiraCode, Inter\nJetBrains Mono" as fontDefault
+    component "FiraCode, Inter\nJetBrains Mono" as fontAll
   }
 }
 
+hosts ..> mods : myconfig.*.enable\nactivates modules
+
 ' ═══════════════════════════════════════════════════
-' LIB
+' PLATFORM ROUTING — how module blocks become output
 ' ═══════════════════════════════════════════════════
 
-package "lib/" #F3E5F5 {
-  component "python-core-packages\nnumpy, pandas, jax..." as pyCore
-  component "xonsh-extra-packages\nxxh, xontribs" as xonshPkgs
+mods -down-> nixOut : nixos.* blocks
+mods -down-> darwinOut : darwin.* blocks
+mods -down-> homeOut : home.* blocks
+
+' ═══════════════════════════════════════════════════
+' SUPPORT LAYERS
+' ═══════════════════════════════════════════════════
+
+package "lib/" as libPkg #F3E5F5 {
+  component "python-core-packages\nxonsh-extra-packages" as libAll
 }
 
-' ═══════════════════════════════════════════════════
-' PACKAGES
-' ═══════════════════════════════════════════════════
-
-package "packages/" #FCE4EC {
-  component "xxh" as pkgXxh
-  component "rofi-desktop" as pkgRofi
-  component "installer-iso" as pkgISO
+package "packages/" as pkgPkg #FCE4EC {
+  component "xxh, rofi-desktop\ninstaller-iso" as pkgAll
 }
 
-' ═══════════════════════════════════════════════════
-' CONFIG (dotfiles)
-' ═══════════════════════════════════════════════════
-
-package "config/" #E0F7FA {
-  component "awesome/" as cfgAwesome
-  component "niri/" as cfgNiri
-  component "kando/" as cfgKando
+package "config/" as cfgPkg #E0F7FA {
+  component "awesome/, niri/\nkando/" as cfgDots
 }
 
-' ═══════════════════════════════════════════════════
-' RELATIONSHIPS — host feature flags
-' ═══════════════════════════════════════════════════
-
-hosts ..> mods : enable flags\n(see table)
+libPkg -up-> mods : imported by\nmodules
+pkgPkg -up-> mods : installed by\nmodules
+cfgPkg -up-> mods : symlinked by\nmodules
 
 ' ═══════════════════════════════════════════════════
-' RELATIONSHIPS — lib → modules
+' LAYOUT CONTROL
 ' ═══════════════════════════════════════════════════
 
-xonshPkgs --> coreXonsh
-xonshPkgs --> termXonsh
-pyCore --> xonshPkgs
-pyCore --> progDefault
+' Module grid
+cfgMod -[hidden]right- coreMod
+coreMod -[hidden]right- termMod
+termMod -[hidden]right- edMod
+edMod -[hidden]right- deskMod
 
-' ═══════════════════════════════════════════════════
-' RELATIONSHIPS — packages → modules
-' ═══════════════════════════════════════════════════
+appMod -[hidden]right- progMod
+progMod -[hidden]right- svcMod
+svcMod -[hidden]right- secMod
+secMod -[hidden]right- fontMod
 
-pkgXxh --> termXonsh
-pkgRofi --> deskRofi
+cfgMod -[hidden]down- appMod
+coreMod -[hidden]down- progMod
+termMod -[hidden]down- svcMod
+edMod -[hidden]down- secMod
+deskMod -[hidden]down- fontMod
 
-' ═══════════════════════════════════════════════════
-' RELATIONSHIPS — dotfiles → modules
-' ═══════════════════════════════════════════════════
-
-cfgAwesome --> deskAwesome
-cfgNiri --> deskNiri
-cfgKando --> appKando
+' Support layer
+libPkg -[hidden]right- pkgPkg
+pkgPkg -[hidden]right- cfgPkg
 
 ' ═══════════════════════════════════════════════════
 ' LEGEND
@@ -185,10 +211,10 @@ cfgKando --> appKando
 
 legend bottom right
   |= Color |= Layer |
-  |<#BBDEFB> | Flake Engine |
-  |<#C8E6C9> | Host Configs |
-  |<#FFE0B2> | Modules (denix) |
-  |<#F3E5F5> | Lib (helpers) |
+  |<#BBDEFB> | Flake Engine + Outputs |
+  |<#C8E6C9> | Host Declarations |
+  |<#FFE0B2> | Module Definitions |
+  |<#F3E5F5> | Shared Libraries |
   |<#FCE4EC> | Custom Packages |
   |<#E0F7FA> | Dotfile Configs |
 endlegend

@@ -7,7 +7,7 @@ terminal, and editors.
 
 ## Documentation
 
-- [Architecture diagram](docs/architecture.png)
+- [Architecture diagram](docs/nix-config-architecture.png)
 - [Modules Reference](docs/MODULES.md) -- every module, its options, and default behavior
 - [Setup Guide](docs/SETUP.md) -- directory structure, rebuilding, adding hosts/modules
 - [Services Reference](docs/SERVICES.md) -- self-hosted services on bristlecone, ports, recovery procedures
@@ -17,7 +17,7 @@ terminal, and editors.
 
 ## Architecture
 
-![Architecture diagram](docs/architecture.png)
+![Architecture diagram](docs/nix-config-architecture.png)
 
 ---
 

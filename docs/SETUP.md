@@ -19,7 +19,7 @@ modules/                Shared modules (delib.module)
   applications/         NixOS-level GUI apps (creative, engineering, archiving)
   applications-home/    Home Manager GUI app configs (floorp, kando, kdenlive)
   programming/          Development tools (analysis, cloud)
-  services/             Self-hosted services
+  services/             Self-hosted services (see [SERVICES.md](SERVICES.md))
   terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij)
   editors/              Editor configurations (vscode, helix, doom-emacs)
   fonts/                Font packages and fontconfig
@@ -500,7 +500,7 @@ display manager, or audio. The bristlecone host is the reference server config.
 - **SSH** with key-only authentication (passwords disabled, root login denied)
 - **Netbird** VPN for secure remote access
 - **Firewall** with only necessary ports open
-- **Self-hosted services** via `myconfig.services.enable = true`
+- **Self-hosted services** via `myconfig.services.enable = true` (see [SERVICES.md](SERVICES.md) for ports, hardening, and recovery details)
 - All core packages (bat, ripgrep, git, claude-code, etc.) and terminal config
   (starship, zellij, xonsh) are still applied
 
