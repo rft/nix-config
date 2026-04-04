@@ -8,13 +8,17 @@ delib.host {
 
   darwin = {
     networking.hostName = "pineapple";
-    homebrew.casks = [ "ollama" ];
+    homebrew.brews = [ "ollama" ];
 
-    # Bind Ollama to all interfaces so other machines can reach it
-    launchd.agents.ollama-env = {
+    # Run ollama serve bound to all interfaces so other machines can reach it
+    launchd.user.agents.ollama-serve = {
       serviceConfig = {
-        ProgramArguments = [ "/bin/launchctl" "setenv" "OLLAMA_HOST" "0.0.0.0" ];
+        ProgramArguments = [ "/opt/homebrew/bin/ollama" "serve" ];
+        EnvironmentVariables.OLLAMA_HOST = "0.0.0.0";
         RunAtLoad = true;
+        KeepAlive = true;
+        StandardOutPath = "/tmp/ollama-serve.log";
+        StandardErrorPath = "/tmp/ollama-serve.err";
       };
     };
   };
