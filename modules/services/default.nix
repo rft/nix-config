@@ -48,10 +48,32 @@ delib.module {
       openFirewall = true;
     };
 
+    # Mosquitto MQTT broker
+    services.mosquitto = {
+      enable = true;
+      listeners = [{
+        acl = [ "pattern readwrite #" ];
+        users.hass = {
+          acl = [ "readwrite #" ];
+          hashedPasswordFile = "/var/lib/mosquitto/hass-password";
+        };
+      }];
+    };
+
     # Home Assistant
     services.home-assistant = {
       enable = true;
       openFirewall = true;
+      extraComponents = [
+        "hue"
+        "xiaomi_miio"
+        "google_translate"
+        "met"
+        "mqtt"
+        "esphome"
+        "cast"
+        "radio_browser"
+      ];
       config = {
         homeassistant = {
           name = "Home";
@@ -224,6 +246,17 @@ delib.module {
       if [ -e ${cfg.sslCertificate} ]; then
           cp ${cfg.sslCertificate} ${kasmDataDir}/certs/kasm_nginx.crt
           cp ${cfg.sslCertificateKey} ${kasmDataDir}/certs/kasm_nginx.key
+      fi
+
+      # Ensure certs are valid files — a failed prior init can leave them as
+      # directories (cp -rL of nix-store symlinks), which crashes nginx.
+      if [ ! -f ${kasmDataDir}/certs/kasm_nginx.crt ] || [ ! -f ${kasmDataDir}/certs/kasm_nginx.key ]; then
+          rm -rf ${kasmDataDir}/certs/kasm_nginx.crt ${kasmDataDir}/certs/kasm_nginx.key
+          mkdir -p ${kasmDataDir}/certs
+          openssl req -x509 -nodes -days 1825 -newkey rsa:2048 \
+              -keyout ${kasmDataDir}/certs/kasm_nginx.key \
+              -out ${kasmDataDir}/certs/kasm_nginx.crt \
+              -subj "/C=US/ST=VA/L=None/O=None/OU=DoFu/CN=$(hostname)/emailAddress=none@none.none" 2>/dev/null
       fi
 
       yq -i '.server.zone_name = "'default'"' ${kasmDataDir}/conf/app/api.app.config.yaml
