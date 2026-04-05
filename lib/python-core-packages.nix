@@ -1,6 +1,7 @@
 ps: with ps; [
   beautifulsoup4
   distributed
+  duckdb
   ipdb
   ipython
   jax
