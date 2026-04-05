@@ -23,6 +23,10 @@ delib.module {
     #   teammateMode = "auto";
     # };
 
+    home.sessionPath = [
+      "$HOME/.local/bin"
+    ];
+
     home.sessionVariables = {
       EDITOR = "nvim";
     };

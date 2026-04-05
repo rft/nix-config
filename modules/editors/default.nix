@@ -26,6 +26,14 @@ delib.module {
       recursive = true;
     };
 
+    home.file.".local/bin/doom" = {
+      executable = true;
+      text = ''
+        #!/usr/bin/env bash
+        exec "$HOME/.config/emacs/bin/doom" "$@"
+      '';
+    };
+
     home.activation.installDoomEmacs = inputs.home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       export PATH="${lib.makeBinPath ([ emacsPackage pkgs.git pkgs.ripgrep pkgs.fd ] ++ [ pkgs.coreutils ])}:$PATH"
       if [ ! -d "$HOME/.config/emacs" ]; then
