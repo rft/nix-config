@@ -81,6 +81,9 @@
           ];
           extensions = with denix.lib.extensions; [
             args
+            (overlays.withConfig {
+              defaultTargets = [ "nixos" "home" "darwin" ];
+            })
             (base.withConfig {
               args.enable = true;
               rices.enable = false;
