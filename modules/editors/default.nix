@@ -5,6 +5,7 @@ let
     fd
     git
   ];
+  emacsPackage = if pkgs.stdenv.hostPlatform.isDarwin then pkgs.emacs30 else pkgs.emacs30-pgtk;
 in
 delib.module {
   name = "editors";
@@ -12,15 +13,11 @@ delib.module {
   options = delib.singleEnableOption true;
 
   nixos.ifEnabled = {
-    environment.systemPackages = with pkgs; [
-      emacs30-pgtk
-    ] ++ sharedPackages;
+    environment.systemPackages = [ emacsPackage ] ++ sharedPackages;
   };
 
   darwin.ifEnabled = {
-    environment.systemPackages = with pkgs; [
-      emacs30
-    ] ++ sharedPackages;
+    environment.systemPackages = [ emacsPackage ] ++ sharedPackages;
   };
 
   home.ifEnabled = {
@@ -29,9 +26,10 @@ delib.module {
       recursive = true;
     };
 
-    home.activation.installDoomEmacs = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.installDoomEmacs = inputs.home-manager.lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      export PATH="${lib.makeBinPath ([ emacsPackage pkgs.git pkgs.ripgrep pkgs.fd ] ++ [ pkgs.coreutils ])}:$PATH"
       if [ ! -d "$HOME/.config/emacs" ]; then
-        run ${pkgs.git}/bin/git clone --depth 1 https://github.com/doomemacs/doomemacs \
+        run git clone --depth 1 https://github.com/doomemacs/doomemacs \
           "$HOME/.config/emacs"
       fi
       if [ ! -d "$HOME/.config/emacs/.local/straight" ]; then
