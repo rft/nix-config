@@ -5,6 +5,7 @@ let
     nixd
     nixfmt-rfc-style
     nodejs_22
+    cucumber
     plantuml-c4
     swi-prolog
     texlab

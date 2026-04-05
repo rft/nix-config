@@ -169,6 +169,7 @@ delib.module {
               roipoussiere.cadquery
               tonybaloney.vscode-pets
               bernhard-42.ocp-cad-viewer
+              alexkrechik.cucumberautocomplete
               anthropic.claude-code
               marimo-team.vscode-marimo
               openai.chatgpt
