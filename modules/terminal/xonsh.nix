@@ -19,6 +19,12 @@ delib.module {
     programs.fzf.enable = true;
 
     home.file.".config/xonsh/rc.xsh".text = ''
+      import os
+      # home.sessionPath entries aren't picked up by xonsh, so add them here
+      local_bin = os.path.expanduser("~/.local/bin")
+      if local_bin not in $PATH:
+          $PATH.insert(0, local_bin)
+
       $XONSH_SHOW_TRACEBACK = True
       if $TERM and $TERM.startswith("xterm-kitty"):
           aliases['rg'] = 'rg --hyperlink-format=kitty'
@@ -42,7 +48,6 @@ delib.module {
       [$PATH.remove(path) for path in $PATH.paths if path.startswith("/mnt/c/")]
       # Allow a minimal set of Windows executables.
       # Use WIN_USER override when Windows username differs from WSL username.
-      import os
       win_user = __xonsh__.env.get("WIN_USER")
       if not win_user:
           wsl_user = __xonsh__.env.get("USER")
