@@ -18,6 +18,9 @@ delib.host {
 
     virtualisation.vmware.guest.enable = true;
 
+    boot.kernelModules = [ "vmwgfx" ];
+    hardware.graphics.enable = true;
+
     networking.hostName = "sequoia-archive";
     networking.networkmanager.enable = true;
     time.timeZone = "America/Phoenix";
