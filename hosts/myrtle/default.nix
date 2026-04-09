@@ -1,4 +1,4 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.host {
   name = "myrtle";
   type = "desktop";
@@ -19,7 +19,19 @@ delib.host {
     virtualisation.vmware.guest.enable = true;
 
     boot.kernelModules = [ "vmwgfx" ];
-    hardware.graphics.enable = true;
+    hardware.graphics = {
+      enable = true;
+      extraPackages = with pkgs; [ mesa ];
+    };
+
+    # Increase PipeWire buffer size to reduce audio crackling in VM
+    services.pipewire.extraConfig.pipewire."10-vm-latency" = {
+      "context.properties" = {
+        "default.clock.min-quantum" = 1024;
+        "default.clock.quantum" = 2048;
+        "default.clock.max-quantum" = 4096;
+      };
+    };
 
     networking.hostName = "sequoia-archive";
     networking.networkmanager.enable = true;
