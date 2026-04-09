@@ -8,7 +8,7 @@ delib.host {
 
   darwin = {
     networking.hostName = "pineapple";
-    homebrew.casks = [ "ollama" ];
+    homebrew.casks = [ "ollama" "google-chrome" ];
 
     # Bind Ollama to all interfaces so other machines can reach it
     environment.variables.OLLAMA_HOST = "0.0.0.0";
