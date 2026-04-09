@@ -25,6 +25,9 @@ delib.module {
       if local_bin not in $PATH:
           $PATH.insert(0, local_bin)
 
+      # home.sessionVariables aren't picked up by xonsh either
+      $EDITOR = "nvim"
+
       $XONSH_SHOW_TRACEBACK = True
       if $TERM and $TERM.startswith("xterm-kitty"):
           aliases['rg'] = 'rg --hyperlink-format=kitty'
