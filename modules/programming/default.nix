@@ -1,7 +1,6 @@
 { delib, inputs, pkgs, ... }:
 let
   sharedPackages = with pkgs; [
-    direnv
     nixd
     nixfmt-rfc-style
     nodejs_22
@@ -31,5 +30,13 @@ delib.module {
   darwin.ifEnabled = {
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     environment.systemPackages = sharedPackages;
+  };
+
+  home.ifEnabled = {
+    programs.direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+      enableNushellIntegration = true;
+    };
   };
 }

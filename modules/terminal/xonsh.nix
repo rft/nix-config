@@ -33,6 +33,11 @@ delib.module {
           aliases['rg'] = 'rg --hyperlink-format=kitty'
 
       try:
+          xontrib load direnv
+      except Exception:
+          pass
+
+      try:
           execx($(atuin init xonsh))
       except Exception:
           pass
