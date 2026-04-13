@@ -32,10 +32,9 @@ delib.module {
       if $TERM and $TERM.startswith("xterm-kitty"):
           aliases['rg'] = 'rg --hyperlink-format=kitty'
 
-      try:
+      import shutil as _shutil
+      if _shutil.which("direnv"):
           xontrib load direnv
-      except Exception:
-          pass
 
       try:
           execx($(atuin init xonsh))

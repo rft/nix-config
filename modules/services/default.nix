@@ -110,6 +110,7 @@ delib.module {
       enable = true;
       listenAddress = "0.0.0.0";
       behindProxy = true;
+      playwrightSupport = true;
     };
 
     networking.firewall.allowedTCPPorts = [ 28981 8443 5000 ];
