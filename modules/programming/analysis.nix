@@ -1,9 +1,17 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 let
   sharedPackages = with pkgs; [
     binwalk
     file
     tlaps
+    binsider
+    hexyl
+    # TODO: Add more profilers here
   ];
   linuxPackages = with pkgs; [
     aflplusplus
@@ -15,9 +23,13 @@ delib.module {
 
   options = delib.singleEnableOption false;
 
-  myconfig.always = { myconfig, ... }: {
-    programs.programming.analysis.enable = lib.mkDefault (myconfig.programs.programming.enable or false);
-  };
+  myconfig.always =
+    { myconfig, ... }:
+    {
+      programs.programming.analysis.enable = lib.mkDefault (
+        myconfig.programs.programming.enable or false
+      );
+    };
 
   nixos.ifEnabled = {
     environment.systemPackages = sharedPackages ++ linuxPackages;

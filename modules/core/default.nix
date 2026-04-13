@@ -9,12 +9,10 @@ let
     atuin
     bandwhich
     bat
-    binsider
     bottom
     claude-code
     codex
     copilot-cli
-    csvlens
     difftastic
     dua
     fd
@@ -23,7 +21,6 @@ let
     gemini-cli
     gh
     git
-    hexyl
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     lazygit
@@ -76,7 +73,10 @@ delib.module {
   name = "core";
 
   home.always = {
-    home.packages = with pkgs; [ ripgrep fd ];
+    home.packages = with pkgs; [
+      ripgrep
+      fd
+    ];
   };
 
   nixos.always = {
@@ -113,7 +113,8 @@ delib.module {
         # Create /var/run/netbird before starting — netbird needs this
         # directory to create its Unix socket for client-daemon IPC
         ProgramArguments = [
-          "/bin/sh" "-c"
+          "/bin/sh"
+          "-c"
           "/bin/mkdir -p /var/run/netbird && ${pkgs.netbird}/bin/netbird service run"
         ];
         RunAtLoad = true;
