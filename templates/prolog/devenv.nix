@@ -2,6 +2,6 @@
 
 {
   packages = [
-    pkgs.swiProlog
+    pkgs.swi-prolog
   ];
 }
