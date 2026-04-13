@@ -387,6 +387,15 @@ Editor configurations. Enabled by default (`singleEnableOption true`).
 - **Default behavior:** Auto-enables when `myconfig.editors.enable` is true.
 - **Dependencies:** `editors`.
 
+### editors.opencode
+
+- **Path:** `modules/editors/opencode.nix`
+- **Name:** `editors.opencode`
+- **Enable option:** `myconfig.editors.opencode.enable` (default: `true`)
+- **Description:** Writes the global OpenCode config (`~/.config/opencode/opencode.json`) with an Ollama provider pointing to `pineapple.netbird.cloud:11434` using the `gemma4:26b` model. Disables built-in free models so only the Ollama provider is available.
+- **Default behavior:** Auto-enables when `myconfig.editors.enable` is true. To disable on a specific host, set `myconfig.editors.opencode.enable = false`.
+- **Dependencies:** `editors`. Requires Netbird connectivity to reach Ollama on pineapple.
+
 ---
 
 ## Fonts
