@@ -6,11 +6,15 @@
 }:
 let
   sharedPackages = with pkgs; [
-    binwalk
-    file
-    tlaps
     binsider
+    binwalk
+    coz
+    file
     hexyl
+    perf
+    samply
+    tlaps
+    valgrind
     # TODO: Add more profilers here
   ];
   linuxPackages = with pkgs; [
