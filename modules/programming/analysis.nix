@@ -8,18 +8,18 @@ let
   sharedPackages = with pkgs; [
     binsider
     binwalk
-    coz
     file
     hexyl
-    perf
     samply
     tlaps
-    valgrind
     # TODO: Add more profilers here
   ];
   linuxPackages = with pkgs; [
     aflplusplus
+    coz
+    perf
     tlaplusToolbox
+    valgrind
   ];
 in
 delib.module {
