@@ -14,6 +14,12 @@ delib.module {
           focus_follows_mouse = true;
           mouse_follows_focus = true;
         };
+        swipe = {
+          continuous = true;
+          gesture = {
+            fingers_count = 4;
+          };
+        };
         bindings = {
           window_focus_west = "cmd - h";
           window_focus_east = "cmd - l";
