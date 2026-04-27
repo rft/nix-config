@@ -81,6 +81,31 @@ For example:
 sudo nixos-rebuild switch --flake .#bristlecone
 ```
 
+## Updating Flake Inputs
+
+To update only the unstable channel (used for pinned packages via the overlay),
+without touching the core nixpkgs or other inputs:
+
+```bash
+nix flake lock --update-input nixpkgs-unstable
+```
+
+This is the safest way to get newer versions of packages pulled from unstable —
+it avoids the risk of breaking changes from a full `nix flake update`, which
+would also bump nixpkgs stable, home-manager, and every other input.
+
+To update everything at once (riskier):
+
+```bash
+nix flake update
+```
+
+To update a single specific input:
+
+```bash
+nix flake lock --update-input <input-name>
+```
+
 ## Darwin (macOS)
 
 Darwin hosts use [nix-darwin](https://github.com/nix-darwin/nix-darwin) instead
