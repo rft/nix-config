@@ -9,7 +9,7 @@ delib.overlayModule {
       };
     })
     (final: prev: {
-      inherit (prev.unstable) vscodium helix claude-code codex kando;
+      inherit (prev.unstable) vscodium helix claude-code codex kando llama-cpp;
     })
   ];
 }

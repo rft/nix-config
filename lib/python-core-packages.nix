@@ -2,6 +2,7 @@ ps: with ps; [
   beautifulsoup4
   distributed
   duckdb
+  huggingface-hub
   ipdb
   ipython
   jax

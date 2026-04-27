@@ -3,7 +3,6 @@ let
   sharedPackages = with pkgs; [
     kitty
     mpv
-    ollama
   ];
 
   linuxOnlyPackages = with pkgs; [

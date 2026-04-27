@@ -1,4 +1,4 @@
-{ delib, ... }:
+{ delib, pkgs, ... }:
 delib.host {
   name = "pineapple";
   type = "darwin";
@@ -8,10 +8,25 @@ delib.host {
 
   darwin = {
     networking.hostName = "pineapple";
-    homebrew.casks = [ "ollama" "google-chrome" ];
+    homebrew.casks = [ "google-chrome" ];
 
-    # Bind Ollama to all interfaces so other machines can reach it
-    environment.variables.OLLAMA_HOST = "0.0.0.0";
+    environment.systemPackages = [ pkgs.llama-cpp ];
+
+    launchd.user.agents.llama-server = {
+      serviceConfig = {
+        Label = "com.llama-cpp.server";
+        ProgramArguments = [
+          "${pkgs.llama-cpp}/bin/llama-server"
+          "--host" "0.0.0.0"
+          "--port" "8080"
+          "--model" "/Users/astro/Models/default.gguf"
+        ];
+        RunAtLoad = true;
+        KeepAlive = true;
+        StandardOutPath = "/tmp/llama-server.log";
+        StandardErrorPath = "/tmp/llama-server.err";
+      };
+    };
   };
 
   myconfig = {

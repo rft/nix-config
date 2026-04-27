@@ -12,20 +12,20 @@ delib.module {
     xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
       "$schema" = "https://opencode.ai/config.json";
       provider = {
-        ollama = {
+        llama-cpp = {
           npm = "@ai-sdk/openai-compatible";
-          name = "Ollama";
+          name = "llama.cpp";
           options = {
-            baseURL = "http://pineapple.netbird.cloud:11434/v1";
+            baseURL = "http://pineapple.netbird.cloud:8080/v1";
           };
           models = {
-            "gemma4:26b" = {
-              name = "Gemma 4 26B";
+            default = {
+              name = "Default";
             };
           };
         };
       };
-      model = "ollama/gemma4:26b";
+      model = "llama-cpp/default";
       disabled_providers = [ "opencode" ];
     };
   };

@@ -41,13 +41,6 @@ delib.module {
       openFirewall = true;
     };
 
-    # Ollama LLM inference
-    services.ollama = {
-      enable = true;
-      host = "0.0.0.0";
-      openFirewall = true;
-    };
-
     # Mosquitto MQTT broker
     services.mosquitto = {
       enable = true;
@@ -129,12 +122,6 @@ delib.module {
     });
     systemd.services.jellyfin.environment.JELLYFIN_HttpListenerHost__BindAddresses = "0.0.0.0";
     systemd.tmpfiles.rules = [ "d /var/log/jellyfin 0750 jellyfin jellyfin -" ];
-
-    systemd.services.ollama.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      RestrictNamespaces = false;
-      ReadWritePaths = [ "/var/lib/ollama" ];
-    });
 
     systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       PrivateDevices = false; # May need device access for integrations
