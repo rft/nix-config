@@ -54,7 +54,7 @@ delib.host {
 
   darwin = {
     networking.hostName = "lemon";
-    homebrew.casks = [ "shottr" "topnotch" ];
+    homebrew.casks = [ "shottr" "topnotch" "typewhisper/tap/typewhisper" ];
     system.defaults.dock.autohide = true;
   };
 
