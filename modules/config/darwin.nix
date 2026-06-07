@@ -51,6 +51,7 @@ delib.module {
           "claude"
           "dockdoor"
           "jordanbaird-ice"
+          "stats"
         ];
         masApps = {
           "Amphetamine" = 937984704;
