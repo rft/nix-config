@@ -12,10 +12,15 @@ delib.module {
   nixos.always.imports = [
     inputs.nix-mineral.nixosModules.nix-mineral
 
-    # nix-mineral references services.resolved.settings which doesn't exist
-    # in NixOS 25.11 yet — define it here so the module can be imported
+    # nix-mineral references options that don't exist in NixOS 25.11 yet
+    # — define shims here so the module can be imported
     ({ lib, ... }: {
       options.services.resolved.settings = lib.mkOption {
+        type = lib.types.anything;
+        default = {};
+        description = "Shim for nix-mineral compatibility";
+      };
+      options.systemd.coredump.settings = lib.mkOption {
         type = lib.types.anything;
         default = {};
         description = "Shim for nix-mineral compatibility";

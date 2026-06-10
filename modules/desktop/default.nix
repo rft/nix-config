@@ -4,20 +4,22 @@ delib.module {
 
   options = delib.singleEnableOption false;
 
-  nixos.always.imports = [ inputs.noctalia.nixosModules.default ];
   home.always.imports = [ inputs.noctalia.homeModules.default ];
 
   nixos.ifEnabled = {
-    services.noctalia-shell = {
-      enable = true;
-      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
-    };
+    environment.systemPackages = [
+      inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
   };
 
   home.ifEnabled = {
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
-      settings.colorSchemes.predefinedScheme = "Nord";
+      settings.theme = {
+        mode = "dark";
+        source = "builtin";
+        builtin = "Nord";
+      };
     };
   };
 }
