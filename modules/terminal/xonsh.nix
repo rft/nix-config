@@ -32,6 +32,16 @@ delib.module {
       if $TERM and $TERM.startswith("xterm-kitty"):
           aliases['rg'] = 'rg --hyperlink-format=kitty'
 
+      # mkcd: create a directory (and parents) then cd into it
+      def _mkcd(args):
+          if not args:
+              import sys
+              print("usage: mkcd DIR", file=sys.stderr)
+              return 1
+          os.makedirs(args[0], exist_ok=True)
+          aliases['cd']([args[0]])
+      aliases['mkcd'] = _mkcd
+
       import shutil as _shutil
       if _shutil.which("direnv"):
           xontrib load direnv

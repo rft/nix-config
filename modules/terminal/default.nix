@@ -14,6 +14,8 @@ delib.module {
         if [[ "''${TERM-}" == xterm-kitty* ]]; then
           alias rg='rg --hyperlink-format=kitty'
         fi
+        # mkcd: create a directory (and parents) then cd into it
+        mkcd() { mkdir -p -- "$1" && cd -- "$1"; }
       '';
     };
 
@@ -24,6 +26,8 @@ delib.module {
         if [[ "''${TERM-}" == xterm-kitty* ]]; then
           alias rg='rg --hyperlink-format=kitty'
         fi
+        # mkcd: create a directory (and parents) then cd into it
+        mkcd() { mkdir -p -- "$1" && cd -- "$1"; }
       '';
     };
 

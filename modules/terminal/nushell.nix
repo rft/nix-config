@@ -38,6 +38,11 @@ delib.module {
           if (($env.TERM? | default "" | str starts-with "xterm-kitty")) {
             alias rg = rg --hyperlink-format=kitty
           }
+          # mkcd: create a directory (and parents) then cd into it
+          def --env mkcd [dir: path] {
+            mkdir $dir
+            cd $dir
+          }
           $env.PATH = ($env.PATH |
           split row (char esep) |
           prepend /home/myuser/.apps |
