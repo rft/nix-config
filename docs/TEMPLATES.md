@@ -118,6 +118,7 @@ rendering are provided via devenv.
 - `devenv.nix` -- Python + uv + OpenGL system libraries
 - `pyproject.toml` -- build123d, cadquery, ocp-vscode
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Points VS Code at the devenv venv interpreter (via direnv + explicit fallback)
 - `.gitignore` -- Ignores for devenv, direnv, Python, uv, and Nix artifacts
 
 **Included packages:**
