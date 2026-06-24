@@ -24,6 +24,7 @@ let
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     lazygit
+    lue
     netbird
     opencode
     oxker
