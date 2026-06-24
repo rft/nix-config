@@ -10,7 +10,11 @@ delib.host {
     networking.hostName = "pineapple";
     homebrew.casks = [ "google-chrome" ];
 
-    environment.systemPackages = [ pkgs.llama-cpp ];
+    environment.systemPackages = [
+      pkgs.llama-cpp
+      pkgs.colima
+      pkgs.docker-client
+    ];
 
     launchd.user.agents.llama-server = {
       serviceConfig = {
