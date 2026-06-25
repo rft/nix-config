@@ -136,10 +136,6 @@
           path = ./templates/haskell;
           description = "Haskell development environment with devenv";
         };
-        veryl = {
-          path = ./templates/veryl;
-          description = "Veryl HDL development environment with devenv";
-        };
         prolog = {
           path = ./templates/prolog;
           description = "Prolog development environment with SWI-Prolog";

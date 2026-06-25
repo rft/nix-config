@@ -16,7 +16,6 @@ development shells. Each template provides a ready-to-use `flake.nix`,
 | `node`   | [Node.js](https://nodejs.org) with TypeScript and npm |
 | `gleam`  | [Gleam](https://gleam.run) with Erlang/OTP |
 | `haskell` | [Haskell](https://www.haskell.org) with GHC, Cabal, and HLS |
-| `veryl`  | [Veryl](https://veryl-lang.org) HDL with Verilator and Surfer |
 | `prolog` | [SWI-Prolog](https://www.swi-prolog.org) |
 | `ada`    | [Ada](https://www.adacore.com) with GNAT and gprbuild |
 | `amaranth` | [Amaranth](https://amaranth-lang.org) HDL with yosys and Surfer |
@@ -237,22 +236,6 @@ built-in language support.
 - `ghc` -- Glasgow Haskell Compiler
 - `cabal-install` -- Cabal build tool (provided by devenv)
 - `haskell-language-server` -- LSP server
-
-### Veryl
-
-Sets up Veryl, a modern hardware description language, with Verilator for
-simulation and Surfer for waveform viewing.
-
-**Files:**
-- `flake.nix` -- Flake with devenv integration
-- `devenv.nix` -- Veryl + Verilator + Surfer
-- `.envrc` -- direnv integration
-- `.gitignore` -- Ignores for devenv, direnv, Veryl, and Nix artifacts
-
-**Included tools:**
-- `veryl` -- Veryl compiler and language server
-- `verilator` -- Verilog/SystemVerilog simulator
-- `surfer` -- Waveform viewer
 
 ### Prolog
 
