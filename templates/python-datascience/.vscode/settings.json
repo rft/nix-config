@@ -1,0 +1,10 @@
+{
+  // Restart direnv automatically so the devenv environment (PATH, etc.)
+  // is available to the integrated terminal, debugger, and Python extension.
+  "direnv.restart.automatic": true,
+
+  // Point at the devenv-managed venv interpreter (not the /nix/store/...
+  // path) so it survives devenv rebuilds.
+  "python.defaultInterpreterPath": "${workspaceFolder}/.devenv/state/venv/bin/python",
+  "python.terminal.activateEnvInCurrentTerminal": true
+}

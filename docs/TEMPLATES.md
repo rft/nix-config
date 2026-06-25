@@ -77,6 +77,7 @@ Sets up Python with uv for dependency management. Dependencies are declared in
 - `devenv.nix` -- Python + uv configuration
 - `pyproject.toml` -- Project metadata and dependencies
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Points VS Code at the devenv venv interpreter (via direnv + explicit fallback)
 - `.gitignore` -- Ignores for devenv, direnv, Python, uv, and Nix artifacts
 
 **Adding dependencies:**
@@ -135,6 +136,7 @@ describe electronic circuits in Python instead of graphical schematic editors.
 - `devenv.nix` -- Python + uv configuration
 - `pyproject.toml` -- skidl, kinparse, matplotlib
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Points VS Code at the devenv venv interpreter (via direnv + explicit fallback)
 - `.gitignore` -- Ignores for devenv, direnv, Python, uv, and Nix artifacts
 
 **Included packages:**
@@ -152,6 +154,7 @@ Jupyter and Marimo.
 - `devenv.nix` -- Python + uv configuration
 - `pyproject.toml` -- Full data science stack
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Points VS Code at the devenv venv interpreter (via direnv + explicit fallback)
 - `.gitignore` -- Ignores for devenv, direnv, Python, uv, and Nix artifacts
 
 **Included packages:**
@@ -170,6 +173,7 @@ Sets up the Rust stable toolchain via devenv.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- Rust stable channel
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Rust, and Nix artifacts
 
 **devenv.nix options:**
@@ -199,6 +203,7 @@ npm dependencies are auto-installed on shell entry.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- Node.js + TypeScript + npm auto-install
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Node, and Nix artifacts
 
 **Included tools:**
@@ -215,6 +220,7 @@ support.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- Gleam + Erlang
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Gleam, and Nix artifacts
 
 **Included tools:**
@@ -230,6 +236,7 @@ built-in language support.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- GHC + Cabal + HLS
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Haskell, and Nix artifacts
 
 **Included tools:**
@@ -245,6 +252,7 @@ Sets up SWI-Prolog for logic programming.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- SWI-Prolog
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Prolog, and Nix artifacts
 
 **Included tools:**
@@ -258,6 +266,7 @@ Sets up Ada with the GNAT compiler (GCC-based) and gprbuild project manager.
 - `flake.nix` -- Flake with devenv integration
 - `devenv.nix` -- GNAT + gprbuild
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
 - `.gitignore` -- Ignores for devenv, direnv, Ada, and Nix artifacts
 
 **Included tools:**
@@ -275,6 +284,7 @@ viewing.
 - `devenv.nix` -- Python + uv + yosys + Surfer
 - `pyproject.toml` -- amaranth, amaranth-boards
 - `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Points VS Code at the devenv venv interpreter (via direnv + explicit fallback)
 - `.gitignore` -- Ignores for devenv, direnv, Python, uv, Amaranth, and Nix artifacts
 
 **Included packages:**

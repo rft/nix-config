@@ -1,0 +1,5 @@
+{
+  // Restart direnv automatically so the devenv environment (PATH, compilers,
+  // language servers, etc.) is available to the integrated terminal and editor.
+  "direnv.restart.automatic": true
+}
