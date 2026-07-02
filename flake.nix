@@ -174,7 +174,7 @@
         in
         {
           rofi-desktop = import ./packages/rofi-desktop {
-            inherit inputs pkgs;
+            inherit pkgs;
             inherit (pkgs)
               lib
               stdenvNoCC

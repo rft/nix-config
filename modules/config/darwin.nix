@@ -1,7 +1,6 @@
 {
   delib,
   lib,
-  pkgs,
   ...
 }:
 delib.module {
@@ -15,6 +14,10 @@ delib.module {
       system.primaryUser = myconfig.constants.username;
       system.stateVersion = lib.mkDefault 6;
 
+      # "nano" is intentionally hardcoded: the flake sets denix's
+      # homeManagerUser = "nano" for all hosts, and nix-darwin's home-manager
+      # integration requires that user to exist even when
+      # constants.username differs (e.g. "astro" on lemon/pineapple).
       users.users.nano = {
         home = "/Users/${myconfig.constants.username}";
       };

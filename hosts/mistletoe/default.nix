@@ -1,4 +1,4 @@
-{ delib, inputs, ... }:
+{ delib, inputs, lib, ... }:
 delib.host {
   name = "mistletoe";
   type = "wsl";
@@ -14,6 +14,9 @@ delib.host {
     wsl.defaultUser = "nano";
 
     programs.nix-ld.enable = true;
+
+    # WSL manages resolv.conf itself, so systemd-resolved does nothing here
+    services.resolved.enable = lib.mkForce false;
 
     # Fix MTU for WSL2 when Windows Netbird client sets adapter to 1280
     systemd.services.fix-wsl-mtu = {
