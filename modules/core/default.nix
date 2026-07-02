@@ -1,5 +1,6 @@
 {
   delib,
+  lib,
   inputs,
   pkgs,
   ...
@@ -80,7 +81,11 @@ delib.module {
     ];
   };
 
-  nixos.always = {
+  nixos.always = { myconfig, ... }: {
+    # Hostname follows the denix host name; hosts that need a different one
+    # (e.g. myrtle -> "sequoia-archive") just set networking.hostName themselves.
+    networking.hostName = lib.mkDefault myconfig.host.name;
+
     home-manager.backupFileExtension = "backup";
 
     environment.systemPackages = sharedPackages ++ linuxOnlyPackages;
@@ -102,7 +107,9 @@ delib.module {
     };
   };
 
-  darwin.always = {
+  darwin.always = { myconfig, ... }: {
+    networking.hostName = lib.mkDefault myconfig.host.name;
+
     home-manager.backupFileExtension = "backup";
 
     environment.systemPackages = sharedPackages;

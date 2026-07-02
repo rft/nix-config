@@ -43,6 +43,7 @@ Guidelines for AI agents working in this nix-config repository.
   - Home Manager: `nix eval .#homeConfigurations.<config>.activationPackage.drvPath`
 - When practical, follow eval with the matching dry-run/build/test command. Eval is the minimum bar, not the whole test plan.
 - If editing a module used by multiple hosts/platforms, eval at least one NixOS and one Darwin target (if applicable).
+- CI (`.github/workflows/check.yml`) evals every NixOS host on Linux and every Darwin host on macOS for each push/PR.
 
 ## Prefer upstream fixes
 
@@ -92,6 +93,9 @@ delib.module {
 - Route config by block: `nixos.*` for NixOS-only, `darwin.*` for macOS-only, `home.*` for both (via home-manager), `myconfig.*` for pre-evaluation defaults.
 - Use `lib.mkDefault` for values that hosts should be able to override.
 - Split packages into `sharedPackages`, `linuxOnlyPackages`, `darwinOnlyPackages` when a module targets multiple platforms.
+- Shared NixOS desktop defaults (locale, pipewire, xserver, printing, timezone, firefox) live in `modules/desktop/default.nix` under `nixos.ifEnabled` with `lib.mkDefault` — override per host instead of re-declaring them.
+- `networking.hostName` defaults to the denix host name (set in `modules/core/default.nix`); only set it in a host when the hostname differs from the host name (e.g. myrtle → "sequoia-archive").
+- `nixosConfigurations`/`darwinConfigurations` are filtered by each host's declared `type` in `flake.nix` — adding a host requires no flake change.
 
 ### Host template
 
@@ -105,7 +109,9 @@ delib.host {
   home.home.stateVersion = "24.05";
 
   nixos = {
-    system.stateVersion = "25.11";
+    # Freeze at the release the host was installed with — never bump on upgrades.
+    # Existing hosts range from 24.11 (desktops) to 25.11 (bristlecone).
+    system.stateVersion = "24.11";
     imports = [ ../../hardware/hostname.nix ];
   };
 
@@ -118,7 +124,7 @@ delib.host {
 
 ## Package and overlay patterns
 
-- Unstable packages are pinned via overlays in `modules/config/overlays.nix` — add new unstable pins there, not inline.
+- Unstable packages are pinned via overlays in `modules/config/overlays/` — add new unstable pins to `unstable.nix` there, not inline.
 - Custom packages live in `packages/` and are added to the overlay.
 - Shared Python package lists live in `lib/python-core-packages.nix` and `lib/xonsh-extra-packages.nix`.
 

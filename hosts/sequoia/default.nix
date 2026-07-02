@@ -18,55 +18,24 @@ delib.host {
 
     virtualisation.vmware.guest.enable = true;
 
-    networking.hostName = "sequoia";
-    networking.networkmanager.enable = true;
     time.timeZone = "America/Phoenix";
 
-    i18n.defaultLocale = "en_US.UTF-8";
-    i18n.extraLocaleSettings = {
-      LC_ADDRESS = "en_US.UTF-8";
-      LC_IDENTIFICATION = "en_US.UTF-8";
-      LC_MEASUREMENT = "en_US.UTF-8";
-      LC_MONETARY = "en_US.UTF-8";
-      LC_NAME = "en_US.UTF-8";
-      LC_NUMERIC = "en_US.UTF-8";
-      LC_PAPER = "en_US.UTF-8";
-      LC_TELEPHONE = "en_US.UTF-8";
-      LC_TIME = "en_US.UTF-8";
+    # Running under VMware: the emulated HD-Audio driver returns bad timing info
+    # (snd_pcm_avail "Broken pipe"), so PipeWire's default timer-based scheduling
+    # underruns and stutters during video playback (146 xruns/15s observed).
+    # Switching the ALSA sink to IRQ/period-based scheduling fixes it (xruns -> 0).
+    services.pipewire.wireplumber.extraConfig."99-vm-alsa-irq" = {
+      "monitor.alsa.rules" = [
+        {
+          matches = [ { "node.name" = "~alsa_output.*"; } ];
+          actions.update-props = {
+            "api.alsa.disable-tsched" = true;
+            "api.alsa.headroom" = 4096;
+            "api.alsa.period-size" = 1024;
+          };
+        }
+      ];
     };
-
-    services.xserver = {
-      enable = true;
-      xkb = { layout = "us"; variant = ""; };
-    };
-    services.printing.enable = true;
-
-    services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      # Running under VMware: the emulated HD-Audio driver returns bad timing info
-      # (snd_pcm_avail "Broken pipe"), so PipeWire's default timer-based scheduling
-      # underruns and stutters during video playback (146 xruns/15s observed).
-      # Switching the ALSA sink to IRQ/period-based scheduling fixes it (xruns -> 0).
-      wireplumber.extraConfig."99-vm-alsa-irq" = {
-        "monitor.alsa.rules" = [
-          {
-            matches = [ { "node.name" = "~alsa_output.*"; } ];
-            actions.update-props = {
-              "api.alsa.disable-tsched" = true;
-              "api.alsa.headroom" = 4096;
-              "api.alsa.period-size" = 1024;
-            };
-          }
-        ];
-      };
-    };
-
-    programs.firefox.enable = true;
   };
 
   myconfig = {

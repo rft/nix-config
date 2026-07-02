@@ -1,0 +1,37 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  eval-nixos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Evaluate every NixOS host
+        run: |
+          hosts=$(nix eval .#nixosConfigurations --apply 'c: builtins.concatStringsSep " " (builtins.attrNames c)' --raw)
+          echo "hosts: $hosts"
+          for host in $hosts; do
+            echo "::group::$host"
+            nix eval ".#nixosConfigurations.$host.config.system.build.toplevel.drvPath"
+            echo "::endgroup::"
+          done
+
+  eval-darwin:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Evaluate every Darwin host
+        run: |
+          hosts=$(nix eval .#darwinConfigurations --apply 'c: builtins.concatStringsSep " " (builtins.attrNames c)' --raw)
+          echo "hosts: $hosts"
+          for host in $hosts; do
+            echo "::group::$host"
+            nix eval ".#darwinConfigurations.$host.config.system.build.toplevel.drvPath"
+            echo "::endgroup::"
+          done

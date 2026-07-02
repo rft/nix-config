@@ -18,7 +18,6 @@ delib.host {
     };
     boot.loader.efi.canTouchEfiVariables = true;
 
-    networking.hostName = "bristlecone";
     networking.networkmanager.enable = true;
     time.timeZone = "America/Phoenix";
 

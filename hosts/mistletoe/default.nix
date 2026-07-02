@@ -14,7 +14,6 @@ delib.host {
     wsl.defaultUser = "nano";
 
     programs.nix-ld.enable = true;
-    networking.hostName = "mistletoe";
 
     # Fix MTU for WSL2 when Windows Netbird client sets adapter to 1280
     systemd.services.fix-wsl-mtu = {

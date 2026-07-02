@@ -24,10 +24,12 @@
 
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nixcats-nvim = {
       url = "github:rft/nixcat-nvim";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-vscode-extensions = {
@@ -96,12 +98,25 @@
             inherit inputs;
           };
         };
-      darwinHosts = [ "lemon" ];
+      homeConfigurations = mkConfigurations "home";
+      # Every configuration carries the full host registry (myconfig.hosts) with
+      # each host's declared type; read it from one config so the OS-specific
+      # outputs below can never desync from hosts/ when a host is added or retyped.
+      hostTypes = builtins.mapAttrs (_: host: host.type) (
+        builtins.head (builtins.attrValues homeConfigurations)
+      ).config.myconfig.hosts;
+      filterHosts =
+        wantDarwin:
+        inputs.nixpkgs.lib.filterAttrs (name: _: (hostTypes.${name} == "darwin") == wantDarwin);
     in
     {
-      nixosConfigurations = builtins.removeAttrs (mkConfigurations "nixos") darwinHosts;
-      darwinConfigurations = mkConfigurations "darwin";
-      homeConfigurations = mkConfigurations "home";
+      nixosConfigurations = filterHosts false (mkConfigurations "nixos");
+      darwinConfigurations = filterHosts true (mkConfigurations "darwin");
+      inherit homeConfigurations;
+
+      formatter = inputs.nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (
+        system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-rfc-style
+      );
 
       templates = {
         python = {

@@ -1,4 +1,8 @@
 { delib, pkgs, ... }:
+let
+  username = "astro";
+  homeDir = "/Users/${username}";
+in
 delib.host {
   name = "pineapple";
   type = "darwin";
@@ -7,7 +11,6 @@ delib.host {
   home.home.stateVersion = "24.05";
 
   darwin = {
-    networking.hostName = "pineapple";
     homebrew.casks = [ "google-chrome" ];
 
     environment.systemPackages = [
@@ -23,18 +26,18 @@ delib.host {
           "${pkgs.llama-cpp}/bin/llama-server"
           "--host" "0.0.0.0"
           "--port" "8080"
-          "--model" "/Users/astro/Models/default.gguf"
+          "--model" "${homeDir}/Models/default.gguf"
         ];
         RunAtLoad = true;
         KeepAlive = true;
-        StandardOutPath = "/tmp/llama-server.log";
-        StandardErrorPath = "/tmp/llama-server.err";
+        StandardOutPath = "${homeDir}/Library/Logs/llama-server.log";
+        StandardErrorPath = "${homeDir}/Library/Logs/llama-server.err";
       };
     };
   };
 
   myconfig = {
-    constants.username = "astro";
+    constants.username = username;
 
     applications.enable = true;
     programs.programming.enable = true;
