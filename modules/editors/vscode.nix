@@ -24,9 +24,7 @@ delib.module {
         else
           pkgs.symlinkJoin {
             name = "${pkgs.vscodium.name}-wayland";
-            pname = pkgs.vscodium.pname;
-            version = pkgs.vscodium.version;
-            meta = pkgs.vscodium.meta;
+            inherit (pkgs.vscodium) pname version meta;
             paths = [ pkgs.vscodium ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
             postBuild = ''
@@ -125,7 +123,7 @@ delib.module {
     in
     {
       programs.vscode = {
-        package = package;
+        inherit package;
         enable = true;
         mutableExtensionsDir = true;
         profiles.default = {

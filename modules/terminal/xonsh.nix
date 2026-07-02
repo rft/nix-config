@@ -7,7 +7,7 @@ delib.module {
   home.ifEnabled =
   let
     xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
-    xxh = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.xxh;
+    inherit (inputs.self.packages.${pkgs.stdenv.hostPlatform.system}) xxh;
   in
   {
     home.packages = [

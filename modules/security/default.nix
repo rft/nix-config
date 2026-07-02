@@ -1,7 +1,6 @@
 {
   delib,
   inputs,
-  lib,
   ...
 }:
 delib.module {
@@ -51,7 +50,6 @@ delib.module {
           tcp-window-scaling = true;
         };
       };
-
-};
+    };
   };
 }
