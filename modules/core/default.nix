@@ -27,6 +27,7 @@ let
     lazygit
     lue
     netbird
+    nmap
     opencode
     oxker
     pandoc
