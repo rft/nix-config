@@ -29,7 +29,9 @@
 
     nixcats-nvim = {
       url = "github:rft/nixcat-nvim";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # nixcat-nvim is developed against unstable (its plugins may not exist
+      # in the stable channel yet), so don't pin it to the 25.11 nixpkgs.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     nix-vscode-extensions = {
