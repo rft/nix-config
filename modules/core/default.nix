@@ -24,6 +24,7 @@ let
     git
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
+    jujutsu
     lazygit
     lue
     netbird
