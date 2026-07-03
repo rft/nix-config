@@ -13,6 +13,8 @@ delib.module {
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
+        # Deploy targets (e.g. juniper) mkForce this to "prohibit-password"
+        # so deploy-rs/nixos-anywhere can push as root with a key.
         PermitRootLogin = "no";
       };
     };

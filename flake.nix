@@ -63,6 +63,16 @@
       url = "github:cynicsketch/nix-mineral";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    deploy-rs = {
+      url = "github:serokell/deploy-rs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -115,6 +125,21 @@
       nixosConfigurations = filterHosts false (mkConfigurations "nixos");
       darwinConfigurations = filterHosts true (mkConfigurations "darwin");
       inherit homeConfigurations;
+
+      # Remote deployment targets (see docs/VPS.md). First install is done
+      # with nixos-anywhere; subsequent updates with deploy-rs.
+      deploy.nodes.juniper = {
+        hostname = "juniper.netbird.cloud";
+        profiles.system = {
+          user = "root";
+          sshUser = "root";
+          path = inputs.deploy-rs.lib.x86_64-linux.activate.nixos inputs.self.nixosConfigurations.juniper;
+        };
+      };
+
+      checks = builtins.mapAttrs (
+        _: deployLib: deployLib.deployChecks inputs.self.deploy
+      ) inputs.deploy-rs.lib;
 
       formatter = inputs.nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (
         system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-rfc-style

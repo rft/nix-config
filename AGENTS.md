@@ -4,15 +4,15 @@ Guidelines for AI agents working in this nix-config repository.
 
 ## Repository structure
 
-- **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 25.11, home-manager, denix, nix-darwin, nixos-wsl, etc.)
-- **`hosts/`** — 9 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS server: bristlecone; WSL: mistletoe; Darwin: lemon, pineapple; installer)
+- **`flake.nix`** — Flake definition with 17 inputs (nixpkgs 25.11, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
+- **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, programming, terminal, editors, fonts, services)
 - **`config/`** — Static app config files (awesome, niri, kando)
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix)
 - **`packages/`** — Custom packages (rofi-desktop, xxh)
-- **`hardware/`** — Hardware-specific configs for desktop hosts
+- **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
 - **`templates/`** — 11 devenv project templates
-- **`docs/`** — Documentation (MODULES.md, SETUP.md, TEMPLATES.md, architecture diagrams)
+- **`docs/`** — Documentation (MODULES.md, SETUP.md, TEMPLATES.md, VPS.md, architecture diagrams)
 
 ## Verify the target first
 
@@ -25,6 +25,7 @@ Guidelines for AI agents working in this nix-config repository.
 | Host | System | Type | Flake output |
 |------|--------|------|-------------|
 | bristlecone | x86_64-linux | server | `nixosConfigurations.bristlecone` |
+| juniper | x86_64-linux | server | `nixosConfigurations.juniper` (VPS — installed via nixos-anywhere, updated via `deploy.nodes.juniper`, see docs/VPS.md) |
 | cottonwood | x86_64-linux | desktop | `nixosConfigurations.cottonwood` |
 | redwood | x86_64-linux | desktop | `nixosConfigurations.redwood` |
 | sequoia | x86_64-linux | desktop | `nixosConfigurations.sequoia` |

@@ -5,6 +5,7 @@
 ```
 hosts/                  Per-host configurations (delib.host)
   bristlecone/          Headless server, SSH + Netbird + self-hosted services
+  juniper/              Barebones VPS, nixos-anywhere + deploy-rs (see VPS.md)
   cottonwood/           Desktop, vertical screen
   redwood/              Desktop, full creative+engineering
   sequoia/              Desktop, VMware guest
@@ -31,13 +32,14 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 9 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 10 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
 extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`).
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
 | **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless), GRUB+EFI |
+| **juniper** | server | America/Phoenix | Barebones VPS: core only, SSH (key-only, root prohibit-password), Netbird, disko disk layout, hybrid BIOS/UEFI GRUB, zram swap. Deployed remotely — see [VPS.md](VPS.md) |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
@@ -49,21 +51,21 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 ### Module enablement by host
 
-| Module | bristlecone | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
-|--------|:-----------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
-| desktop | -- | yes | yes | yes | yes | -- | -- | -- | -- |
-| applications | -- | yes | yes | yes | yes | -- | yes | yes | -- |
-| applications.creative | -- | auto | yes | yes | no | -- | auto | auto | -- |
-| applications.engineering | -- | auto | yes | yes | no | -- | auto | auto | -- |
-| applications.archiving | -- | -- | -- | -- | yes | -- | -- | -- | -- |
-| desktop.paneru | -- | -- | -- | -- | -- | -- | yes | -- | -- |
-| programs.programming | -- | yes | yes | yes | no | yes | yes | yes | -- |
-| programs.programming.analysis | -- | auto | auto | auto | -- | yes | auto | auto | -- |
-| programs.programming.cloud | -- | -- | -- | -- | -- | yes | yes | yes | -- |
-| services | yes | -- | -- | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | -- | yes | yes | yes |
+| Module | bristlecone | juniper | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
+|--------|:-----------:|:-------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
+| desktop | -- | -- | yes | yes | yes | yes | -- | -- | -- | -- |
+| applications | -- | -- | yes | yes | yes | yes | -- | yes | yes | -- |
+| applications.creative | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.engineering | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
+| applications.archiving | -- | -- | -- | -- | -- | yes | -- | -- | -- | -- |
+| desktop.paneru | -- | -- | -- | -- | -- | -- | -- | yes | -- | -- |
+| programs.programming | -- | -- | yes | yes | yes | no | yes | yes | yes | -- |
+| programs.programming.analysis | -- | -- | auto | auto | auto | -- | yes | auto | auto | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | -- | yes | yes | yes | -- |
+| services | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| editors | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| fonts | auto | auto | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
