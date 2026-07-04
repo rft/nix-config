@@ -7,6 +7,7 @@
 }:
 let
   sharedPackages = with pkgs; [
+    aria2
     atuin
     bandwhich
     bat
