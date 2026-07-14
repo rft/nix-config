@@ -172,6 +172,7 @@ delib.module {
               marimo-team.vscode-marimo
               openai.chatgpt
               astral-sh.ty
+              leanprover.lean4
             ]);
           userSettings = general // editor // git // languages;
           keybindings = [

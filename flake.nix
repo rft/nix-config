@@ -190,6 +190,10 @@
           path = ./templates/amaranth;
           description = "Amaranth HDL development environment with yosys and surfer";
         };
+        lean = {
+          path = ./templates/lean;
+          description = "Lean 4 development environment with devenv";
+        };
       };
 
       packages.x86_64-linux =

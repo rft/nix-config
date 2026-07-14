@@ -19,6 +19,7 @@ development shells. Each template provides a ready-to-use `flake.nix`,
 | `prolog` | [SWI-Prolog](https://www.swi-prolog.org) |
 | `ada`    | [Ada](https://www.adacore.com) with GNAT and gprbuild |
 | `amaranth` | [Amaranth](https://amaranth-lang.org) HDL with yosys and Surfer |
+| `lean`   | [Lean 4](https://lean-lang.org) theorem prover with Lake |
 
 ## Usage
 
@@ -292,6 +293,27 @@ viewing.
 - `amaranth-boards` -- Board definitions for common FPGA boards (via uv)
 - `yosys` -- Open-source synthesis suite (nix)
 - `surfer` -- Waveform viewer (nix)
+
+### Lean
+
+Sets up [Lean 4](https://lean-lang.org), an interactive theorem prover and
+functional programming language, via devenv's built-in language support.
+
+**Files:**
+- `flake.nix` -- Flake with devenv integration
+- `devenv.nix` -- Lean 4
+- `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
+- `.gitignore` -- Ignores for devenv, direnv, Lean, and Nix artifacts
+
+**Included tools:**
+- `lean` -- Lean 4 compiler and language server
+- `lake` -- Lean build tool and package manager (bundled with lean4)
+
+Scaffold a project inside the shell with `lake init <name>` or
+`lake new <name>`. The VS Code [lean4
+extension](https://marketplace.visualstudio.com/items?itemName=leanprover.lean4)
+picks up `lean` from the direnv-provided PATH.
 
 ---
 

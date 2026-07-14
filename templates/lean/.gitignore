@@ -1,0 +1,14 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# Lean
+.lake/
+*.olean
+*.ilean
+
+# Nix
+result
