@@ -194,6 +194,10 @@
           path = ./templates/lean;
           description = "Lean 4 development environment with devenv";
         };
+        formal = {
+          path = ./templates/formal;
+          description = "Formal methods environment with TLA+ and Alloy";
+        };
       };
 
       packages.x86_64-linux =

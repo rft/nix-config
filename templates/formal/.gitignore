@@ -1,0 +1,14 @@
+# Devenv
+.devenv*
+devenv.local.nix
+
+# Direnv
+.direnv
+
+# TLA+
+states/
+*.toolbox/
+*_TTrace_*
+
+# Nix
+result

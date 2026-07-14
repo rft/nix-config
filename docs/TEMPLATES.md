@@ -20,6 +20,7 @@ development shells. Each template provides a ready-to-use `flake.nix`,
 | `ada`    | [Ada](https://www.adacore.com) with GNAT and gprbuild |
 | `amaranth` | [Amaranth](https://amaranth-lang.org) HDL with yosys and Surfer |
 | `lean`   | [Lean 4](https://lean-lang.org) theorem prover with Lake |
+| `formal` | [TLA+](https://lamport.azurewebsites.net/tla/tla.html) and [Alloy](https://alloytools.org) formal methods |
 
 ## Usage
 
@@ -314,6 +315,28 @@ Scaffold a project inside the shell with `lake init <name>` or
 `lake new <name>`. The VS Code [lean4
 extension](https://marketplace.visualstudio.com/items?itemName=leanprover.lean4)
 picks up `lean` from the direnv-provided PATH.
+
+### Formal
+
+Sets up [TLA+](https://lamport.azurewebsites.net/tla/tla.html) and
+[Alloy](https://alloytools.org) for formal specification and model checking.
+Both toolchains are Java-based and run on Linux and macOS.
+
+**Files:**
+- `flake.nix` -- Flake with devenv integration
+- `devenv.nix` -- TLA+ tools + Alloy
+- `.envrc` -- direnv integration
+- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
+- `.gitignore` -- Ignores for devenv, direnv, TLC artifacts, and Nix artifacts
+
+**Included tools:**
+- `tlc` -- TLA+ model checker
+- `sany` -- TLA+ parser and semantic analyzer
+- `pcal` -- PlusCal-to-TLA+ translator
+- `alloy6` -- Alloy Analyzer 6 (launches the GUI; pass a `.als` file to open it)
+
+Check a spec with `tlc Spec.tla` (expects a `Spec.cfg` alongside it). Run
+`alloy6` to open the Alloy Analyzer.
 
 ---
 
