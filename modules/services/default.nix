@@ -101,6 +101,17 @@ delib.module {
       listenPort = 8443;
     };
 
+    # Karakeep bookmark manager (links, notes, images)
+    # Secrets (NEXTAUTH_SECRET, MEILI_MASTER_KEY) are auto-generated into
+    # /var/lib/karakeep/settings.env on first start by karakeep-init.
+    services.karakeep = {
+      enable = true;
+      extraEnvironment = {
+        PORT = "3000";
+        DISABLE_NEW_RELEASE_CHECK = "true";
+      };
+    };
+
     # changedetection.io (website change monitoring)
     services.changedetection-io = {
       enable = true;
@@ -109,7 +120,7 @@ delib.module {
       playwrightSupport = true;
     };
 
-    networking.firewall.allowedTCPPorts = [ 28981 8443 5000 ];
+    networking.firewall.allowedTCPPorts = [ 28981 8443 5000 3000 ];
 
     # ──────────────────────────────────────────────
     # Systemd service hardening
@@ -301,6 +312,17 @@ delib.module {
 
       systemctl restart docker-kasm_proxy.service
     ''));
+
+    # karakeep-browser is already hardened by the upstream module;
+    # karakeep-init only runs migrations, leave it as-is.
+    systemd.services.karakeep-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      ReadWritePaths = [ "/var/lib/karakeep" ];
+    });
+    systemd.services.karakeep-workers.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
+      ProtectSystem = "strict";
+      ReadWritePaths = [ "/var/lib/karakeep" ];
+    });
 
     systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
