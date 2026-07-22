@@ -61,7 +61,6 @@ delib.host {
     constants.username = "astro";
 
     applications.enable = true;
-    desktop.omniwm.enable = true;
     programs.programming.enable = true;
     programs.programming.cloud.enable = true;
     fonts.enable = true;
