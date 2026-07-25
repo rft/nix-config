@@ -55,13 +55,18 @@ delib.host {
   darwin = {
     homebrew.casks = [ "shottr" "topnotch" "typewhisper/tap/typewhisper" ];
     system.defaults.dock.autohide = true;
+
+    # Free up ⌥⌘Space for nehir's command palette by disabling macOS's
+    # built-in "Show Finder search window" Spotlight shortcut (symbolic
+    # hotkey 65). Takes effect after a logout.
+    system.defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys."65".enabled = false;
   };
 
   myconfig = {
     constants.username = "astro";
 
     applications.enable = true;
-    desktop.omniwm.enable = true;
+    desktop.nehir.enable = true;
     programs.programming.enable = true;
     programs.programming.cloud.enable = true;
     fonts.enable = true;
