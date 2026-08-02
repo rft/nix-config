@@ -144,6 +144,23 @@ delib.module {
     # Drop this line if the SMB transport ever replaces SFTP here.
     services.openssh.settings.HostKeyAlgorithms = "+ssh-rsa";
 
+    # Same story for MACs: the scanner offers only non-ETM algorithms
+    # (hmac-sha2-256/512 plus sha1/md5/ripemd160 variants), while the default
+    # list here is ETM-only — an empty intersection, so the connection dies at
+    # "no matching MAC found" before authentication is even attempted.
+    # Appending just the two SHA-2 non-ETM variants keeps the SHA-1 and MD5
+    # ones the firmware also offers off the table. Encrypt-and-MAC rather than
+    # encrypt-then-MAC is a real but modest downgrade, and only for clients
+    # that can't do better — the ETM entries stay first in the list.
+    # Macs is not a valid Match keyword either, hence global.
+    services.openssh.settings.Macs = [
+      "hmac-sha2-512-etm@openssh.com"
+      "hmac-sha2-256-etm@openssh.com"
+      "umac-128-etm@openssh.com"
+      "hmac-sha2-512"
+      "hmac-sha2-256"
+    ];
+
     # internal-sftp is required, not stylistic: the global `Subsystem sftp`
     # points at a /nix/store binary that doesn't exist inside the chroot.
     # -u 0022 makes uploads 0644 so paperless-consumer can read them.

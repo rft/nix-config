@@ -263,22 +263,27 @@ Without it the scanner fails and sshd logs
 
 ### If the scanner can't connect
 
-**SFTP:** bristlecone runs OpenSSH 10.x with modern-only algorithms (ETM MACs,
-curve25519/mlkem KEX). Brother firmware often offers only `ecdh-sha2-nistp256`,
-`diffie-hellman-group14-sha256`, and non-ETM `hmac-sha2-256`, which can leave an
-empty intersection. Check `journalctl -u sshd | grep -i 'no matching'`.
+**MAC negotiation (hit in practice).** bristlecone's default MAC list is ETM-only;
+the ADS-1700W offers only non-ETM. Empty intersection, so the connection dies
+before authentication — and the scanner reports a misleading generic
+"Authentication Error" for *any* connection failure, so always read the server log
+rather than trusting its message:
 
-The fix cannot be scoped to a `Match` block — sshd does not accept `Ciphers`,
-`MACs`, or `KexAlgorithms` there. Widen them host-wide inside the services module
-(bristlecone only, leaving the VPS untouched), writing the full list explicitly
-since any definition discards the option default:
-
-```nix
-services.openssh.settings.Macs = lib.mkForce [ /* current three */ "hmac-sha2-256" ];
+```
+Unable to negotiate with <scanner-ip>: no matching MAC found.
+Their offer: hmac-sha2-256,hmac-sha2-512,hmac-sha1,hmac-sha1-96,hmac-md5,...
 ```
 
-Add only what the log says is missing. If the firmware demands SHA-1 MACs, use the
-SMB path instead of weakening SSH for every client.
+Fixed by appending the two SHA-2 non-ETM variants (and none of the SHA-1/MD5 ones
+the firmware also offers) to `services.openssh.settings.Macs`. Like
+`HostKeyAlgorithms`, `Macs` is not a valid `Match` keyword, so it's host-wide; the
+ETM entries stay first so every other client still negotiates them. Note the full
+list must be written out — any definition discards the option default.
+
+For other algorithm classes, check `journalctl -u sshd | grep -i 'no matching'` and
+add only what the log names. `Ciphers` and `KexAlgorithms` needed no change. If the
+firmware ever demands SHA-1 MACs or MD5, use the SMB path instead of weakening SSH
+for every client.
 
 **SFTP, RSA signature rejected:** the scanner's key is RSA, and OpenSSH has refused
 SHA-1 `ssh-rsa` signatures since 8.8. If the log shows
