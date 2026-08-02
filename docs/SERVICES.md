@@ -184,8 +184,17 @@ derives `ReadWritePaths` from the `consumptionDir` option, so the relocation nee
 no change to the hardening block.
 
 With `PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS`, each subdirectory name becomes a tag on
-ingest. Add a directory to `scanTags` in `modules/services/default.nix` to add a
-new tagged drop point.
+ingest, and paperless creates any tag that doesn't exist yet. The tag is applied
+unconditionally from the path — nothing inspects the document — so a file dropped
+in `receipts/` is tagged `receipts` whether or not it is one. Nested directories
+apply multiple tags (`foo/bar/x.pdf` → `foo` *and* `bar`).
+
+**Drop at the top level of `consume/` for no tag at all** — that's the right target
+for miscellaneous documents, leaving classification to paperless's own workflow
+rules in the web UI.
+
+Add a directory to `scanTags` in `modules/services/default.nix` to add a new tagged
+drop point. Paperless does not delete these directories after consuming from them.
 
 ### Transports
 
