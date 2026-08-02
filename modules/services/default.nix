@@ -131,6 +131,19 @@ delib.module {
       ];
     };
 
+    # The ADS-1700W only accepts an RSA server host key (it rejects the ed25519
+    # one outright) and only offers the legacy SHA-1 `ssh-rsa` host key
+    # algorithm, which OpenSSH has not offered by default since 8.8. Without
+    # this the scanner fails with "no matching host key type found".
+    #
+    # This is host-wide, not scoped: HostKeyAlgorithms is not a valid Match
+    # keyword. `+ssh-rsa` appends to the defaults, so modern clients still
+    # negotiate ed25519/rsa-sha2 and only ever fall back to SHA-1 if they ask
+    # for it. It weakens host *authentication* only — user pubkey auth is
+    # governed separately by PubkeyAcceptedAlgorithms and is untouched.
+    # Drop this line if the SMB transport ever replaces SFTP here.
+    services.openssh.settings.HostKeyAlgorithms = "+ssh-rsa";
+
     # internal-sftp is required, not stylistic: the global `Subsystem sftp`
     # points at a /nix/store binary that doesn't exist inside the chroot.
     # -u 0022 makes uploads 0644 so paperless-consumer can read them.

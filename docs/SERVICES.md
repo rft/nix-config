@@ -232,13 +232,34 @@ profile per tag directory.
 | Port | 22 | 445 |
 | Username | `scanner` | `scanner` |
 | Auth Method | Public Key (Client Key Pair) | password from `smbpasswd` |
-| Server Public Key | import `/etc/ssh/ssh_host_ed25519_key.pub` | — |
+| Server Public Key | import `/etc/ssh/ssh_host_rsa_key.pub` — **not** the ed25519 one | — |
 | Store Directory | `/consume/receipts` (absolute *inside the chroot*) | `scan/receipts` |
 
 Per-profile scan settings worth using: 300 dpi, 2-sided (Long Edge), Auto Colour
 Detect, **Skip Blank Page = On**, Auto Deskew = On, File Type = **PDF Multi-Page**
 — plain PDF, not the device's searchable-PDF mode; paperless's OCRmyPDF pass is
 better.
+
+### Server host key: RSA only
+
+The firmware rejects an Ed25519 server public key at upload time with *"The file
+is either no longer available or does not contain a valid public key"* — the file
+is fine, the algorithm just isn't supported. Import
+`/etc/ssh/ssh_host_rsa_key.pub`.
+
+The scanner also only offers the legacy SHA-1 `ssh-rsa` host key algorithm, which
+OpenSSH has not offered by default since 8.8, so sshd needs:
+
+```nix
+services.openssh.settings.HostKeyAlgorithms = "+ssh-rsa";
+```
+
+This is host-wide — `HostKeyAlgorithms` is not a valid `Match` keyword. `+ssh-rsa`
+appends to the defaults, so modern clients still negotiate ed25519/rsa-sha2 and
+only fall back to SHA-1 if they explicitly ask. It affects host authentication
+only; user pubkey auth is governed separately by `PubkeyAcceptedAlgorithms`.
+Without it the scanner fails and sshd logs
+`no matching host key type found. Their offer: ssh-rsa`.
 
 ### If the scanner can't connect
 
