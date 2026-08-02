@@ -167,6 +167,11 @@ delib.module {
     # mkAfter keeps the Match block last — every directive after a Match
     # belongs to it. Ciphers/MACs/KexAlgorithms cannot go in a Match block; if
     # the scanner can't negotiate, widen them globally (see docs/SERVICES.md).
+    #
+    # PubkeyAcceptedAlgorithms *is* a valid Match keyword, so the firmware's
+    # SHA-1 ssh-rsa user-auth signatures are accepted for this account alone —
+    # every other user on the host keeps the SHA-2-only default. Without it:
+    # "signature algorithm ssh-rsa not in PubkeyAcceptedAlgorithms".
     services.openssh.extraConfig = lib.mkAfter ''
       Match User scanner
         ChrootDirectory ${scanDir}
@@ -175,6 +180,7 @@ delib.module {
         X11Forwarding no
         PermitTunnel no
         PermitTTY no
+        PubkeyAcceptedAlgorithms +ssh-rsa
     '';
 
     # SMB fallback. The scanner password is set out-of-band with

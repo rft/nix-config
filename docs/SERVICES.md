@@ -285,19 +285,25 @@ add only what the log names. `Ciphers` and `KexAlgorithms` needed no change. If 
 firmware ever demands SHA-1 MACs or MD5, use the SMB path instead of weakening SSH
 for every client.
 
-**SFTP, RSA signature rejected:** the scanner's key is RSA, and OpenSSH has refused
-SHA-1 `ssh-rsa` signatures since 8.8. If the log shows
-`signature algorithm ssh-rsa not in PubkeyAcceptedAlgorithms`, the firmware is
-signing with SHA-1. Unlike `Ciphers`/`MACs`, `PubkeyAcceptedAlgorithms` *is* valid
-inside a `Match` block, so this one can be scoped to the scanner alone — add to the
-existing `Match User scanner` block in `modules/services/default.nix`:
+**RSA user-auth signature rejected (hit in practice).** The firmware signs user
+authentication with SHA-1 `ssh-rsa`, which OpenSSH has refused since 8.8:
+
+```
+userauth_pubkey: signature algorithm ssh-rsa not in PubkeyAcceptedAlgorithms [preauth]
+Connection closed by authenticating user scanner <scanner-ip> [preauth]
+```
+
+Unlike `Ciphers`/`MACs`/`HostKeyAlgorithms`, `PubkeyAcceptedAlgorithms` *is* valid
+inside a `Match` block, so this one is scoped to the scanner alone via the existing
+`Match User scanner` block:
 
 ```
   PubkeyAcceptedAlgorithms +ssh-rsa
 ```
 
-That affects only this chrooted, SFTP-only account; every other user on bristlecone
-keeps the default SHA-2-only policy.
+Every other user on bristlecone keeps the default SHA-2-only policy — confirm with
+`grep '^PubkeyAcceptedAlgorithms' /etc/ssh/sshd_config`, which should return
+nothing.
 
 **SMB:** older firmware may want SMB1/NT1, which Samba disallows by default. Update
 the scanner's firmware first. `server min protocol = NT1` plus
