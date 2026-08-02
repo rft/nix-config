@@ -18,8 +18,11 @@ Enabled via `myconfig.services.enable = true` in the host config.
 | Karakeep             | 3000  | HTTP     | 0.0.0.0      |
 | Meilisearch          | 7700  | HTTP     | 127.0.0.1    |
 | Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
+| Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
+| Samba NetBIOS        | 139   | SMB      | 0.0.0.0      |
 
 Mosquitto (MQTT, 1883) also runs but is not firewall-opened.
+Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
 
 ---
 
@@ -51,6 +54,9 @@ Mosquitto (MQTT, 1883) also runs but is not firewall-opened.
 
 - **What:** Document management system with OCR.
 - **Port:** 28981 (firewall opened manually)
+- **Data:** `/var/lib/paperless` (documents in `media/`)
+- **Consume dir:** `/var/lib/scan/consume` — *not* the default `/var/lib/paperless/consume`. See [Document scanning](#document-scanning) for why.
+- **Settings:** `PAPERLESS_OCR_LANGUAGE=eng`, recursive consume, subdirectories as tags.
 - **Hardening:** Systemd sandbox on web, scheduler, and consumer processes.
 
 ### Kasm Workspaces
@@ -151,6 +157,166 @@ If the init times out, check:
 - `sudo docker ps -a` — are the containers running?
 - `sudo docker logs kasm_db_init` — is the DB seeding progressing?
 - `sudo ls /var/lib/kasmweb/.done_initing_data` — has seeding completed?
+
+---
+
+## Document scanning
+
+A Brother ADS-1700W feeds Paperless. It is a *push* scanner — it uploads finished
+PDFs from its own touchscreen, so there is no SANE driver or scanner daemon on
+bristlecone. Two transports are configured so a firmware incompatibility on one
+doesn't block the workflow.
+
+### Directory layout
+
+```
+/var/lib/scan                  root:root 0755   ← sshd ChrootDirectory
+/var/lib/scan/consume          0777             ← PAPERLESS_CONSUMPTION_DIR
+/var/lib/scan/consume/receipts 0777             ← one subdir per scanner profile
+/var/lib/scan/consume/tax      0777
+/var/lib/scan/consume/manuals  0777
+```
+
+The consume dir sits under `/var/lib/scan` rather than `/var/lib/paperless`
+because sshd refuses to chroot into a directory it doesn't own, and
+`/var/lib/paperless` belongs to the `paperless` user. Upstream's paperless module
+derives `ReadWritePaths` from the `consumptionDir` option, so the relocation needs
+no change to the hardening block.
+
+With `PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS`, each subdirectory name becomes a tag on
+ingest, and paperless creates any tag that doesn't exist yet. The tag is applied
+unconditionally from the path — nothing inspects the document — so a file dropped
+in `receipts/` is tagged `receipts` whether or not it is one. Nested directories
+apply multiple tags (`foo/bar/x.pdf` → `foo` *and* `bar`).
+
+**Drop at the top level of `consume/` for no tag at all** — that's the right target
+for miscellaneous documents, leaving classification to paperless's own workflow
+rules in the web UI.
+
+Add a directory to `scanTags` in `modules/services/default.nix` to add a new tagged
+drop point. Paperless does not delete these directories after consuming from them.
+
+### Transports
+
+Both authenticate as the `scanner` system user (`users.users.scanner`).
+
+**SFTP (primary)** — reuses the existing sshd. A `Match User scanner` block chroots
+the account into `/var/lib/scan` and forces `internal-sftp`. `internal-sftp` is
+required, not stylistic: the global `Subsystem sftp` points at a `/nix/store`
+binary that doesn't exist inside the chroot. `-u 0022` forces uploads to mode 0644
+so `paperless-consumer` can read them; deleting them afterwards is covered by the
+0777 directory.
+
+Password auth is off globally (`modules/core/ssh.nix`), so the scanner uses a key
+pair. Generate it on the device (**Network > Security > Client Key Pair**), then
+**Export Public Key**. The ADS-1700W exports directly in OpenSSH format
+(`ssh-rsa AAAA... root@BR<mac>`) — no PEM/DER conversion needed — so the line goes
+straight into `users.users.scanner.openssh.authorizedKeys.keys`. Public keys belong
+in Nix here for the same reason `myconfig.constants.sshKeys` does.
+
+Note the export produces a **2048-bit RSA** key. Browsers auto-save it without a
+dialog; if the export seems to do nothing after showing "Request : Acknowledged",
+check the downloads folder before assuming it failed.
+
+**SMB (fallback)** — share `//bristlecone/scan` → `/var/lib/scan/consume`.
+`force user = paperless` makes uploads land owned by paperless. `nmbd` is enabled
+so the scanner's "Browse Network" button finds the host.
+
+### Bootstrap after deploy
+
+```bash
+sudo smbpasswd -a scanner          # SMB password, kept out of Nix
+ls -ld /var/lib/scan /var/lib/scan/consume
+sudo sshd -T -C user=scanner | grep -iE 'chroot|forcecommand'
+```
+
+### Scanner profile settings
+
+Browse to the scanner's IP, then **Scan > Scan to FTP/SFTP/Network**. Create one
+profile per tag directory.
+
+| Field | SFTP profile | SMB profile |
+|---|---|---|
+| Host Address | bristlecone's LAN IP | bristlecone's LAN IP |
+| Port | 22 | 445 |
+| Username | `scanner` | `scanner` |
+| Auth Method | Public Key (Client Key Pair) | password from `smbpasswd` |
+| Server Public Key | import `/etc/ssh/ssh_host_rsa_key.pub` — **not** the ed25519 one | — |
+| Store Directory | `/consume/receipts` (absolute *inside the chroot*) | `scan/receipts` |
+
+Per-profile scan settings worth using: 300 dpi, 2-sided (Long Edge), Auto Colour
+Detect, **Skip Blank Page = On**, Auto Deskew = On, File Type = **PDF Multi-Page**
+— plain PDF, not the device's searchable-PDF mode; paperless's OCRmyPDF pass is
+better.
+
+### Server host key: RSA only
+
+The firmware rejects an Ed25519 server public key at upload time with *"The file
+is either no longer available or does not contain a valid public key"* — the file
+is fine, the algorithm just isn't supported. Import
+`/etc/ssh/ssh_host_rsa_key.pub`.
+
+The scanner also only offers the legacy SHA-1 `ssh-rsa` host key algorithm, which
+OpenSSH has not offered by default since 8.8, so sshd needs:
+
+```nix
+services.openssh.settings.HostKeyAlgorithms = "+ssh-rsa";
+```
+
+This is host-wide — `HostKeyAlgorithms` is not a valid `Match` keyword. `+ssh-rsa`
+appends to the defaults, so modern clients still negotiate ed25519/rsa-sha2 and
+only fall back to SHA-1 if they explicitly ask. It affects host authentication
+only; user pubkey auth is governed separately by `PubkeyAcceptedAlgorithms`.
+Without it the scanner fails and sshd logs
+`no matching host key type found. Their offer: ssh-rsa`.
+
+### If the scanner can't connect
+
+**MAC negotiation (hit in practice).** bristlecone's default MAC list is ETM-only;
+the ADS-1700W offers only non-ETM. Empty intersection, so the connection dies
+before authentication — and the scanner reports a misleading generic
+"Authentication Error" for *any* connection failure, so always read the server log
+rather than trusting its message:
+
+```
+Unable to negotiate with <scanner-ip>: no matching MAC found.
+Their offer: hmac-sha2-256,hmac-sha2-512,hmac-sha1,hmac-sha1-96,hmac-md5,...
+```
+
+Fixed by appending the two SHA-2 non-ETM variants (and none of the SHA-1/MD5 ones
+the firmware also offers) to `services.openssh.settings.Macs`. Like
+`HostKeyAlgorithms`, `Macs` is not a valid `Match` keyword, so it's host-wide; the
+ETM entries stay first so every other client still negotiates them. Note the full
+list must be written out — any definition discards the option default.
+
+For other algorithm classes, check `journalctl -u sshd | grep -i 'no matching'` and
+add only what the log names. `Ciphers` and `KexAlgorithms` needed no change. If the
+firmware ever demands SHA-1 MACs or MD5, use the SMB path instead of weakening SSH
+for every client.
+
+**RSA user-auth signature rejected (hit in practice).** The firmware signs user
+authentication with SHA-1 `ssh-rsa`, which OpenSSH has refused since 8.8:
+
+```
+userauth_pubkey: signature algorithm ssh-rsa not in PubkeyAcceptedAlgorithms [preauth]
+Connection closed by authenticating user scanner <scanner-ip> [preauth]
+```
+
+Unlike `Ciphers`/`MACs`/`HostKeyAlgorithms`, `PubkeyAcceptedAlgorithms` *is* valid
+inside a `Match` block, so this one is scoped to the scanner alone via the existing
+`Match User scanner` block:
+
+```
+  PubkeyAcceptedAlgorithms +ssh-rsa
+```
+
+Every other user on bristlecone keeps the default SHA-2-only policy — confirm with
+`grep '^PubkeyAcceptedAlgorithms' /etc/ssh/sshd_config`, which should return
+nothing.
+
+**SMB:** older firmware may want SMB1/NT1, which Samba disallows by default. Update
+the scanner's firmware first. `server min protocol = NT1` plus
+`ntlm auth = ntlmv1-permitted` is a last resort and weakens SMB for every client.
 
 ---
 
