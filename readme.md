@@ -25,7 +25,7 @@ terminal, and editors.
 
 | Host | Type | Description |
 |------|------|-------------|
-| **bristlecone** | server | Self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless, Kasm Workspaces, changedetection.io) with nix-mineral hardening |
+| **bristlecone** | server | Self-hosted services (Jellyfin, Home Assistant, n8n, Paperless + scanner ingest, Kasm Workspaces, changedetection.io, Karakeep) with nix-mineral hardening |
 | **cottonwood** | desktop | Vertical screen rotation |
 | **redwood** | desktop | Full creative + engineering modules |
 | **sequoia** | desktop | VMware guest |
@@ -75,7 +75,7 @@ for the full reference.
 | **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
 | **Applications (HM)** | `modules/applications-home/` | Floorp browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
-| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless, kasm, changedetection.io |
+| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
 | **Editors** | `modules/editors/` | VSCodium, Helix, Doom Emacs |
 | **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |

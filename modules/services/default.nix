@@ -1,5 +1,14 @@
 { delib, pkgs, lib, ... }:
 let
+  # SFTP chroot root for the document scanner. sshd refuses to chroot into a
+  # path it doesn't own, so this stays root-owned and the paperless consume
+  # dir is nested inside it.
+  scanDir = "/var/lib/scan";
+
+  # One subdir per scanner profile — PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS turns
+  # each directory name into a paperless tag on ingest.
+  scanTags = [ "receipts" "tax" "manuals" ];
+
   # Shared baseline for all service sandboxes
   hardenedServiceConfig = {
     ProtectHome = true;
@@ -85,9 +94,85 @@ delib.module {
     };
 
     # Paperless document management
+    # The consume dir lives under /var/lib/scan (not the default
+    # /var/lib/paperless/consume) so sshd can chroot the scanner user into a
+    # root-owned parent. Upstream derives ReadWritePaths from consumptionDir,
+    # so the relocation needs no hardening change below.
     services.paperless = {
       enable = true;
       address = "0.0.0.0";
+      consumptionDir = "${scanDir}/consume";
+      consumptionDirIsPublic = true; # mode 0777 so the scanner can drop files
+      settings = {
+        PAPERLESS_OCR_LANGUAGE = "eng";
+        PAPERLESS_CONSUMER_RECURSIVE = true;
+        PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS = true;
+      };
+    };
+
+    # Brother ADS-1700W ingest: the scanner pushes finished PDFs over SFTP
+    # (primary) or SMB (fallback) into a per-tag subdir of the consume dir.
+    users.groups.scanner = { };
+    users.users.scanner = {
+      isSystemUser = true;
+      group = "scanner";
+      home = scanDir;
+      createHome = false;
+      # Safe with SFTP: sshd implements internal-sftp in-process and never
+      # execs the login shell.
+      shell = "${pkgs.shadow}/bin/nologin";
+      # Generated on the scanner under Network > Security > Client Key Pair and
+      # exported from Web Based Management. A public key, so it belongs in Nix
+      # for the same reason myconfig.constants.sshKeys does.
+      # RSA 2048, SHA256:QWsjjN2g4Y+sv1iZtrTUnS640Vn4nwp1UFbcBZ0gSg0
+      # The comment is the scanner's own hostname (BR + its MAC).
+      openssh.authorizedKeys.keys = [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDfTXHWsyvbt5qyT+1TecbgJrKBDHLP017k2ebfepreRD4SFicEbXaN4MS1WUhGNNNFYefvApDbhCskwJ3obe4PLPVFubfKsgWr8DpvaPuJQJc+vS8WH/lxReO7RvRDv0OhfY4oq0NgyAv4YNcUZGmSnuRfb3wTJe+HzNqFjwmuFSd8mZeNVifDuSGX8Mk8XaZ41M4iCYpNPidbWntK8AsF7Fck/FA9ebrWFckwkTGw8qqmOAgYXj0o+2VnfZsD+wb6OcUkHqWgEnPs7uoy+ufMoXNJpnEdQzf2QqLsLc9A4UgFdOiMn3Mu/RUbcLrqBc38pcVxD9cX91kOOBjqFyUP root@BR5CF370C3AC5A"
+      ];
+    };
+
+    # internal-sftp is required, not stylistic: the global `Subsystem sftp`
+    # points at a /nix/store binary that doesn't exist inside the chroot.
+    # -u 0022 makes uploads 0644 so paperless-consumer can read them.
+    # mkAfter keeps the Match block last — every directive after a Match
+    # belongs to it. Ciphers/MACs/KexAlgorithms cannot go in a Match block; if
+    # the scanner can't negotiate, widen them globally (see docs/SERVICES.md).
+    services.openssh.extraConfig = lib.mkAfter ''
+      Match User scanner
+        ChrootDirectory ${scanDir}
+        ForceCommand internal-sftp -u 0022 -d /consume
+        AllowTcpForwarding no
+        X11Forwarding no
+        PermitTunnel no
+        PermitTTY no
+    '';
+
+    # SMB fallback. The scanner password is set out-of-band with
+    # `smbpasswd -a scanner`, like /var/lib/mosquitto/hass-password.
+    services.samba = {
+      enable = true;
+      openFirewall = true;
+      nmbd.enable = true; # NetBIOS, so the scanner's "Browse Network" finds us
+      settings = {
+        global = {
+          "workgroup" = "WORKGROUP";
+          "server string" = "bristlecone";
+          "security" = "user";
+          "map to guest" = "never";
+          "load printers" = "no";
+          "printcap name" = "/dev/null";
+          "disable spoolss" = "yes";
+        };
+        scan = {
+          "path" = "${scanDir}/consume";
+          "browseable" = "yes";
+          "read only" = "no";
+          "valid users" = "scanner";
+          "force user" = "paperless"; # uploads land owned by paperless
+          "create mask" = "0644";
+          "directory mask" = "0755";
+        };
+      };
     };
 
     # Kasm Workspaces (container-based browser/desktop streaming)
@@ -136,7 +221,12 @@ delib.module {
       ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
     });
     systemd.services.jellyfin.environment.JELLYFIN_HttpListenerHost__BindAddresses = "0.0.0.0";
-    systemd.tmpfiles.rules = [ "d /var/log/jellyfin 0750 jellyfin jellyfin -" ];
+    systemd.tmpfiles.rules = [
+      "d /var/log/jellyfin 0750 jellyfin jellyfin -"
+      # Chroot root: must be root-owned and not group/world-writable.
+      # The consume dir inside it is created by the paperless module.
+      "d ${scanDir} 0755 root root -"
+    ] ++ map (tag: "d ${scanDir}/consume/${tag} 0777 - - -") scanTags;
 
     systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       PrivateDevices = false; # May need device access for integrations
