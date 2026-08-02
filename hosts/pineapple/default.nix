@@ -34,6 +34,16 @@ delib.host {
         StandardErrorPath = "${homeDir}/Library/Logs/llama-server.err";
       };
     };
+
+    # Keep the machine awake on boot (system sleep disabled while running).
+    launchd.user.agents.caffeinate = {
+      serviceConfig = {
+        Label = "com.user.caffeinate";
+        ProgramArguments = [ "/usr/bin/caffeinate" "-s" ];
+        RunAtLoad = true;
+        KeepAlive = true;
+      };
+    };
   };
 
   myconfig = {
