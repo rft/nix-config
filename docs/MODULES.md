@@ -284,14 +284,17 @@ Self-hosted services. Gated by `services.enable`.
 - **Path:** `modules/services/default.nix`
 - **Name:** `services`
 - **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Ollama (LLM inference), Home Assistant (home automation), n8n (workflow automation), Paperless (document management). Also installs borgmatic for backup configuration.
+- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks). Also installs borgmatic for backup configuration. See `docs/SERVICES.md` for the full reference.
 - **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
 - **Services and ports:**
-  - **Jellyfin** — media server (firewall auto-opened)
-  - **Ollama** — LLM inference (localhost:11434)
+  - **Jellyfin** — media server (firewall auto-opened, port 8096)
+  - **Mosquitto** — MQTT broker (port 1883, not firewall-opened)
   - **Home Assistant** — home automation (firewall auto-opened, default port 8123)
   - **n8n** — workflow automation (firewall auto-opened, default port 5678)
-  - **Paperless** — document management (localhost:28981)
+  - **Paperless** — document management (port 28981, firewall opened manually)
+  - **Kasm Workspaces** — browser/desktop streaming (port 8443 HTTPS, firewall opened manually)
+  - **changedetection.io** — website change monitoring (port 5000, firewall opened manually)
+  - **Karakeep** — bookmarks / read-it-later (port 3000, firewall opened manually; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222)
 - **Dependencies:** None.
 
 ---
