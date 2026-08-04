@@ -31,12 +31,4 @@ delib.module {
     nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
     environment.systemPackages = sharedPackages;
   };
-
-  home.ifEnabled = {
-    programs.direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-      enableNushellIntegration = true;
-    };
-  };
 }
