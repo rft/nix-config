@@ -138,7 +138,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "services" as svcMod {
-    component "jellyfin, ollama\nhome-assistant, n8n\npaperless, kasm\nchangedetection\nborgmatic" as svcAll
+    component "jellyfin, karakeep\nhome-assistant, n8n\npaperless + samba/sftp\nscanner ingest\nkasm, changedetection\nborgmatic" as svcAll
   }
 
   package "security" as secMod {
