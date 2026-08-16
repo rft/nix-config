@@ -2,7 +2,7 @@
 let
   sharedPackages = with pkgs; [
     nixd
-    nixfmt-rfc-style
+    nixfmt
     nodejs_22
     cucumber
     plantuml-c4

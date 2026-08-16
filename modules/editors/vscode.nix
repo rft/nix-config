@@ -122,7 +122,11 @@ delib.module {
       };
     in
     {
-      programs.vscode = {
+      # home-manager 26.05 made programs.vscode always write to Visual Studio
+      # Code's own paths (~/.vscode, "Code/User"), so a vscodium package set
+      # there would have its config written where vscodium never reads it.
+      # programs.vscodium takes the same schema and targets vscodium's paths.
+      programs.vscodium = {
         inherit package;
         enable = true;
         mutableExtensionsDir = true;

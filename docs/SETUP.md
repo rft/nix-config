@@ -675,18 +675,25 @@ system and `myconfig` option merging.
 
 ### Key inputs
 
+All 15 inputs. Only `nixpkgs`, `home-manager`, and `nix-darwin` pin a release
+branch — bumping to a new NixOS release means changing those three. Everything
+below them follows `nixpkgs`, except `nixcats-nvim`, which deliberately follows
+`nixpkgs-unstable`.
+
 | Input | Purpose |
 |-------|---------|
-| nixpkgs | NixOS 25.11 stable channel |
+| nixpkgs | NixOS 26.05 stable channel |
 | nixpkgs-unstable | Unstable channel (pinned packages via overlay) |
-| home-manager | Home Manager release-25.11 |
+| home-manager | Home Manager release-26.05 |
+| nix-darwin | macOS system configuration (nix-darwin-26.05) |
 | denix | Module/host framework |
 | noctalia | Noctalia shell (desktop shell) |
-| nixcats-nvim | Custom Neovim config |
+| nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nur | Nix User Repository (Floorp addons) |
-| nix-doom-emacs-unstraightened | Doom Emacs for Nix |
 | nixos-wsl | NixOS on WSL support |
-| nix-darwin | macOS system configuration |
 | paneru | macOS tiling window manager |
 | quickshell | Quickshell (available as input) |
+| nix-mineral | Opt-in system hardening |
+| disko | Declarative disk layouts (remote servers) |
+| deploy-rs | Remote deployment (juniper) |

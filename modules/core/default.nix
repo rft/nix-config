@@ -14,7 +14,6 @@ let
     bottom
     claude-code
     codex
-    copilot-cli
     difftastic
     dua
     fd
@@ -23,6 +22,8 @@ let
     gemini-cli
     gh
     git
+    # renamed upstream in 26.05: the old copilot-cli attr was retired as EOL
+    github-copilot-cli
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     jujutsu

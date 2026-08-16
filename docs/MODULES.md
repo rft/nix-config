@@ -251,7 +251,7 @@ Development tools. Gated by `programs.programming.enable`.
 - **Path:** `modules/programming/default.nix`
 - **Name:** `programs.programming`
 - **Enable option:** `myconfig.programs.programming.enable` (default: `false`)
-- **Description:** Core development tools: direnv, nixd, nixfmt-rfc-style, nodejs 22, plantuml-c4, swi-prolog, Python 3.12 with core packages. Sets `nix.nixPath` to the flake's nixpkgs.
+- **Description:** Core development tools: direnv, nixd, nixfmt, nodejs 22, plantuml-c4, swi-prolog, Python 3.12 with core packages. Sets `nix.nixPath` to the flake's nixpkgs.
 - **Default behavior:** Disabled by default. Enabled per-host.
 - **Dependencies:** `lib/python-core-packages.nix`.
 
