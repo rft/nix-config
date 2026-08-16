@@ -17,7 +17,7 @@ let
     nsxiv
     obs-studio
     pciutils
-    plover.dev
+    plover
     rofi
     spotify
   ];

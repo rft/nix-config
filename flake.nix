@@ -2,11 +2,11 @@
   description = "rft's flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -30,7 +30,7 @@
     nixcats-nvim = {
       url = "github:rft/nixcat-nvim";
       # nixcat-nvim is developed against unstable (its plugins may not exist
-      # in the stable channel yet), so don't pin it to the 25.11 nixpkgs.
+      # in the stable channel yet), so don't pin it to the stable nixpkgs.
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
@@ -50,7 +50,7 @@
     };
 
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
+      url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -142,7 +142,7 @@
       ) inputs.deploy-rs.lib;
 
       formatter = inputs.nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-darwin" ] (
-        system: inputs.nixpkgs.legacyPackages.${system}.nixfmt-rfc-style
+        system: inputs.nixpkgs.legacyPackages.${system}.nixfmt
       );
 
       templates = {

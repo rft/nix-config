@@ -94,8 +94,12 @@ Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
   is reached under a different name, or sign-in redirects break.
 - **Hardening:** Strict systemd sandbox on web and workers with write access to the data
   path. `karakeep-init` and `karakeep-browser` are left as upstream ships them (the
-  browser is already sandboxed more strictly). `karakeep-web` also carries a backport of
-  the unstable-only `NEXT_CACHE_DIR` / `CacheDirectory` fix, which 25.11 lacks.
+  browser is already sandboxed more strictly). `karakeep-web` also sets `NEXT_CACHE_DIR`
+  explicitly: 26.05's karakeep module tries to set it, but writes
+  `environment = { NEXT_CACHE_DIR = ...; } // karakeepEnv;` where `karakeepEnv` is a
+  `lib.mkMerge` value, so the merged attrset carries `_type = "merge"` and the module
+  system keeps only `contents`, silently dropping the variable. `CacheDirectory` does
+  come from upstream and is no longer set here.
 
 ---
 

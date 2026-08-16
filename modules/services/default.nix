@@ -230,6 +230,16 @@ delib.module {
       playwrightSupport = true;
     };
 
+    # karakeep on 26.05 still builds with pnpm_9 (9.15.9), which nixpkgs now
+    # flags for a batch of CVEs, so the package refuses to evaluate. pnpm is a
+    # build-time tool only — it is not in the service's runtime closure, and the
+    # build runs sandboxed against a pinned lockfile. unstable resolved this by
+    # moving karakeep to pnpm_11 alongside a karakeep bump; that can't be
+    # backported on its own here because 26.05's karakeep ships a pnpm-9-era
+    # pnpm-lock.yaml. Scoped to this module, so it only applies to hosts running
+    # these services. Drop once 26.05 ships a karakeep built on a clean pnpm.
+    nixpkgs.config.permittedInsecurePackages = [ "pnpm-9.15.9" ];
+
     # Karakeep bookmark / read-it-later app
     # meilisearch (127.0.0.1:7700) and headless chromium (127.0.0.1:9222) are
     # enabled by default by the upstream module. MEILI_MASTER_KEY and
@@ -452,12 +462,18 @@ delib.module {
     # as is karakeep-browser (upstream already sandboxes it more strictly).
     systemd.services.karakeep-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
       ProtectSystem = "strict";
+      # CacheDirectory now comes from 26.05's karakeep module (it used to be
+      # backported here); it is not in hardenedServiceConfig, so the mkForce
+      # above leaves upstream's value intact.
       ReadWritePaths = [ "/var/lib/karakeep" ];
-      # Backport of the nixpkgs-unstable fix (not in 25.11): Next.js otherwise
-      # tries to write its cache next to the read-only store copy of the app.
-      # Matters more here because we add ProtectSystem = "strict" on top.
-      CacheDirectory = "karakeep";
     });
+    # NEXT_CACHE_DIR still has to be set here. 26.05's karakeep module writes
+    # `environment = { NEXT_CACHE_DIR = "%C/karakeep"; } // karakeepEnv;`, but
+    # karakeepEnv is a lib.mkMerge value, so `//` yields an attrset carrying
+    # `_type = "merge"`; the module system then takes only `contents` and drops
+    # NEXT_CACHE_DIR on the floor. Without it Next.js writes its cache next to
+    # the read-only store copy of the app, which our ProtectSystem = "strict"
+    # makes fatal. Verified absent from the rendered environment on 26.05.
     systemd.services.karakeep-web.environment.NEXT_CACHE_DIR = "%C/karakeep";
 
     systemd.services.karakeep-workers.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {

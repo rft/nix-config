@@ -10,24 +10,12 @@ delib.module {
 
   nixos.always.imports = [
     inputs.nix-mineral.nixosModules.nix-mineral
-
-    # nix-mineral references options that don't exist in NixOS 25.11 yet
-    # — define shims here so the module can be imported
-    ({ lib, ... }: {
-      options.services.resolved.settings = lib.mkOption {
-        type = lib.types.anything;
-        default = {};
-        description = "Shim for nix-mineral compatibility";
-      };
-      options.systemd.coredump.settings = lib.mkOption {
-        type = lib.types.anything;
-        default = {};
-        description = "Shim for nix-mineral compatibility";
-      };
-    })
   ];
 
-  # Disable dnssec by default as it requires services.resolved.settings
+  # nix-mineral turns this into services.resolved.settings.Resolve.DNSSEC.
+  # 26.05 defines that option natively (25.11 did not, which is why this used
+  # to need a shim), so this is now a deliberate opt-out rather than a
+  # compatibility workaround — flip it to true to actually enforce DNSSEC.
   nixos.always = {
     nix-mineral.settings.misc.dnssec = false;
   };

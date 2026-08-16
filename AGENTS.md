@@ -4,7 +4,7 @@ Guidelines for AI agents working in this nix-config repository.
 
 ## Repository structure
 
-- **`flake.nix`** — Flake definition with 17 inputs (nixpkgs 25.11, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
+- **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
 - **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, programming, terminal, editors, fonts, services)
 - **`config/`** — Static app config files (awesome, niri, kando)
