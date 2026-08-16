@@ -47,7 +47,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays.nix`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`codex`/`kando` to unstable, custom `xxh` package, NUR, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`codex`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, NUR, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nur`, `nix-vscode-extensions`).

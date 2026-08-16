@@ -30,6 +30,7 @@ let
     lue
     netbird
     nmap
+    oh-my-pi
     opencode
     oxker
     pandoc
