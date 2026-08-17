@@ -194,7 +194,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/engineering.nix`
 - **Name:** `applications.engineering`
 - **Enable option:** `myconfig.applications.engineering.enable` (default: `false`)
-- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, cutter, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
+- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, circuitjs1, cutter, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
 - **Default behavior:** Auto-enables when `myconfig.applications.enable` is true. Can be explicitly disabled per-host.
 - **Dependencies:** `applications`.
 

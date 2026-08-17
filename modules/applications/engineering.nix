@@ -9,6 +9,7 @@ let
   linuxOnlyPackages = with pkgs; [
     alloy6
     chirp
+    circuitjs1
     cutter
     fiji
     pulseview
