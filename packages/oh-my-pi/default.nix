@@ -3,6 +3,7 @@
   pkgs,
   stdenvNoCC,
   fetchurl,
+  makeBinaryWrapper,
 }:
 
 let
@@ -31,6 +32,16 @@ let
   };
 
   inherit (stdenvNoCC.hostPlatform) system;
+
+  # `omp plugin install` shells out to bun (npm: specs) and git (git: specs);
+  # installed plugins then run under node, and some ship helper scripts that
+  # need python3 (e.g. engram's engram.py).
+  runtimeDeps = with pkgs; [
+    bun
+    nodejs
+    git
+    python3
+  ];
 
   source = sources.${system} or (throw "oh-my-pi: no prebuilt binary for ${system}");
 
@@ -68,7 +79,23 @@ let
   };
 in
 if stdenvNoCC.hostPlatform.isDarwin then
-  unwrapped
+  # No FHS env on Darwin, so put the runtime deps on PATH with a wrapper. The
+  # wrapper exports PATH rather than rewriting argv, so omp's self-re-exec for
+  # subagents inherits it too.
+  stdenvNoCC.mkDerivation {
+    pname = "omp";
+    inherit version meta;
+
+    dontUnpack = true;
+    nativeBuildInputs = [ makeBinaryWrapper ];
+
+    installPhase = ''
+      runHook preInstall
+      makeWrapper ${unwrapped}/bin/omp $out/bin/omp \
+        --prefix PATH : ${lib.makeBinPath runtimeDeps}
+      runHook postInstall
+    '';
+  }
 else
   # omp re-execs itself for subagents and resolves its own path via
   # /proc/self/exe, so it has to run as the actual process — a loader wrapper
@@ -80,11 +107,12 @@ else
     inherit version meta;
 
     targetPkgs =
-      p: with p; [
+      p: [
         unwrapped
-        cacert
-        zlib
-      ];
+        p.cacert
+        p.zlib
+      ]
+      ++ runtimeDeps;
 
     runScript = "omp";
   }
