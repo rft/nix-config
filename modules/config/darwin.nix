@@ -27,9 +27,13 @@ delib.module {
       homebrew = {
         enable = lib.mkDefault true;
         onActivation.cleanup = lib.mkDefault "zap";
-        taps = [ "typewhisper/tap" ];
+        taps = [
+          "typewhisper/tap"
+          "guria/tap"
+        ];
         brews = [ "mas" ];
         casks = [
+          "nehir"
           "discord"
           "spotify"
           "obs"
