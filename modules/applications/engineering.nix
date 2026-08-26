@@ -1,4 +1,9 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 let
   sharedPackages = with pkgs; [
     ghidra
@@ -10,7 +15,6 @@ let
     alloy6
     chirp
     circuitjs1
-    cutter
     fiji
     pulseview
     sdrangel

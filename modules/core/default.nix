@@ -13,27 +13,21 @@ let
     bat
     bottom
     claude-code
-    codex
     difftastic
     dua
     fd
-    ffmpeg_7-full
+    ffmpeg
     fzf
-    gemini-cli
     gh
     git
-    # renamed upstream in 26.05: the old copilot-cli attr was retired as EOL
-    github-copilot-cli
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
     jujutsu
     lazygit
-    lue
     netbird
     nmap
     oh-my-pi
     opencode
-    oxker
     pandoc
     pass
     procs
@@ -44,7 +38,6 @@ let
     syncthing
     tealdeer
     tio
-    tokei
     trippy
     visidata
     watchexec
@@ -57,21 +50,9 @@ let
   ];
 
   linuxOnlyPackages = with pkgs; [
-    bpftrace
-    cpuid
     distrobox
-    ethtool
-    iproute2
-    msr-tools
-    nicstat
-    numactl
     podman
     podman-tui
-    procps
-    rr
-    sysstat
-    tcpdump
-    util-linux
     wl-clipboard
     picat
   ];

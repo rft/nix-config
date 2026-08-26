@@ -19,7 +19,7 @@ delib.module {
     let
       marketplace = pkgs.vscode-marketplace;
       package =
-        if pkgs.stdenv.isDarwin then
+        if pkgs.stdenv.hostPlatform.isDarwin then
           pkgs.vscodium
         else
           pkgs.symlinkJoin {

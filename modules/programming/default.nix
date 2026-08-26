@@ -1,4 +1,9 @@
-{ delib, inputs, pkgs, ... }:
+{
+  delib,
+  inputs,
+  pkgs,
+  ...
+}:
 let
   sharedPackages = with pkgs; [
     nixd
@@ -6,7 +11,6 @@ let
     nodejs_22
     cucumber
     plantuml-c4
-    swi-prolog
     texlab
     (python313.withPackages (ps: import ../../lib/python-core-packages.nix ps))
     (texlive.combine {

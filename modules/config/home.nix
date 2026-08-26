@@ -7,7 +7,7 @@ delib.module {
 
     home.username = lib.mkForce myconfig.constants.username;
     home.homeDirectory = lib.mkForce (
-      if pkgs.stdenv.isDarwin
+      if pkgs.stdenv.hostPlatform.isDarwin
       then "/Users/${myconfig.constants.username}"
       else "/home/${myconfig.constants.username}"
     );

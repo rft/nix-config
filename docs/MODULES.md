@@ -45,9 +45,9 @@ Infrastructure modules that are always active. They have no enable option.
 
 ### overlays
 
-- **Path:** `modules/config/overlays.nix`
+- **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`codex`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, NUR, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, NUR, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nur`, `nix-vscode-extensions`).
@@ -62,7 +62,7 @@ System-level packages and shell configuration. Always enabled, no toggle.
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs 60+ system packages shared across platforms (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, yt-dlp, zellij, etc.) plus Linux-only packages (bpftrace, podman, wl-clipboard, tcpdump, util-linux, etc.). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
+- **Description:** Installs ~40 system packages shared across platforms (bat, ripgrep, fd, fzf, git, claude-code, yazi, yt-dlp, zellij, etc.) plus a small Linux-only set (distrobox, podman, podman-tui, wl-clipboard, picat). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
@@ -194,7 +194,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/engineering.nix`
 - **Name:** `applications.engineering`
 - **Enable option:** `myconfig.applications.engineering.enable` (default: `false`)
-- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, circuitjs1, cutter, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
+- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, circuitjs1, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
 - **Default behavior:** Auto-enables when `myconfig.applications.enable` is true. Can be explicitly disabled per-host.
 - **Dependencies:** `applications`.
 
@@ -251,7 +251,7 @@ Development tools. Gated by `programs.programming.enable`.
 - **Path:** `modules/programming/default.nix`
 - **Name:** `programs.programming`
 - **Enable option:** `myconfig.programs.programming.enable` (default: `false`)
-- **Description:** Core development tools: direnv, nixd, nixfmt, nodejs 22, plantuml-c4, swi-prolog, Python 3.12 with core packages. Sets `nix.nixPath` to the flake's nixpkgs.
+- **Description:** Core development tools: direnv, nixd, nixfmt, nodejs 22, cucumber, plantuml-c4, texlab, TeX Live (scheme-medium), Python 3.13 with core packages. Sets `nix.nixPath` to the flake's nixpkgs.
 - **Default behavior:** Disabled by default. Enabled per-host.
 - **Dependencies:** `lib/python-core-packages.nix`.
 

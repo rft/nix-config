@@ -6,7 +6,7 @@ delib.module {
 
   myconfig.always = { myconfig, ... }: {
     applications.kando.enable = lib.mkDefault (
-      (myconfig.applications.enable or false) && !pkgs.stdenv.isDarwin
+      (myconfig.applications.enable or false) && !pkgs.stdenv.hostPlatform.isDarwin
     );
   };
 
