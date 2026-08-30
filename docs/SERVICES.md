@@ -17,6 +17,7 @@ Enabled via `myconfig.services.enable = true` in the host config.
 | changedetection.io   | 5000  | HTTP     | 0.0.0.0      |
 | Karakeep             | 3000  | HTTP     | 0.0.0.0      |
 | Mosquitto (MQTT)     | 1883  | MQTT     | 0.0.0.0      |
+| Zigbee2MQTT frontend | 8080  | HTTP     | 0.0.0.0      |
 | Meilisearch          | 7700  | HTTP     | 127.0.0.1    |
 | Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
 | Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
@@ -98,6 +99,7 @@ Docs: <https://www.home-assistant.io/integrations/airgradient/>
 |------------|-------------------------------------------|--------------------------------------|
 | `hass`     | `readwrite #`                             | `/var/lib/mosquitto/hass-password`   |
 | `livegrid` | `readwrite livegrid/#`, `readwrite homeassistant/#` | `/var/lib/mosquitto/livegrid-password` |
+| `zigbee2mqtt` | `readwrite zigbee2mqtt/#`, `readwrite homeassistant/#` | `/var/lib/mosquitto/zigbee2mqtt-password` |
 
 Password files hold a bare `mosquitto_passwd` hash with the `username:` prefix
 stripped, and are created out of band (like `smbpasswd -a scanner`). They are
@@ -166,6 +168,174 @@ Verify from the server:
 ```bash
 mosquitto_sub -h localhost -u livegrid -P '<password>' -t 'livegrid/#' -v
 mosquitto_sub -h localhost -u hass -P '<password>' -t 'homeassistant/#' -v
+```
+
+### Zigbee2MQTT
+
+- **What:** Zigbee coordinator daemon. Bridges Zigbee devices onto MQTT, where
+  Home Assistant picks them up through discovery.
+- **Port:** 8080 (frontend — pairing, per-device settings, network map)
+- **Data:** `/var/lib/zigbee2mqtt`
+- **Radio:** SONOFF Dongle Plus MG24 (Silicon Labs EFR32MG24) over USB
+
+Nothing is declared on the Home Assistant side. The `mqtt` component is already
+loaded, Zigbee2MQTT publishes discovery payloads under `homeassistant/`, and
+paired devices appear on their own.
+
+#### Why Zigbee2MQTT rather than ZHA
+
+ZHA is built into Home Assistant and needs no broker, so it is the cheaper
+option on paper. It lost on device support: for the Third Reality Smart Plug
+Gen3 (`3RSP02064Z`) the Zigbee2MQTT converter exposes `metering_only_mode` and
+the power rise/drop thresholds, which ZHA still lacks
+([zigpy/zha-device-handlers#4844](https://github.com/zigpy/zha-device-handlers/issues/4844)).
+Mosquitto was already running with Home Assistant attached, so Zigbee2MQTT
+drops in as one more authenticated MQTT client rather than new infrastructure.
+
+#### The coordinator
+
+The dongle enumerates through a CP2102N UART bridge as `/dev/ttyUSB0`, owned
+`root:dialout`. The config points at the `by-id` path instead, since `ttyUSB0`
+moves if another USB serial device enumerates first:
+
+```
+/dev/serial/by-id/usb-SONOFF_SONOFF_Dongle_Plus_MG24_<serial>-if00-port0
+```
+
+The upstream module derives its systemd `DeviceAllow=` from `serial.port`.
+systemd `stat()`s through the symlink, so the `by-id` path still resolves to
+the `188:0` character device — verified working, no extra `DeviceAllow` entry
+needed. The module also adds `dialout` as a supplementary group.
+
+| Setting    | Value      | Why                                          |
+|------------|------------|----------------------------------------------|
+| `adapter`  | `ember`    | EFR32MG24 runs EmberZNet, not zstack         |
+| `baudrate` | `115200`   | stock SONOFF firmware; community builds use `460800` |
+| `rtscts`   | `false`    | dongle has no hardware flow control; ASH falls back to software |
+
+A healthy start logs the firmware version. This dongle shipped **EmberZNet
+7.4.5 [GA], EZSP v13**:
+
+```
+zh:ember: Adapter version info: {"ezsp":13,"revision":"7.4.5 [GA]",...}
+zh:ember: [INIT TC] Adapter network matches config.
+z2m: zigbee-herdsman started (resumed)
+```
+
+`Adapter EZSP protocol version (13) lower than Host. Switched.` is normal and
+not an error. If the firmware ever reads **8.0.2**, expect repeated
+`ASH_ERROR_TIMEOUTS` and restart loops — that is a firmware bug
+([zigbee2mqtt#30891](https://github.com/Koenkk/zigbee2mqtt/issues/30891)) fixed
+by reflashing, not by changing `baudrate` or `rtscts`.
+
+#### Credentials
+
+Two files, both created out of band, both required before the first rebuild —
+and they hold the **same** password in **different formats**:
+
+| File | Owner/mode | Contents |
+|------|-----------|----------|
+| `/var/lib/mosquitto/zigbee2mqtt-password` | `mosquitto:mosquitto` `0400` | bare hash, `username:` prefix stripped |
+| `/var/lib/zigbee2mqtt-mqtt.env` | `root:root` `0400` | `KEY=value` env pairs |
+
+The broker file follows the same rule as every other entry in the Mosquitto
+table above. The env file exists because `services.zigbee2mqtt.settings` is
+serialised into a world-readable store path, so `mqtt.user`/`mqtt.password` are
+deliberately absent from it. Zigbee2MQTT's `applyEnvironmentVariables` overlays
+them at startup instead:
+
+```
+ZIGBEE2MQTT_CONFIG_MQTT_USER=zigbee2mqtt
+ZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=<password>
+```
+
+systemd reads the `EnvironmentFile` as root before dropping to the
+`zigbee2mqtt` user, so `0400 root:root` is correct.
+
+#### Bootstrap after deploy
+
+Generate the password once and write both files from it. Under nushell there
+are no heredocs — pipe a string into `tee` and discard output with `| ignore`,
+since `>` is not a redirection operator there:
+
+```nu
+let pw = (random chars --length 32)   # alphanumeric only, nothing to escape
+
+# Broker side. `sed` strips the `username:` prefix mosquitto_passwd writes;
+# leaving it in produces `zigbee2mqtt:zigbee2mqtt:$7$...` in the merged
+# passwd-0 and takes the whole broker down (see Troubleshooting).
+sudo mosquitto_passwd -c -b /var/lib/mosquitto/zigbee2mqtt-password zigbee2mqtt $pw
+sudo sed -i 's/^zigbee2mqtt://' /var/lib/mosquitto/zigbee2mqtt-password
+sudo chown mosquitto:mosquitto /var/lib/mosquitto/zigbee2mqtt-password
+sudo chmod 400 /var/lib/mosquitto/zigbee2mqtt-password
+
+# Client side
+$"ZIGBEE2MQTT_CONFIG_MQTT_USER=zigbee2mqtt\nZIGBEE2MQTT_CONFIG_MQTT_PASSWORD=($pw)\n" | sudo tee /var/lib/zigbee2mqtt-mqtt.env | ignore
+sudo chmod 400 /var/lib/zigbee2mqtt-mqtt.env
+
+sudo nixos-rebuild switch --flake '.#bristlecone'
+```
+
+Confirm every password file is hash-only before rebuilding, without printing
+any hashes:
+
+```nu
+sudo awk '{print FILENAME": "(($0 ~ /^\$7\$/) ? "OK (hash only)" : "BAD (username prefix)")}' /var/lib/mosquitto/*-password
+```
+
+#### Pairing devices
+
+`permit_join` is `false` in the config; join is opened from the frontend at
+`http://bristlecone:8080` (**Permit join**, 3-minute window), never by editing
+the Nix. Paired devices are written to `devices.yaml` / `groups.yaml` in the
+data dir, which are separate from the `configuration.yaml` that the unit's
+`ExecStartPre` recopies from the store on every start — so pairings survive
+rebuilds and restarts. The network itself is backed up to
+`coordinator_backup.json`.
+
+**Third Reality Smart Plug Gen3 (`3RSP02064Z`)** — hold the On/Off button for
+more than 10 seconds until the LED flashes red. A factory-fresh plug enters
+pairing mode on first insertion without the button hold. Exposes on/off, power,
+energy, voltage, current, AC frequency, power factor, LED brightness, countdown
+timers, `metering_only_mode`, and `reset_total_energy`.
+
+> **Gotcha:** by default these plugs only report instantaneous watts about once
+> a minute. Set **power rise threshold** and **power drop threshold** to `1` (W)
+> per plug for near-real-time updates. The `energy` (kWh) sensor feeds Home
+> Assistant's Energy dashboard directly.
+
+#### Troubleshooting
+
+**`MQTT failed to connect, exiting... ()`** — empty parentheses mean the broker
+refused the connection. Check that mosquitto is actually up first (a broken
+password file takes it down entirely), then that both credential files carry
+the same password.
+
+**`password-file: Error: Unable to decode line in password file
+'/var/lib/mosquitto/passwd-0'`** — a `hashedPasswordFile` still has its
+`username:` prefix. This kills mosquitto for *all* clients, so Home Assistant
+and Livegrid go down with it. Strip the prefix, then note that mosquitto will
+have hit its restart limit and needs `reset-failed` before it will start:
+
+```nu
+sudo sed -i 's/^zigbee2mqtt://' /var/lib/mosquitto/zigbee2mqtt-password
+sudo systemctl reset-failed mosquitto
+sudo systemctl restart mosquitto
+sudo systemctl reset-failed zigbee2mqtt
+sudo systemctl restart zigbee2mqtt
+```
+
+**Nothing listening on 8080** — the frontend binds late, after the MQTT
+connection succeeds. An unreachable port almost always means the service is
+crash-looping earlier; read `journalctl -u zigbee2mqtt` rather than debugging
+the port.
+
+**`Permission denied` opening the serial device** — `DeviceAllow` failed to
+resolve the `by-id` symlink. Append the real node; `serviceConfig` list options
+merge, so this adds to upstream's entry rather than replacing it:
+
+```nix
+systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
 ```
 
 ### n8n
@@ -469,3 +639,9 @@ All services (except Kasm) share a hardened baseline:
 - Syscall filter: `@system-service` minus `@mount`, `@reboot`, `@swap`
 
 Per-service overrides add `ReadWritePaths` or relax restrictions as needed.
+
+Zigbee2MQTT is the other exception. Upstream's unit is already stricter than
+this baseline (`DevicePolicy=closed` with a `DeviceAllow` derived from
+`serial.port`, `PrivateUsers`, `ProtectSystem=strict`, `ProtectProc=invisible`),
+so it is deliberately *not* passed through `hardenedServiceConfig` — doing so
+would loosen it.
