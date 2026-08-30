@@ -92,6 +92,10 @@ delib.module {
         "esphome"
         "cast"
         "radio_browser"
+        # AirGradient ONE (I-9PSL) indoor monitors. Local polling over the
+        # device's HTTP API — no cloud account and no MQTT involved. Needs
+        # device firmware >= 3.1.1.
+        "airgradient"
       ];
       config = {
         homeassistant = {
@@ -291,6 +295,12 @@ delib.module {
 
     # 1883 is mosquitto: LAN IoT devices (Livegrid panel) need to reach it.
     networking.firewall.allowedTCPPorts = [ 1883 28981 8443 5000 3000 ];
+
+    # mDNS. Home Assistant's zeroconf listener binds UDP 5353 and receives
+    # replies on that same port, so the default deny drops every response and
+    # nothing is ever auto-discovered — AirGradient, esphome and cast all rely
+    # on it. Outbound queries alone are not enough.
+    networking.firewall.allowedUDPPorts = [ 5353 ];
 
     # ──────────────────────────────────────────────
     # Systemd service hardening

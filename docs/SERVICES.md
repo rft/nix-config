@@ -21,6 +21,7 @@ Enabled via `myconfig.services.enable = true` in the host config.
 | Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
 | Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
 | Samba NetBIOS        | 139   | SMB      | 0.0.0.0      |
+| mDNS (zeroconf)      | 5353  | UDP      | 0.0.0.0      |
 
 Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
 
@@ -41,6 +42,48 @@ Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
 - **Port:** 8123 (firewall opened via `openFirewall`)
 - **Config:** Timezone set to `America/Phoenix`, metric units.
 - **Hardening:** Systemd sandbox with device access allowed for hardware integrations.
+- **Discovery:** UDP 5353 is firewall-opened for mDNS. Home Assistant's zeroconf
+  listener binds that port and replies arrive on it, so without the rule every
+  response is dropped and nothing (AirGradient, esphome, cast) is auto-discovered.
+
+#### AirGradient ONE monitors (I-9PSL-DE)
+
+Two indoor monitors, handled by the native `airgradient` component in
+`extraComponents`. Local polling over the device's own HTTP API once a minute —
+no AirGradient cloud account and no MQTT involved.
+
+Device firmware must be **3.1.1 or newer**, and the monitors must be joined to
+the same LAN as bristlecone (192.168.12.0/24).
+
+**Set `configurationControl` to `local` before anything else.** If a monitor is
+onboarded to the AirGradient dashboard it takes its configuration from the cloud,
+Home Assistant's config entities (display brightness, LED bar mode, temperature
+unit, CO₂ calibration) stay read-only, and **switching cloud → local afterwards
+requires a factory reset**. Set it during the device's own captive-portal setup,
+or via its local web UI.
+
+Per monitor:
+
+1. Power it on. A fresh device raises its own AP, `airgradient-<serialnumber>`.
+   Join it and use the captive portal to enter the WiFi credentials and pick
+   local configuration.
+2. In Home Assistant: **Settings → Devices & Services**. Each monitor should
+   appear under Discovered. If not, **Add Integration → AirGradient** and enter
+   its IP or `airgradient_<serialnumber>.local`.
+3. Repeat for the second monitor — the integration creates one config entry per
+   device, so they are added separately and get distinct entity name prefixes.
+
+Verify a monitor is reachable from the server before adding it:
+
+```bash
+curl -s http://<monitor-ip>/measures/current | jq
+```
+
+Entities: PM1/PM2.5/PM10 plus PM0.3 particle count, CO₂, temperature, humidity,
+TVOC and NOx index (and their raw values), WiFi signal strength, a firmware
+update entity, and the config entities listed above.
+
+Docs: <https://www.home-assistant.io/integrations/airgradient/>
 
 ### Mosquitto (MQTT)
 
