@@ -36,6 +36,7 @@ let
     ripgrep
     rsync
     syncthing
+    tcpdump
     tealdeer
     tio
     trippy
