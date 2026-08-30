@@ -100,8 +100,25 @@ delib.module {
           time_zone = "America/Phoenix";
         };
         default_config = {};
+
+        # The UI editors write to these files and then reload; without the
+        # matching !include they are never read, so a saved automation/script/
+        # scene never materialises and the frontend times out waiting for it.
+        # configuration.yaml itself is a read-only store symlink, so the
+        # includes have to be declared here rather than added from the UI.
+        automation = "!include automations.yaml";
+        script = "!include scripts.yaml";
+        scene = "!include scenes.yaml";
       };
     };
+
+    # !include on a missing file aborts startup, so seed the UI-managed files
+    # before hass reads the config. Runs as the hass user in configDir.
+    systemd.services.home-assistant.preStart = lib.mkAfter ''
+      for f in automations.yaml scripts.yaml scenes.yaml; do
+        [ -e "/var/lib/hass/$f" ] || echo "[]" > "/var/lib/hass/$f"
+      done
+    '';
 
     # n8n workflow automation
     services.n8n = {
