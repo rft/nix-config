@@ -16,12 +16,12 @@ Enabled via `myconfig.services.enable = true` in the host config.
 | Kasm Workspaces      | 8443  | HTTPS    | 0.0.0.0      |
 | changedetection.io   | 5000  | HTTP     | 0.0.0.0      |
 | Karakeep             | 3000  | HTTP     | 0.0.0.0      |
+| Mosquitto (MQTT)     | 1883  | MQTT     | 0.0.0.0      |
 | Meilisearch          | 7700  | HTTP     | 127.0.0.1    |
 | Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
 | Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
 | Samba NetBIOS        | 139   | SMB      | 0.0.0.0      |
 
-Mosquitto (MQTT, 1883) also runs but is not firewall-opened.
 Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
 
 ---
@@ -41,6 +41,89 @@ Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
 - **Port:** 8123 (firewall opened via `openFirewall`)
 - **Config:** Timezone set to `America/Phoenix`, metric units.
 - **Hardening:** Systemd sandbox with device access allowed for hardware integrations.
+
+### Mosquitto (MQTT)
+
+- **What:** MQTT broker for Home Assistant and LAN IoT devices.
+- **Port:** 1883 (firewall opened manually; unencrypted, LAN only)
+- **Data:** `/var/lib/mosquitto`
+- **Auth:** Anonymous access is off. Each client authenticates as a named user
+  with its own ACL — there is deliberately no `pattern readwrite #` line, since
+  patterns apply to every authenticated user and would nullify the per-user ACLs.
+
+| User       | ACL                                       | Password file                        |
+|------------|-------------------------------------------|--------------------------------------|
+| `hass`     | `readwrite #`                             | `/var/lib/mosquitto/hass-password`   |
+| `livegrid` | `readwrite livegrid/#`, `readwrite homeassistant/#` | `/var/lib/mosquitto/livegrid-password` |
+
+Password files hold a bare `mosquitto_passwd` hash with the `username:` prefix
+stripped, and are created out of band (like `smbpasswd -a scanner`). They are
+passed in as systemd credentials, so **a missing file makes mosquitto fail to
+start** — create it before rebuilding:
+
+`mosquitto_passwd` only reaches `PATH` once this module is deployed, so the
+first run needs a `nix shell`. Quote the flake ref under xonsh, where an
+unquoted `#` starts a comment and silently truncates the argument.
+
+```bash
+nix shell 'nixpkgs#mosquitto'
+# -c here is mosquitto_passwd's "create file" flag. It prompts for the
+# password twice, so the password never lands in shell history.
+mosquitto_passwd -c /tmp/mqtt-pw livegrid
+exit
+
+sudo sed 's/^livegrid://' /tmp/mqtt-pw \
+  | sudo tee /var/lib/mosquitto/livegrid-password >/dev/null
+rm /tmp/mqtt-pw
+sudo nixos-rebuild switch --flake '.#bristlecone'
+```
+
+#### Livegrid OpenMatrix panel
+
+Docs: <https://livegrid.github.io/mqtt/>. The panel publishes its own Home
+Assistant discovery payloads, so nothing is declared in the Home Assistant
+config — the entities (light with brightness, write-only display text,
+temperature/humidity/CO₂/ambient-light/RSSI sensors) appear on their own.
+
+In the Livegrid web app under **Settings → MQTT**:
+
+| Field    | Value                                                   |
+|----------|---------------------------------------------------------|
+| Broker   | bristlecone's LAN IP (the default `homeassistant.local` will not resolve here) |
+| Port     | `1883`                                                  |
+| Username | `livegrid`                                              |
+| Password | the one set above                                       |
+
+Then toggle **Home Assistant Discovery** on and save.
+
+Topics it uses:
+
+| Purpose             | Topic                                       |
+|---------------------|---------------------------------------------|
+| Light discovery     | `homeassistant/light/<device_id>/light/config` |
+| Text discovery      | `homeassistant/text/<device_id>/display_text/config` |
+| Sensor discovery    | `homeassistant/sensor/livegrid_<sensor>/config` |
+| Light command       | `livegrid/<device_id>/light/set`            |
+| Light state         | `livegrid/<device_id>/light/state`          |
+| Availability        | `livegrid/<device_id>/status` (`online`/`offline`) |
+| Display text        | `livegrid/text` (command + echo, configurable) |
+| Environment sensors | `livegrid/sensors` (configurable)           |
+
+Light payload is JSON — `{"state":"ON","brightness":128}` — with plain
+`ON`/`OFF` also accepted.
+
+#### Bootstrap after deploy
+
+Home Assistant's broker connection is a config entry, not YAML, so it is added
+once through the UI: **Settings → Devices & Services → Add Integration → MQTT**,
+broker `localhost`, port `1883`, user `hass`. Discovery is on by default there.
+
+Verify from the server:
+
+```bash
+mosquitto_sub -h localhost -u livegrid -P '<password>' -t 'livegrid/#' -v
+mosquitto_sub -h localhost -u hass -P '<password>' -t 'homeassistant/#' -v
+```
 
 ### n8n
 

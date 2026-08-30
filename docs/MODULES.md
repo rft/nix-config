@@ -288,7 +288,7 @@ Self-hosted services. Gated by `services.enable`.
 - **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
 - **Services and ports:**
   - **Jellyfin** — media server (firewall auto-opened, port 8096)
-  - **Mosquitto** — MQTT broker (port 1883, not firewall-opened)
+  - **Mosquitto** — MQTT broker (port 1883, firewall opened manually; per-user ACLs for `hass` and the `livegrid` panel)
   - **Home Assistant** — home automation (firewall auto-opened, default port 8123)
   - **n8n** — workflow automation (firewall auto-opened, default port 5678)
   - **Paperless** — document management (port 28981, firewall opened manually; consume dir at `/var/lib/scan/consume`, subdirs become tags)

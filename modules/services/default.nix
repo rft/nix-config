@@ -42,6 +42,7 @@ delib.module {
   nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
       borgmatic
+      mosquitto # mosquitto_passwd / mosquitto_sub for broker bootstrap + debugging
     ];
 
     # Jellyfin media server
@@ -50,14 +51,30 @@ delib.module {
       openFirewall = true;
     };
 
-    # Mosquitto MQTT broker
+    # Mosquitto MQTT broker. Home Assistant talks to it over localhost; IoT
+    # devices reach it from the LAN, so 1883 is firewall-opened below.
+    #
+    # No blanket `pattern readwrite #`: patterns apply to every authenticated
+    # user, which would make the per-user ACLs below meaningless. Anonymous
+    # access is already off (mosquitto 2.x default), so each client
+    # authenticates as a named user and gets only the topics it needs.
     services.mosquitto = {
       enable = true;
       listeners = [{
-        acl = [ "pattern readwrite #" ];
         users.hass = {
           acl = [ "readwrite #" ];
           hashedPasswordFile = "/var/lib/mosquitto/hass-password";
+        };
+        # Livegrid OpenMatrix LED panel. It publishes its own HA discovery
+        # payloads under homeassistant/ and subscribes to homeassistant/status
+        # to re-announce after a restart; its own state lives under livegrid/.
+        # https://livegrid.github.io/mqtt/
+        users.livegrid = {
+          acl = [
+            "readwrite livegrid/#"
+            "readwrite homeassistant/#"
+          ];
+          hashedPasswordFile = "/var/lib/mosquitto/livegrid-password";
         };
       }];
     };
@@ -255,7 +272,8 @@ delib.module {
       };
     };
 
-    networking.firewall.allowedTCPPorts = [ 28981 8443 5000 3000 ];
+    # 1883 is mosquitto: LAN IoT devices (Livegrid panel) need to reach it.
+    networking.firewall.allowedTCPPorts = [ 1883 28981 8443 5000 3000 ];
 
     # ──────────────────────────────────────────────
     # Systemd service hardening
