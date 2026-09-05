@@ -53,7 +53,7 @@ delib.host {
     '';
 
   darwin = {
-    homebrew.casks = [ "shottr" "topnotch" "typewhisper/tap/typewhisper" ];
+    homebrew.casks = [ "topnotch" "typewhisper/tap/typewhisper" ];
     system.defaults.dock.autohide = true;
 
     # Free up ⌥⌘Space for nehir's command palette by disabling macOS's
