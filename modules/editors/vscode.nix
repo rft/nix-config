@@ -177,6 +177,7 @@ delib.module {
               openai.chatgpt
               astral-sh.ty
               leanprover.lean4
+              foam.foam-vscode
             ]);
           userSettings = general // editor // git // languages;
           keybindings = [
