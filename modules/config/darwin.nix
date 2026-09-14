@@ -56,9 +56,8 @@ delib.module {
           "espanso"
           "obsidian"
           "claude"
-          "dockdoor"
           "jordanbaird-ice"
-          "stats"
+          "vorssaint"
         ];
         masApps = {
           "Amphetamine" = 937984704;
