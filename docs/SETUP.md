@@ -531,6 +531,26 @@ display manager, or audio. The bristlecone host is the reference server config.
 - All core packages (bat, ripgrep, git, claude-code, etc.) and terminal config
   (starship, zellij, xonsh) are still applied
 
+### Running personal projects on bristlecone
+
+Use `/srv/projects` for projects that need to execute local binaries or scripts.
+The host config creates this directory with mode `0750`, owned by the configured
+user and group `users`, and gives it an executable bind mount while retaining
+`nodev` and `nosuid`. The rest of `/srv`, `/home`, and temporary directories
+remain `noexec`.
+
+Apply from the updated repository on bristlecone:
+
+```bash
+sudo nixos-rebuild switch --flake .#bristlecone
+findmnt -T /srv/projects -o TARGET,OPTIONS
+stat -c '%U:%G %a' /srv/projects
+```
+
+The mount target should be `/srv/projects`, with `nodev,nosuid` and no `noexec`
+flag. Tools that download executables into home-directory caches or `/tmp` may
+still need their cache or temporary directory configured under `/srv/projects`.
+
 ### Netbird setup
 
 After the first rebuild, authenticate Netbird:

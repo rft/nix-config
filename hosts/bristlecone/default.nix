@@ -6,7 +6,7 @@ delib.host {
 
   home.home.stateVersion = "24.05";
 
-  nixos = {
+  nixos = { myconfig, ... }: {
     system.stateVersion = "25.11";
     imports = [ ../../hardware/bristlecone.nix ];
 
@@ -36,6 +36,19 @@ delib.host {
 
     # Firewall
     networking.firewall.enable = true;
+
+    # Allow project executables without relaxing hardening elsewhere.
+    nix-mineral.filesystems.normal."/srv/projects" = {
+      enable = true;
+      options = {
+        noexec = false;
+        exec = true;
+      };
+    };
+
+    systemd.tmpfiles.rules = [
+      "d /srv/projects 0750 ${myconfig.constants.username} users -"
+    ];
   };
 
   myconfig = {
