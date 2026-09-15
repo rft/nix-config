@@ -56,7 +56,6 @@ delib.module {
           "espanso"
           "obsidian"
           "claude"
-          "jordanbaird-ice"
           "vorssaint"
         ];
         masApps = {
