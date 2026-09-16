@@ -358,6 +358,15 @@ Shell and terminal emulator configuration. Enabled by default (`singleEnableOpti
 - **Default behavior:** Enabled by default for all hosts.
 - **Dependencies:** None.
 
+### terminal.yazi
+
+- **Path:** `modules/terminal/yazi.nix`
+- **Name:** `terminal.yazi`
+- **Enable option:** `myconfig.terminal.yazi.enable` (default: `true`)
+- **Description:** Configures the Yazi file manager (via home-manager, `package = null`) with the "titanium" theme shared with nvim and oh-my-pi. Adds the `y` shell wrapper that changes directory on exit.
+- **Default behavior:** Enabled by default for all hosts. The yazi binary itself comes from `core`.
+- **Dependencies:** `core` (installs `yazi`).
+
 ---
 
 ## Editors
