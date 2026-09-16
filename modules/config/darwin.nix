@@ -33,7 +33,6 @@ delib.module {
         ];
         brews = [ "mas" ];
         casks = [
-          "nehir"
           "discord"
           "spotify"
           "obs"
@@ -56,6 +55,7 @@ delib.module {
           "espanso"
           "obsidian"
           "claude"
+          "chatgpt"
           "vorssaint"
         ];
         masApps = {
