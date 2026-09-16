@@ -16,7 +16,7 @@ let
     difftastic
     dua
     fd
-    ffmpeg
+    ffmpeg-headless
     fzf
     gh
     git
@@ -27,7 +27,6 @@ let
     netbird
     nmap
     oh-my-pi
-    opencode
     pandoc
     pass
     procs
