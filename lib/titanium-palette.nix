@@ -13,5 +13,6 @@
   alertRed = "#ff4757";
   subtleGray = "#2a3038"; # borders, selection
   borderMuted = "#1f252d"; # cursorline
+  slate = "#343a42"; # (derived) next step past subtleGray, nvim's bg3
   comment = "#6b7280";
 }

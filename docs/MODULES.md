@@ -327,7 +327,7 @@ Shell and terminal emulator configuration. Enabled by default (`singleEnableOpti
 - **Path:** `modules/terminal/starship.nix`
 - **Name:** `terminal.starship`
 - **Enable option:** `myconfig.terminal.starship.enable` (default: `true`)
-- **Description:** Configures the Starship prompt with a custom Nord-themed two-line format. Shows username, hostname, shell indicator, directory, git info, language versions, command duration, time, and status symbols. Integrates with zsh and nushell.
+- **Description:** Configures the Starship prompt with a custom two-line format themed with "titanium" (palette from `lib/titanium-palette.nix`, shared with nvim, oh-my-pi, yazi and zellij). Shows username, hostname, shell indicator, directory, git info, language versions, command duration, time, and status symbols. Integrates with zsh and nushell.
 - **Default behavior:** Enabled by default for all hosts.
 - **Dependencies:** None.
 
