@@ -1,7 +1,6 @@
 { delib, pkgs, ... }:
 let
   sharedPackages = with pkgs; [
-    kitty
     mpv
   ];
 
@@ -14,6 +13,7 @@ let
     flameshot
     floorp-bin
     kdePackages.dolphin
+    kitty
     nsxiv
     obs-studio
     pciutils
