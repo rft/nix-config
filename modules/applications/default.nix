@@ -12,6 +12,7 @@ let
     discord
     flameshot
     floorp-bin
+    handy
     kdePackages.dolphin
     kitty
     nsxiv

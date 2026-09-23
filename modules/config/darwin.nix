@@ -28,7 +28,6 @@ delib.module {
         enable = lib.mkDefault true;
         onActivation.cleanup = lib.mkDefault "zap";
         taps = [
-          "typewhisper/tap"
           "guria/tap"
         ];
         brews = [ "mas" ];
