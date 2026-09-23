@@ -53,7 +53,10 @@ delib.host {
     '';
 
   darwin = {
-    homebrew.casks = [ "topnotch" "typewhisper/tap/typewhisper" ];
+    # trusted: Homebrew 6 refuses to load casks from untrusted third-party taps,
+    # which aborts the brew bundle phase of activation (and the zap cleanup).
+    homebrew.taps = [ { name = "fujacob/cotabby"; trusted = true; } ];
+    homebrew.casks = [ "topnotch" "typewhisper/tap/typewhisper" "fujacob/cotabby/cotabby" ];
     system.defaults.dock.autohide = true;
 
     # Free up ⌥⌘Space for nehir's command palette by disabling macOS's
