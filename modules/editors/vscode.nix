@@ -18,6 +18,7 @@ delib.module {
   home.ifEnabled =
     let
       marketplace = pkgs.vscode-marketplace;
+      openVsx = pkgs.open-vsx;
       package =
         if pkgs.stdenv.hostPlatform.isDarwin then
           pkgs.vscodium
@@ -178,6 +179,12 @@ delib.module {
               astral-sh.ty
               leanprover.lean4
               foam.foam-vscode
+            ])
+            # bernhard-42.ocp-cad-viewer hard-depends on ms-python.python and
+            # will not activate without it. Open VSX carries the openly
+            # licensed build, which is the one vscodium may use.
+            ++ (with openVsx; [
+              ms-python.python
             ]);
           userSettings = general // editor // git // languages;
           keybindings = [

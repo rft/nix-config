@@ -112,8 +112,9 @@ uv add requests numpy
 ### Python CAD
 
 Sets up Python with build123d and CadQuery for programmatic CAD modeling.
-Includes ocp-vscode for viewing models in VS Code. System packages for OpenGL
-rendering are provided via devenv.
+Includes ocp-vscode, the Python half of the OCP CAD Viewer -- pair it with the
+OCP CAD Viewer extension at a matching major.minor version. System packages for
+OpenGL rendering are provided via devenv.
 
 **Files:**
 - `flake.nix` -- Flake with devenv integration
