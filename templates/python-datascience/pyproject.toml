@@ -17,3 +17,8 @@ dependencies = [
     "ipython",
     "marimo",
 ]
+
+[dependency-groups]
+dev = [
+    "ipykernel",
+]

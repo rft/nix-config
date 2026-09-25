@@ -6,5 +6,10 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "build123d",
     "cadquery",
-    "ocp-viewer",
+    "ocp-vscode",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel",
 ]
