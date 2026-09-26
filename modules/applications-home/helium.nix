@@ -51,6 +51,13 @@ let
     "ldgfbffkinooeloadekpmfoklnobpien" # Raindrop.io
     "jinjaccalgkegednnccohejagnlnfdag" # Violentmonkey
   ];
+
+  # Merged into the profile's Preferences on activation (no policy exists for these).
+  preferences = {
+    extensions.pinned_extensions = pinnedExtensions;
+    # 0 classic, 1 compact, 2 vertical, 3 dynamic (HeliumLayoutType in Helium's patches).
+    helium.browser.layout = 2;
+  };
 in
 delib.module {
   name = "applications.helium";
@@ -100,7 +107,7 @@ delib.module {
         NewTabPageLocation = "about:blank";
 
         # Force-installed extensions are hidden under the puzzle menu by default.
-        # Policy can pin but not order them; the order is seeded by the activation below.
+        # Policy can pin but not order them; the order is seeded via preferences below.
         ExtensionSettings =
           lib.genAttrs (lib.remove "blockjmkbacgjkknlgpkjjiijinjdanf" pinnedExtensions)
             (_: {
@@ -113,6 +120,7 @@ delib.module {
           "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
           "enamippconapkdmgfgjchkhakpfinmaj" # DeArrow
           "ponfpcnoihfmfllpaingbgckeeldkhle" # Enhancer for YouTube
+          "bifgfhokfobhebifcogneljkpaaloonp" # Cesturefy
           "fcjmgeodgobggcppooncdagfkogfffdm" # Imagus Reborn
           "fkagelmloambgokoeokbpihmgpkbgbfm" # Indie Wiki Buddy
           "halllmdjninjohpckldgkaolbhgkfnpe" # Karamel
@@ -145,15 +153,13 @@ delib.module {
             x-scheme-handler/about x-scheme-handler/unknown
         '';
 
-    home.activation.heliumPinnedExtensions =
-      inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ]
-        ''
-          prefs="$HOME/.config/net.imput.helium/Default/Preferences"
-          if [ -f "$prefs" ] && ! ${pkgs.procps}/bin/pgrep -u "$USER" -x helium >/dev/null; then
-            tmp=$(mktemp)
-            ${lib.getExe pkgs.jq} --argjson ids '${builtins.toJSON pinnedExtensions}' \
-              '.extensions.pinned_extensions = $ids' "$prefs" > "$tmp" && run mv "$tmp" "$prefs"
-          fi
-        '';
+    home.activation.heliumPreferences = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      prefs="$HOME/.config/net.imput.helium/Default/Preferences"
+      if [ -f "$prefs" ] && ! ${pkgs.procps}/bin/pgrep -u "$USER" -x helium >/dev/null; then
+        tmp=$(mktemp)
+        ${lib.getExe pkgs.jq} --argjson p '${builtins.toJSON preferences}' \
+          '. * $p' "$prefs" > "$tmp" && run mv "$tmp" "$prefs"
+      fi
+    '';
   };
 }
