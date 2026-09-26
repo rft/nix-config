@@ -138,7 +138,6 @@ delib.module {
             (with pkgs.vscode-extensions; [
               aaron-bond.better-comments
               brettm12345.nixfmt-vscode
-              github.copilot
               github.copilot-chat
               jebbs.plantuml
               jnoortheen.nix-ide
