@@ -1,7 +1,5 @@
-// Niri session tuned to launch Noctalia and reuse Awesome-style shortcuts where possible.
+// Niri session that reuses Awesome-style shortcuts where possible. Noctalia is started by its home-manager systemd service.
 // Based on the upstream default config: https://github.com/YaLTeR/niri/blob/main/resources/default-config.kdl
-
-spawn-at-startup "qs" "-c" "noctalia-shell"
 
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
