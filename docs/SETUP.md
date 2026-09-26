@@ -18,7 +18,7 @@ modules/                Shared modules (delib.module)
   core/                 Always-on system packages and xonsh
   desktop/              Desktop environment (noctalia, niri, rofi, login)
   applications/         NixOS-level GUI apps (creative, engineering, archiving)
-  applications-home/    Home Manager GUI app configs (floorp, kando, kdenlive)
+  applications-home/    Home Manager GUI app configs (helium, kando, kdenlive)
   programming/          Development tools (analysis, cloud)
   services/             Self-hosted services (see [SERVICES.md](SERVICES.md))
   terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij)
@@ -710,7 +710,6 @@ below them follows `nixpkgs`, except `nixcats-nvim`, which deliberately follows
 | noctalia | Noctalia shell (desktop shell) |
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
 | nix-vscode-extensions | VSCode marketplace extensions |
-| nur | Nix User Repository (Floorp addons) |
 | nixos-wsl | NixOS on WSL support |
 | paneru | macOS tiling window manager |
 | quickshell | Quickshell (available as input) |

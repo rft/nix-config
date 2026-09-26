@@ -134,6 +134,17 @@ delib.module {
 
   # Helium rewrites Preferences on exit, so only touch it while the browser is closed.
   home.ifEnabled = lib.mkIf pkgs.stdenv.isLinux {
+    home.sessionVariables.BROWSER = "helium";
+
+    # xdg-mime instead of xdg.mimeApps keeps mimeapps.list writable for other apps' handlers.
+    home.activation.heliumDefaultBrowser =
+      inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ]
+        ''
+          run ${pkgs.xdg-utils}/bin/xdg-mime default helium.desktop \
+            text/html application/xhtml+xml x-scheme-handler/http x-scheme-handler/https \
+            x-scheme-handler/about x-scheme-handler/unknown
+        '';
+
     home.activation.heliumPinnedExtensions =
       inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ]
         ''

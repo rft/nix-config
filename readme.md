@@ -73,7 +73,7 @@ for the full reference.
 | **Core** | `modules/core/` | 60+ system packages, Podman, xonsh shell (always active) |
 | **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, Rofi, greetd login |
 | **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
-| **Applications (HM)** | `modules/applications-home/` | Floorp browser, Kando, KDEnlive configs |
+| **Applications (HM)** | `modules/applications-home/` | Helium browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
 | **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
@@ -99,7 +99,7 @@ Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
 ## Niri Keybinds
 
 - `Mod+Shift+Slash` shows the built-in hotkey overlay.
-- `Mod+Return` launches `kitty`; `Mod+Space` opens rofi run; `Mod+P` raises the rofi window switcher; `Mod+Q` starts Floorp.
+- `Mod+Return` launches `kitty`; `Mod+Space` opens rofi run; `Mod+P` raises the rofi window switcher; `Mod+Q` starts Helium.
 - `Mod+Shift+C` closes the focused window; `Mod+Ctrl+Space` toggles floating; `Mod+Shift+Q` quits the session without confirmation.
 - `Mod+H/J/K/L` focus columns or windows; `Mod+Ctrl+H/J/K/L` move them; `Mod+Shift+H/J/K/L` focus adjacent monitors.
 - `Mod+1…9` jump to workspaces; `Mod+Ctrl+1…9` move the current column; paging keys (`Mod+Page_Down/Page_Up`) and wheel binds navigate or move workspaces.

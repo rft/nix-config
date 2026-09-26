@@ -47,10 +47,10 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, NUR, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
-- **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nur`, `nix-vscode-extensions`).
+- **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
 
 ---
 
@@ -167,7 +167,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/default.nix`
 - **Name:** `applications`
 - **Enable option:** `myconfig.applications.enable` (default: `false`)
-- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, floorp-bin, dolphin, kitty, mpv, nsxiv, obs-studio, ollama, pciutils, plover, rofi, spotify.
+- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, dolphin, kitty, mpv, nsxiv, obs-studio, ollama, pciutils, plover, rofi, spotify.
 - **Default behavior:** Disabled by default. Enabled per-host.
 - **Dependencies:** None.
 
@@ -204,14 +204,12 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 
 GUI application configs managed through Home Manager. Located in `modules/applications-home/`.
 
-### applications.floorp
+### applications.helium
 
-- **Path:** `modules/applications-home/floorp.nix`
-- **Name:** `applications.floorp`
-- **Enable option:** `myconfig.applications.floorp.enable` (default: `false`)
-- **Description:** Configures Floorp browser via Home Manager. Sets BROWSER env var. Installs ff2mpv-rust. Creates a default profile with 20+ NUR extensions (bitwarden, darkreader, ublock-origin, vimium-c, sponsorblock, sidebery, etc.).
-- **Default behavior:** Auto-enables when `myconfig.applications.enable` is true.
-- **Dependencies:** `applications`. NUR overlay (for `rycee.firefox-addons`).
+- **Path:** `modules/applications-home/helium.nix`
+- **Name:** `applications.helium`
+- **Enable option:** `myconfig.applications.helium.enable` (default: `false`, auto-enabled by `applications`)
+- **Description:** Installs Helium (Linux only, via the `helium` flake input) with managed Chromium policies: Kagi default search, `r`/`y`/`a` site searches (subreddit, YouTube, Amazon), blank new tab, and force-installed Chrome Web Store extensions. Loads a titanium-palette theme with `--force-dark-mode`, seeds pinned toolbar order on activation, and sets Helium as BROWSER and (via xdg-mime) default for http/https/html.
 
 ### applications.kando
 

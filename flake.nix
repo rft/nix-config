@@ -39,11 +39,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nur = {
-      url = "github:nix-community/NUR";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -95,7 +90,11 @@
           extensions = with denix.lib.extensions; [
             args
             (overlays.withConfig {
-              defaultTargets = [ "nixos" "home" "darwin" ];
+              defaultTargets = [
+                "nixos"
+                "home"
+                "darwin"
+              ];
             })
             (base.withConfig {
               args.enable = true;
@@ -119,12 +118,11 @@
       # Every configuration carries the full host registry (myconfig.hosts) with
       # each host's declared type; read it from one config so the OS-specific
       # outputs below can never desync from hosts/ when a host is added or retyped.
-      hostTypes = builtins.mapAttrs (_: host: host.type) (
-        builtins.head (builtins.attrValues homeConfigurations)
-      ).config.myconfig.hosts;
+      hostTypes =
+        builtins.mapAttrs (_: host: host.type)
+          (builtins.head (builtins.attrValues homeConfigurations)).config.myconfig.hosts;
       filterHosts =
-        wantDarwin:
-        inputs.nixpkgs.lib.filterAttrs (name: _: (hostTypes.${name} == "darwin") == wantDarwin);
+        wantDarwin: inputs.nixpkgs.lib.filterAttrs (name: _: (hostTypes.${name} == "darwin") == wantDarwin);
     in
     {
       nixosConfigurations = filterHosts false (mkConfigurations "nixos");

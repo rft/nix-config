@@ -130,7 +130,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "applications" as appMod {
-    component "base, creative\nengineering, archiving\nfloorp, kando, kdenlive" as appAll
+    component "base, creative\nengineering, archiving\nhelium, kando, kdenlive" as appAll
   }
 
   package "programming" as progMod {

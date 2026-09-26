@@ -31,9 +31,9 @@
               {
                 "type": "command",
                 "data": {
-                  "command": "floorp"
+                  "command": "helium"
                 },
-                "name": "Floorp Browser",
+                "name": "Helium Browser",
                 "icon": "public",
                 "iconTheme": "material-symbols-rounded"
               },

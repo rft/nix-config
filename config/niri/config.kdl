@@ -21,7 +21,7 @@ binds {
     Ctrl+Space hotkey-overlay-title="Open Pie Menu: Kando" { spawn "kando" "--menu" "Noctalia Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
     Mod+Ctrl+G hotkey-overlay-title="Global Menu: rofi-desktop" { spawn "rofi-desktop-hud"; }
-    Mod+Q hotkey-overlay-title="Browser: Floorp" { spawn "floorp"; }
+    Mod+Q hotkey-overlay-title="Browser: Helium" { spawn "helium"; }
     Mod+Shift+C repeat=false { close-window; }
     Mod+Shift+Q { quit skip-confirmation=true; }
     Mod+Ctrl+Space { toggle-window-floating; }

@@ -60,8 +60,8 @@ delib.module {
                   }
                   {
                     type = "command";
-                    data.command = "floorp";
-                    name = "Floorp Browser";
+                    data.command = "helium";
+                    name = "Helium Browser";
                     icon = "public";
                     iconTheme = "material-symbols-rounded";
                   }

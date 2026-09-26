@@ -11,7 +11,6 @@ let
     calibre
     discord
     flameshot
-    floorp-bin
     handy
     kdePackages.dolphin
     kitty
