@@ -96,6 +96,8 @@ delib.module {
         source = "custom";
         custom_palette = "Titanium";
       };
+      # Default minus the wallpaper picker; mpvpaper owns the wallpaper.
+      settings.bar.main.start = [ "launcher" "workspaces" ];
       # Same palette as nvim, yazi, zellij and omp. No light variant, so
       # noctalia reuses the dark one in light mode.
       customPalettes.Titanium.dark = with t; {
