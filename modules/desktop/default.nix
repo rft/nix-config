@@ -14,7 +14,31 @@ delib.module {
   nixos.ifEnabled = {
     environment.systemPackages = [
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
+      pkgs.netbird-ui
     ];
+
+    # Espanso's NixOS module adds the cap_dac_override wrapper that the
+    # wayland build needs and starts the daemon with graphical-session.target.
+    services.espanso = {
+      enable = true;
+      package = pkgs.espanso-wayland;
+    };
+
+    # Tray apps launched with the session (the netbird daemon itself runs
+    # system-wide from modules/core).
+    systemd.user.services = lib.mapAttrs (name: cmd: {
+      description = "${name} tray app";
+      wantedBy = [ "graphical-session.target" ];
+      partOf = [ "graphical-session.target" ];
+      after = [ "graphical-session.target" ];
+      serviceConfig = {
+        ExecStart = cmd;
+        Restart = "on-failure";
+      };
+    }) {
+      handy = "${lib.getExe pkgs.handy} --start-hidden";
+      netbird-ui = lib.getExe pkgs.netbird-ui;
+    };
 
     networking.networkmanager.enable = lib.mkDefault true;
     time.timeZone = lib.mkDefault "America/Los_Angeles";
@@ -53,7 +77,17 @@ delib.module {
     programs.firefox.enable = lib.mkDefault true;
   };
 
-  home.ifEnabled = {
+  home.ifEnabled = { myconfig, ... }: {
+    # Symlinked into the repo (like niri) so matches stay editable without a
+    # rebuild; match/packages stays in ~/.config for `espanso install`.
+    home.file = let
+      repo = "/home/${myconfig.constants.username}/nix-config/config/espanso";
+      link = name: path: pkgs.runCommandLocal "espanso-${name}-symlink" {} "ln -s ${repo}/${path} $out";
+    in {
+      ".config/espanso/config".source = link "config" "config";
+      ".config/espanso/match/base.yml".source = link "base" "match/base.yml";
+    };
+
     programs.noctalia = {
       enable = true;
       systemd.enable = true;

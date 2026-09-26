@@ -1,0 +1,5 @@
+# espanso configuration: https://espanso.org/docs/configuration/options/
+
+# niri doesn't expose the active layout, so tell espanso explicitly.
+keyboard_layout:
+  layout: us
