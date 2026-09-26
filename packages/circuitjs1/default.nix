@@ -13,7 +13,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # Upstream publishes no tagged releases and the offline builds live at a
   # fixed, unversioned URL, so the version tracks the file's upload date.
   # Bump the date and the hash together when refreshing.
-  version = "0-unstable-2026-09-06";
+  version = "0-unstable-2026-09-11";
 
   # The GWT-compiled web app under war/circuitjs1 is not checked into the
   # upstream repo (gradle + the GWT compiler produce it), so the prebuilt
@@ -22,7 +22,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   # chromium the bundle ships.
   src = fetchurl {
     url = "https://www.falstad.com/circuit/offline/circuitjs1-linux64.tgz";
-    hash = "sha256-O8nBd5uA5Xu5TZAfFElWcCNb/IXjqkCYevLFFHa9Lp0=";
+    hash = "sha256-Fj1UTGPcz13a5CfIDHAXzVyqXMQ+H6/08H4awJ8D9hQ=";
   };
 
   dontUnpack = true;
