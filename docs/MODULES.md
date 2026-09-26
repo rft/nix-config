@@ -96,7 +96,7 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Path:** `modules/desktop/default.nix`
 - **Name:** `desktop`
 - **Enable option:** `myconfig.desktop.enable` (default: `false`)
-- **Description:** Imports and enables Noctalia shell (both NixOS service and HM program). Sets Noctalia color scheme to Nord.
+- **Description:** Imports and enables Noctalia shell (both NixOS service and HM program). Sets Noctalia to a custom "Titanium" palette built from `lib/titanium-palette.nix` (shared with nvim, yazi, zellij and oh-my-pi).
 - **Default behavior:** Disabled by default. Enabled in desktop-type hosts via `myconfig.desktop.enable = true`.
 - **Dependencies:** `noctalia` flake input.
 

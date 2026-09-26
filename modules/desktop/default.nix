@@ -1,4 +1,7 @@
 { delib, lib, inputs, pkgs, ... }:
+let
+  t = import ../../lib/titanium-palette.nix;
+in
 delib.module {
   name = "desktop";
 
@@ -56,8 +59,56 @@ delib.module {
       systemd.enable = true;
       settings.theme = {
         mode = "dark";
-        source = "builtin";
-        builtin = "Nord";
+        source = "custom";
+        custom_palette = "Titanium";
+      };
+      # Same palette as nvim, yazi, zellij and omp. No light variant, so
+      # noctalia reuses the dark one in light mode.
+      customPalettes.Titanium.dark = with t; {
+        mPrimary = electricBlue;
+        mOnPrimary = darkTitanium;
+        mSecondary = titaniumGold;
+        mOnSecondary = darkTitanium;
+        mTertiary = readoutGreen;
+        mOnTertiary = darkTitanium;
+        mError = alertRed;
+        mOnError = darkTitanium;
+        mSurface = brushedTitanium;
+        mOnSurface = brightAluminum;
+        mSurfaceVariant = borderMuted;
+        mOnSurfaceVariant = dimAluminum;
+        mOutline = subtleGray;
+        mShadow = darkTitanium;
+        mHover = subtleGray;
+        mOnHover = brightAluminum;
+        terminal = {
+          background = brushedTitanium;
+          foreground = brightAluminum;
+          cursor = electricBlue;
+          cursorText = darkTitanium;
+          selectionBg = subtleGray;
+          selectionFg = brightAluminum;
+          normal = {
+            black = subtleGray;
+            red = alertRed;
+            green = readoutGreen;
+            yellow = warningAmber;
+            blue = deepBlue;
+            magenta = titaniumGold;
+            cyan = electricBlue;
+            white = dimAluminum;
+          };
+          bright = {
+            black = comment;
+            red = alertRed;
+            green = readoutGreen;
+            yellow = warningAmber;
+            blue = electricBlue;
+            magenta = titaniumGold;
+            cyan = electricBlue;
+            white = brightAluminum;
+          };
+        };
       };
     };
   };
