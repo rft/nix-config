@@ -1,5 +1,5 @@
 # omp's built-in "titanium" theme — same values as nixcat-nvim's
-# lua/core/palette.lua, so nvim, omp, yazi, zellij and noctalia read as one scheme.
+# lua/core/palette.lua, so nvim, omp, yazi, zellij, noctalia and rofi read as one scheme.
 {
   brushedTitanium = "#151820"; # background
   darkTitanium = "#0f1216"; # floats, bars

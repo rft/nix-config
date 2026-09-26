@@ -152,7 +152,7 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Path:** `modules/desktop/rofi.nix`
 - **Name:** `desktop.rofi`
 - **Enable option:** `myconfig.desktop.rofi.enable` (default: `false`)
-- **Description:** Configures Rofi launcher with Nord theme. Installs rofi-desktop (custom package) and libdbusmenu. Creates a systemd user service for the rofi-appmenu-service HUD.
+- **Description:** Configures Rofi launcher with a "titanium" theme generated from `lib/titanium-palette.nix`. Installs rofi-desktop (custom package) and libdbusmenu. Creates a systemd user service for the rofi-appmenu-service HUD.
 - **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
 - **Dependencies:** `desktop`. Custom `rofi-desktop` package from `packages/rofi-desktop/`.
 
