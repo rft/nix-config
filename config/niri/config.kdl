@@ -1,4 +1,4 @@
-// Niri session that reuses Awesome-style shortcuts where possible. Noctalia is started by its home-manager systemd service.
+// Niri session. Noctalia is started by its home-manager systemd service.
 // Based on the upstream default config: https://github.com/YaLTeR/niri/blob/main/resources/default-config.kdl
 
 binds {
@@ -15,7 +15,7 @@ binds {
     // Mod-Shift-/, which is usually the same as Mod-?,
     // shows a list of important hotkeys.
     Mod+Shift+Slash { show-hotkey-overlay; }
-    // Additional Awesome-style shortcuts
+    // Additional shortcuts
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
     Mod+Space hotkey-overlay-title="Run an Application: rofi run" { spawn "rofi" "-show" "run"; }
     Ctrl+Space hotkey-overlay-title="Open Pie Menu: Kando" { spawn "kando" "--menu" "Noctalia Menu"; }

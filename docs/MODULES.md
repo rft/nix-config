@@ -129,15 +129,6 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 | Unstack | `Alt + [` |
 | Quit | `Ctrl + Alt + Q` |
 
-### desktop.awesome
-
-- **Path:** `modules/desktop/awesome.nix`
-- **Name:** `desktop.awesome`
-- **Enable option:** `myconfig.desktop.awesome.enable` (default: `false`)
-- **Description:** Installs AwesomeWM with startx display manager. Adds autorandr and arandr packages. Enables libinput with natural scrolling.
-- **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
-- **Dependencies:** `desktop`.
-
 ### desktop.login
 
 - **Path:** `modules/desktop/login.nix`

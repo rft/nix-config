@@ -7,7 +7,7 @@ Guidelines for AI agents working in this nix-config repository.
 - **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
 - **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, programming, terminal, editors, fonts, services)
-- **`config/`** — Static app config files (awesome, niri, kando)
+- **`config/`** — Static app config files (niri, kando)
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix)
 - **`packages/`** — Custom packages (rofi-desktop, xxh)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
@@ -134,7 +134,7 @@ delib.host {
 - This repo targets NixOS (x86_64-linux), Darwin (aarch64-darwin), and WSL.
 - When editing a module, check whether it uses `nixos.*`, `darwin.*`, or both — ensure changes work on all applicable platforms.
 - Darwin uses Homebrew casks for GUI apps (configured in `modules/config/darwin.nix`). NixOS installs GUI apps via `environment.systemPackages`.
-- macOS hosts use `paneru` for tiling; NixOS desktops use `niri` (Wayland) or `awesome` (X11).
+- macOS hosts use `paneru` for tiling; NixOS desktops use `niri` (Wayland).
 
 ## Naming conventions
 
@@ -148,5 +148,4 @@ delib.host {
 - Do not hardcode usernames — use `myconfig.constants.username`.
 - Do not add packages to `modules/core/default.nix` unless they should be on every single host. Use feature modules instead.
 - Do not manage secrets (API keys, tokens, SSH keys) through Nix — they are handled outside this repo.
-- Do not modify `config/awesome/lain` or `config/awesome/freedesktop` — these are git submodules.
 - Do not add Claude Code settings to home-manager — `~/.claude/settings.json` must remain writable at runtime.

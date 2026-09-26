@@ -71,7 +71,7 @@ for the full reference.
 |----------|------|-------------|
 | **Config** | `modules/config/` | Infrastructure: constants, user account, overlays (always active) |
 | **Core** | `modules/core/` | 60+ system packages, Podman, xonsh shell (always active) |
-| **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, AwesomeWM, Rofi, greetd login |
+| **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, Rofi, greetd login |
 | **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
 | **Applications (HM)** | `modules/applications-home/` | Floorp browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |

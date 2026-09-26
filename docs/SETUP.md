@@ -16,7 +16,7 @@ hosts/                  Per-host configurations (delib.host)
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
-  desktop/              Desktop environment (noctalia, awesome, niri, rofi, login)
+  desktop/              Desktop environment (noctalia, niri, rofi, login)
   applications/         NixOS-level GUI apps (creative, engineering, archiving)
   applications-home/    Home Manager GUI app configs (floorp, kando, kdenlive)
   programming/          Development tools (analysis, cloud)
@@ -24,7 +24,7 @@ modules/                Shared modules (delib.module)
   terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij)
   editors/              Editor configurations (vscode, helix, doom-emacs)
   fonts/                Font packages and fontconfig
-config/                 Static app configs (awesome, niri, kando)
+config/                 Static app configs (niri, kando)
 lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages)
 packages/               Custom packages (rofi-desktop, xxh)
 docs/                   This documentation

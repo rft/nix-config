@@ -126,7 +126,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "desktop" as deskMod {
-    component "noctalia, niri\nawesome, rofi\ngreetd, paneru" as deskAll
+    component "noctalia, niri\nrofi, greetd\npaneru" as deskAll
   }
 
   package "applications" as appMod {
@@ -173,7 +173,7 @@ package "packages/" as pkgPkg #FCE4EC {
 }
 
 package "config/" as cfgPkg #E0F7FA {
-  component "awesome/, niri/\nkando/" as cfgDots
+  component "niri/, kando/" as cfgDots
 }
 
 libPkg -up-> mods : imported by\nmodules
