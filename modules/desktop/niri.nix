@@ -16,6 +16,7 @@ delib.module {
       niri
       kanshi
       wdisplays
+      xwayland-satellite # niri auto-spawns it for X11 apps (also needed by vmware-user clipboard sync)
     ];
 
     systemd.user.services.niri = {
