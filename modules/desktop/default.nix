@@ -104,14 +104,16 @@ delib.module {
         custom_palette = "Titanium";
       };
       # Default minus the launcher and the wallpaper picker (mpvpaper owns
-      # the wallpaper), plus the AI plugin widgets.
-      settings.bar.main.start = [ "workspaces" "ai_usage" "agent_glow" ];
-      # Both come from the built-in community source.
-      settings.plugins.enabled = [ "felipeartur/ai-usagebar" "fel/agent-glow" ];
-      settings.widget = {
-        ai_usage.type = "felipeartur/ai-usagebar:bar";
-        agent_glow.type = "fel/agent-glow:indicator";
-      };
+      # the wallpaper), plus the AI usage widget. `end` is noctalia's default
+      # list — setting it replaces the whole thing.
+      settings.bar.main.start = [ "workspaces" ];
+      settings.bar.main.end = [
+        "ai_usage" "media" "tray" "notifications" "clipboard" "network"
+        "bluetooth" "volume" "brightness" "battery" "control-center" "session"
+      ];
+      # From the built-in community source.
+      settings.plugins.enabled = [ "felipeartur/ai-usagebar" ];
+      settings.widget.ai_usage.type = "felipeartur/ai-usagebar:bar";
       # Same palette as nvim, yazi, zellij and omp. No light variant, so
       # noctalia reuses the dark one in light mode.
       customPalettes.Titanium.dark = with t; {
