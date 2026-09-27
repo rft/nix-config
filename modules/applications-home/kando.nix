@@ -153,17 +153,18 @@ delib.module {
     xdg.configFile."kando/menu-themes/titanium/theme.css".source = "${themeDir}/theme.css";
     xdg.configFile."kando/menu-themes/titanium/theme.json5".text = builtins.toJSON themeJson;
 
-    # config.json stays writable (Kando saves settings into it), so only the
-    # theme keys are patched in rather than managing the whole file.
+    # config.json stays writable (Kando saves settings into it), so only these
+    # keys are patched in rather than managing the whole file. menus.json is a
+    # read-only store symlink, which Kando warns about unless told to ignore it.
     home.activation.kandoTheme = inputs.home-manager.lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       cfg="$HOME/.config/kando/config.json"
       if [ -f "$cfg" ]; then
         tmp=$(mktemp)
-        ${lib.getExe pkgs.jq} '.menuTheme = "titanium" | .darkMenuTheme = "titanium"' "$cfg" > "$tmp" \
+        ${lib.getExe pkgs.jq} '.menuTheme = "titanium" | .darkMenuTheme = "titanium" | .ignoreWriteProtectedConfigFiles = true' "$cfg" > "$tmp" \
           && run mv "$tmp" "$cfg"
       else
         run mkdir -p "$(dirname "$cfg")"
-        run sh -c 'echo "{\"menuTheme\": \"titanium\", \"darkMenuTheme\": \"titanium\"}" > "$1"' _ "$cfg"
+        run sh -c 'echo "{\"menuTheme\": \"titanium\", \"darkMenuTheme\": \"titanium\", \"ignoreWriteProtectedConfigFiles\": true}" > "$1"' _ "$cfg"
       fi
     '';
   };
