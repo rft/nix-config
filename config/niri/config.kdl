@@ -24,7 +24,6 @@ binds {
     Mod+M hotkey-overlay-title="Media Menu: Kando" { spawn "kando" "--menu" "Media Menu"; }
     Mod+X hotkey-overlay-title="Power Menu: Kando" { spawn "kando" "--menu" "Power Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
-    Mod+Ctrl+G hotkey-overlay-title="Global Menu: rofi-desktop" { spawn "rofi-desktop-hud"; }
     Mod+Q hotkey-overlay-title="Browser: Helium" { spawn "helium"; }
     Mod+Shift+C repeat=false { close-window; }
     Mod+Shift+Q { quit skip-confirmation=true; }
@@ -32,7 +31,6 @@ binds {
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+T hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
-    Mod+D hotkey-overlay-title="Desktop Menus: rofi-desktop" { spawn "rofi-desktop"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia" "msg" "session" "lock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.

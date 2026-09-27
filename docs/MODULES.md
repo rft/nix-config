@@ -47,7 +47,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `xxh` and `oh-my-pi` packages, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `oh-my-pi` package, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
@@ -152,9 +152,9 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Path:** `modules/desktop/rofi.nix`
 - **Name:** `desktop.rofi`
 - **Enable option:** `myconfig.desktop.rofi.enable` (default: `false`)
-- **Description:** Configures Rofi launcher with a "titanium" theme generated from `lib/titanium-palette.nix`. Installs rofi-desktop (custom package) and libdbusmenu. Creates a systemd user service for the rofi-appmenu-service HUD.
+- **Description:** Configures Rofi launcher with a "titanium" theme generated from `lib/titanium-palette.nix`.
 - **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
-- **Dependencies:** `desktop`. Custom `rofi-desktop` package from `packages/rofi-desktop/`.
+- **Dependencies:** `desktop`.
 
 ---
 
@@ -185,7 +185,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/engineering.nix`
 - **Name:** `applications.engineering`
 - **Enable option:** `myconfig.applications.engineering.enable` (default: `false`)
-- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, circuitjs1, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
+- **Description:** Engineering and reverse-engineering tools: alloy6, chirp, fiji, ghidra, imhex, kicad, pulseview, qemu, sdrangel, solvespace, virt-manager.
 - **Default behavior:** Auto-enables when `myconfig.applications.enable` is true. Can be explicitly disabled per-host.
 - **Dependencies:** `applications`.
 
@@ -334,9 +334,9 @@ Shell and terminal emulator configuration. Enabled by default (`singleEnableOpti
 - **Path:** `modules/terminal/xonsh.nix`
 - **Name:** `terminal.xonsh`
 - **Enable option:** `myconfig.terminal.xonsh.enable` (default: `true`)
-- **Description:** Configures xonsh for Home Manager with atuin, starship, and zoxide init. Installs xxh (custom package) and Python with xonsh. Includes WSL path handling: strips `/mnt/c/` paths for performance and re-adds select Windows executables (VS Code).
+- **Description:** Configures xonsh for Home Manager with atuin, starship, and zoxide init. Installs Python with xonsh. Includes WSL path handling: strips `/mnt/c/` paths for performance and re-adds select Windows executables (VS Code).
 - **Default behavior:** Enabled by default for all hosts.
-- **Dependencies:** `lib/xonsh-extra-packages.nix`. Custom `xxh` package from `packages/xxh/`.
+- **Dependencies:** `lib/xonsh-extra-packages.nix`.
 
 ### terminal.zellij
 

@@ -9,7 +9,7 @@ Guidelines for AI agents working in this nix-config repository.
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, programming, terminal, editors, fonts, services)
 - **`config/`** — Static app config files (niri, kando)
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix)
-- **`packages/`** — Custom packages (rofi-desktop, xxh)
+- **`packages/`** — Custom packages (oh-my-pi)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
 - **`templates/`** — 11 devenv project templates
 - **`docs/`** — Documentation (MODULES.md, SETUP.md, TEMPLATES.md, VPS.md, architecture diagrams)

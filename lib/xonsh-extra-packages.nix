@@ -1,14 +1,10 @@
 ps:
 let
   pythonCorePackages = import ./python-core-packages.nix;
-  xxh = ps.callPackage ../packages/xxh {
-    python3Packages = ps;
-  };
 in
 (pythonCorePackages ps)
 ++ [
   # xonsh-specific extras
-  xxh
   # Looks like the only ones available right now are
   # nix repl github:NixOS/nixpkgs
   # nix repl github:nixos/nixpkgs/nixos-unstable

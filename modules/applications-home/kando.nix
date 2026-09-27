@@ -42,8 +42,6 @@ let
   launchers = submenu "Launchers" "widgets" [
     (item "Rofi Apps" "search" "rofi -show drun")
     (item "Rofi Windows" "view_quilt" "rofi -show window")
-    (item "Rofi Desktop" "dashboard" "rofi-desktop")
-    (item "Global Menu" "menu" "rofi-desktop-hud")
   ];
 
   window = submenu "Window" "select_window" [

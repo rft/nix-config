@@ -211,36 +211,7 @@
           };
         in
         {
-          rofi-desktop = import ./packages/rofi-desktop {
-            inherit pkgs;
-            inherit (pkgs)
-              lib
-              stdenvNoCC
-              fetchgit
-              makeWrapper
-              runtimeShell
-              python3
-              gtk3
-              glib
-              gdk-pixbuf
-              pango
-              atk
-              wrapGAppsHook3
-              ;
-          };
-          xxh = pkgs.callPackage ./packages/xxh { };
           installer-iso = inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
-        };
-
-      packages.aarch64-darwin =
-        let
-          pkgs = import inputs.nixpkgs {
-            system = "aarch64-darwin";
-            config.allowUnfree = true;
-          };
-        in
-        {
-          xxh = pkgs.callPackage ./packages/xxh { };
         };
     };
 }

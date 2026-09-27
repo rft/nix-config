@@ -1,4 +1,4 @@
-{ delib, inputs, pkgs, ... }:
+{ delib, pkgs, ... }:
 delib.module {
   name = "terminal.xonsh";
 
@@ -7,12 +7,10 @@ delib.module {
   home.ifEnabled =
   let
     xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
-    inherit (inputs.self.packages.${pkgs.stdenv.hostPlatform.system}) xxh;
   in
   {
     home.packages = [
       pkgs.starship
-      xxh
       (pkgs.python3.withPackages (ps: [ ps.xonsh ] ++ xonshExtraPackages ps))
     ];
 

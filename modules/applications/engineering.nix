@@ -14,7 +14,6 @@ let
   linuxOnlyPackages = with pkgs; [
     alloy6
     chirp
-    circuitjs1
     fiji
     pulseview
     sdrangel

@@ -26,7 +26,7 @@ modules/                Shared modules (delib.module)
   fonts/                Font packages and fontconfig
 config/                 Static app configs (niri, kando)
 lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages)
-packages/               Custom packages (rofi-desktop, xxh)
+packages/               Custom packages (oh-my-pi)
 docs/                   This documentation
 ```
 

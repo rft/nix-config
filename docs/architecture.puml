@@ -169,7 +169,7 @@ package "lib/" as libPkg #F3E5F5 {
 }
 
 package "packages/" as pkgPkg #FCE4EC {
-  component "xxh, rofi-desktop\ninstaller-iso" as pkgAll
+  component "installer-iso" as pkgAll
 }
 
 package "config/" as cfgPkg #E0F7FA {
