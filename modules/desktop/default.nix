@@ -92,6 +92,9 @@ delib.module {
       ".config/espanso/scripts".source = link "scripts" "scripts";
     };
 
+    # The noctalia ai-usagebar plugin shells out to this CLI by name.
+    home.packages = [ pkgs.ai-usagebar ];
+
     programs.noctalia = {
       enable = true;
       systemd.enable = true;
@@ -100,8 +103,15 @@ delib.module {
         source = "custom";
         custom_palette = "Titanium";
       };
-      # Default minus the wallpaper picker; mpvpaper owns the wallpaper.
-      settings.bar.main.start = [ "launcher" "workspaces" ];
+      # Default minus the launcher and the wallpaper picker (mpvpaper owns
+      # the wallpaper), plus the AI plugin widgets.
+      settings.bar.main.start = [ "workspaces" "ai_usage" "agent_glow" ];
+      # Both come from the built-in community source.
+      settings.plugins.enabled = [ "felipeartur/ai-usagebar" "fel/agent-glow" ];
+      settings.widget = {
+        ai_usage.type = "felipeartur/ai-usagebar:bar";
+        agent_glow.type = "fel/agent-glow:indicator";
+      };
       # Same palette as nvim, yazi, zellij and omp. No light variant, so
       # noctalia reuses the dark one in light mode.
       customPalettes.Titanium.dark = with t; {
