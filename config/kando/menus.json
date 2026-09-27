@@ -66,9 +66,9 @@
               {
                 "type": "command",
                 "data": {
-                  "command": "rofi -show run"
+                  "command": "rofi -show drun"
                 },
-                "name": "Rofi Run",
+                "name": "Rofi Apps",
                 "icon": "search",
                 "iconTheme": "material-symbols-rounded"
               },

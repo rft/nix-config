@@ -10,7 +10,7 @@ let
     }
 
     * {
-        font: "IBM Plex Mono 11";
+        font: "FiraCode Nerd Font 11";
 
         background-color: transparent;
         text-color:       ${t.brightAluminum};
@@ -43,7 +43,7 @@ let
     inputbar {
         padding:  8px;
         spacing:  8px;
-        children: [ icon-search, entry ];
+        children: [ textbox-search, entry ];
 
         background-color: ${t.darkTitanium};
         border:           0px 0px 2px 0px solid;
@@ -51,18 +51,21 @@ let
         border-radius:    4px;
     }
 
-    icon-search, entry, element-icon, element-text {
+    textbox-search, entry, element-icon, element-text {
         vertical-align: 0.5;
     }
 
-    icon-search {
-        expand:   false;
-        filename: "search-symbolic";
-        size:     20px;
+    // Nerd Font magnifier glyph; the search-symbolic icon isn't in the icon theme.
+    textbox-search {
+        expand:     false;
+        // Mono variant keeps the glyph inside its cell so it isn't clipped.
+        font:       "FiraCode Nerd Font Mono 14";
+        str:        "";
+        text-color: @accent-color;
     }
 
     entry {
-        font:              "IBM Plex Mono 12";
+        font:              "FiraCode Nerd Font 12";
         placeholder:       "Type here to search";
         placeholder-color: ${t.comment};
     }
