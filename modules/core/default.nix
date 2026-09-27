@@ -13,6 +13,7 @@ let
     bat
     bottom
     claude-code
+    codex
     difftastic
     dua
     fd
