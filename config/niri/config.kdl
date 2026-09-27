@@ -17,7 +17,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     // Additional shortcuts
     Mod+Return hotkey-overlay-title="Open a Terminal: kitty" { spawn "kitty"; }
-    Mod+Space hotkey-overlay-title="Run an Application: rofi run" { spawn "rofi" "-show" "run"; }
+    Mod+Space hotkey-overlay-title="Run an Application: rofi drun" { spawn "rofi" "-show" "drun"; }
     Ctrl+Space hotkey-overlay-title="Open Pie Menu: Kando" { spawn "kando" "--menu" "Noctalia Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
     Mod+Ctrl+G hotkey-overlay-title="Global Menu: rofi-desktop" { spawn "rofi-desktop-hud"; }

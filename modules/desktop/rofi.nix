@@ -2,15 +2,15 @@
 let
   t = import ../../lib/titanium-palette.nix;
 
-  # Vertical layout (originally newmanls' Nord theme) recoloured with the
-  # titanium palette shared with nvim, yazi, zellij and noctalia.
+  # Single-column list (originally newmanls' windows11-list theme) recoloured
+  # with the titanium palette shared with nvim, yazi, zellij and noctalia.
   theme = pkgs.writeText "titanium.rasi" ''
     configuration {
         show-icons: true;
     }
 
     * {
-        font: "IBM Plex Mono 12";
+        font: "IBM Plex Mono 11";
 
         background-color: transparent;
         text-color:       ${t.brightAluminum};
@@ -21,79 +21,90 @@ let
         spacing: 0px;
     }
 
-    window {
-        background-color: ${t.brushedTitanium};
-        border-color:     @accent-color;
+    element-icon, element-text, scrollbar {
+        cursor: pointer;
+    }
 
+    window {
         location: center;
-        width:    480px;
-        border:   1px;
+        width:    560px;
+
+        background-color: ${t.brushedTitanium};
+        border:           1px;
+        border-color:     ${t.subtleGray};
+        border-radius:    8px;
+    }
+
+    mainbox {
+        padding: 16px;
+        spacing: 16px;
     }
 
     inputbar {
-        padding:  8px 12px;
-        spacing:  12px;
-        children: [ prompt, entry ];
+        padding:  8px;
+        spacing:  8px;
+        children: [ icon-search, entry ];
+
         background-color: ${t.darkTitanium};
+        border:           0px 0px 2px 0px solid;
+        border-color:     @accent-color;
+        border-radius:    4px;
     }
 
-    prompt, entry, element-text, element-icon {
+    icon-search, entry, element-icon, element-text {
         vertical-align: 0.5;
     }
 
-    prompt {
-        text-color: @accent-color;
+    icon-search {
+        expand:   false;
+        filename: "search-symbolic";
+        size:     20px;
     }
 
     entry {
+        font:              "IBM Plex Mono 12";
+        placeholder:       "Type here to search";
         placeholder-color: ${t.comment};
     }
 
-    listview {
-        lines:   8;
-        columns: 1;
+    textbox {
+        padding:          4px 8px;
+        background-color: ${t.darkTitanium};
+    }
 
-        fixed-height:     false;
-        spacing:          1px;
-        background-color: ${t.subtleGray};
+    listview {
+        lines:        8;
+        columns:      1;
+        spacing:      4px;
+        fixed-height: false;
+        scrollbar:    false;
     }
 
     element {
-        padding: 8px;
-        spacing: 8px;
-        background-color: ${t.brushedTitanium};
-    }
-
-    element alternate normal {
-        background-color: ${t.borderMuted};
+        padding:       6px 8px;
+        spacing:       12px;
+        border-radius: 4px;
     }
 
     element normal urgent, element alternate urgent {
         text-color: ${t.warningAmber};
     }
 
-    element normal active, element alternate active {
+    element normal active, element alternate active, element selected active {
         text-color: @accent-color;
     }
 
     element selected {
-        text-color: ${t.darkTitanium};
-    }
-
-    element selected normal {
-        background-color: @accent-color;
+        background-color: ${t.subtleGray};
     }
 
     element selected urgent {
         background-color: ${t.warningAmber};
-    }
-
-    element selected active {
-        background-color: ${t.deepBlue};
+        text-color:       ${t.darkTitanium};
     }
 
     element-icon {
-        size: 0.75em;
+        size: 32px;
     }
 
     element-text {

@@ -38,6 +38,9 @@ delib.module {
     }) {
       handy = "${lib.getExe pkgs.handy} --start-hidden";
       netbird-ui = lib.getExe pkgs.netbird-ui;
+    } // {
+      # match/base.yml shells out to config/espanso/scripts/helper.py.
+      espanso.path = [ pkgs.python3 ];
     };
 
     networking.networkmanager.enable = lib.mkDefault true;
@@ -86,6 +89,7 @@ delib.module {
     in {
       ".config/espanso/config".source = link "config" "config";
       ".config/espanso/match/base.yml".source = link "base" "match/base.yml";
+      ".config/espanso/scripts".source = link "scripts" "scripts";
     };
 
     programs.noctalia = {

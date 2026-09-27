@@ -1,5 +1,11 @@
 # espanso matches: https://espanso.org/docs/matches/basics/
+#
+# Regex triggers fire the moment they match, so every variable-length macro
+# needs a terminator (a unit letter, "=", ")" or a space); otherwise ":+1"
+# would fire before you could type ":+10". Dynamic ones call scripts/helper.py.
+
 matches:
+  # --- dates (ISO 8601) ---
   - trigger: ":date"
     replace: "{{today}}"
     vars:
@@ -7,3 +13,93 @@ matches:
         type: date
         params:
           format: "%Y-%m-%d"
+
+  - trigger: ":now"
+    replace: "{{now}}"
+    vars:
+      - name: now
+        type: date
+        params:
+          format: "%Y-%m-%dT%H:%M:%S%:z"
+
+  - trigger: ":tomorrow"
+    replace: "{{d}}"
+    vars:
+      - name: d
+        type: date
+        params:
+          format: "%Y-%m-%d"
+          offset: 86400
+
+  - trigger: ":yesterday"
+    replace: "{{d}}"
+    vars:
+      - name: d
+        type: date
+        params:
+          format: "%Y-%m-%d"
+          offset: -86400
+
+  # :+3d :-2w :+1m :-1y  -> date relative to today
+  - regex: ":(?P<sign>[+-])(?P<n>\\d+)(?P<unit>[dwmy])$"
+    replace: "{{out}}"
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", offset, "{{sign}}", "{{n}}", "{{unit}}"]
+
+  # ":+1 " / ":-1 " (space-terminated) -> days, space kept. Leaves :+1: alone.
+  - regex: ":(?P<sign>[+-])(?P<n>\\d+) $"
+    replace: "{{out}} "
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", offset, "{{sign}}", "{{n}}", d]
+
+  # --- math (Python syntax + the math module), terminated by "=" ---
+  # :5+5=  :2**10=  :(1+2)*3=  :sqrt(2)*pi=  ->  result
+  - regex: ":(?P<expr>[\\d(.][^\\s=:>]*|[a-z]+\\([^\\s=:>]*)=$"
+    replace: "{{out}}"
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", calc, "{{expr}}"]
+
+  # --- unit conversion: :10km>mi=  :72f>c=  :5gib>gb= ---
+  - regex: ":(?P<val>-?[\\d.]+)(?P<src>[a-zA-Z]+)>(?P<dst>[a-zA-Z]+)=$"
+    replace: "{{out}}"
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", convert, "{{val}}", "{{src}}", "{{dst}}"]
+
+  # --- random ---
+  # :random(6) -> 1..6, :random(1,5) -> 1..5 (inclusive, like random.randint)
+  - regex: ":random\\((?P<args>[\\d, -]*)\\)$"
+    replace: "{{out}}"
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", random, "{{args}}"]
+
+  # ":random " (space-terminated) -> 1..100, space kept
+  - regex: ":random $"
+    replace: "{{out}} "
+    vars:
+      - name: out
+        type: script
+        params:
+          args: [python3, "%CONFIG%/scripts/helper.py", random]
+
+  - trigger: ":coin"
+    replace: "{{flip}}"
+    vars:
+      - name: flip
+        type: random
+        params:
+          choices: [Heads, Tails]
