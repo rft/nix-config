@@ -48,7 +48,38 @@ delib.host {
 
     systemd.tmpfiles.rules = [
       "d /srv/projects 0750 ${myconfig.constants.username} users -"
+      "d /srv/share 0750 ${myconfig.constants.username} users -"
     ];
+
+    # General-purpose SMB share. Samba itself (globals, firewall, nmbd) is set
+    # up in the services module; the password is set out-of-band with
+    # `sudo smbpasswd -a ${myconfig.constants.username}`.
+    #
+    # 445 stays LAN-open for the scanner's share, so this one is fenced to
+    # NetBird peers (CGNAT range) by Samba itself rather than the firewall.
+    # The default reverse-path filter drops LAN packets spoofing a wt0 address.
+    services.samba.settings.share = {
+      "path" = "/srv/share";
+      "browseable" = "yes";
+      "read only" = "no";
+      "valid users" = myconfig.constants.username;
+      "hosts allow" = "100.64.0.0/10";
+      "create mask" = "0644";
+      "directory mask" = "0755";
+    };
+
+    # macOS interop: Apple SMB extensions so Finder keeps tags, resource
+    # forks and metadata, and doesn't litter ._ files. Samba recommends
+    # loading fruit globally so every share agrees on it.
+    services.samba.settings.global = {
+      "vfs objects" = "catia fruit streams_xattr";
+      "fruit:aapl" = "yes";
+      "fruit:metadata" = "stream";
+      "fruit:model" = "MacSamba";
+      "fruit:nfs_aces" = "no";
+      "fruit:wipe_intentionally_left_blank_rfork" = "yes";
+      "fruit:delete_empty_adfiles" = "yes";
+    };
   };
 
   myconfig = {

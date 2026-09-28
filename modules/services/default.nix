@@ -340,6 +340,16 @@ delib.module {
         # instead of letting next-auth infer it from request headers.
         NEXTAUTH_URL = "http://bristlecone:3000";
         DISABLE_NEW_RELEASE_CHECK = "true";
+
+        # AI tagging/summaries go through the local 9router gateway below.
+        # Inference only switches on once OPENAI_API_KEY is set; that key is a
+        # 9router API key and lives in /var/lib/karakeep/settings.env (append
+        # `OPENAI_API_KEY=...` there — karakeep-init never overwrites it).
+        OPENAI_BASE_URL = "http://127.0.0.1:20128/v1";
+        INFERENCE_TEXT_MODEL = "cx/gpt-5.6-luna";
+        INFERENCE_IMAGE_MODEL = "cx/gpt-5.6-luna";
+        # 9router drops json_schema response_format, so ask for plain JSON mode.
+        INFERENCE_OUTPUT_SCHEMA = "json";
       };
     };
 
