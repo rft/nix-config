@@ -45,8 +45,8 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, paneru tiling WM. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
-| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, raycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, paneru tiling WM. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host

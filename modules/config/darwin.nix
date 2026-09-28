@@ -29,6 +29,11 @@ delib.module {
         onActivation.cleanup = lib.mkDefault "zap";
         taps = [
           "guria/tap"
+          # trusted: Homebrew 6 refuses to load casks from untrusted third-party taps.
+          {
+            name = "abue-ammar/tinycast";
+            trusted = true;
+          }
         ];
         brews = [ "mas" ];
         casks = [
@@ -43,7 +48,7 @@ delib.module {
           "krita"
           "reaper"
           "rustdesk"
-          "raycast"
+          "abue-ammar/tinycast/tinycast"
           "shortcat"
           "linearmouse"
           "orion"
