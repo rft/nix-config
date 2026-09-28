@@ -44,5 +44,13 @@ delib.module {
         push.autoSetupRemote = true;
       };
     };
+
+    programs.jujutsu = {
+      enable = true;
+      settings.user = {
+        name = myconfig.constants.gitname;
+        email = myconfig.constants.useremail;
+      };
+    };
   };
 }
