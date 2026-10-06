@@ -318,16 +318,6 @@ delib.module {
       playwrightSupport = true;
     };
 
-    # karakeep on 26.05 still builds with pnpm_9 (9.15.9), which nixpkgs now
-    # flags for a batch of CVEs, so the package refuses to evaluate. pnpm is a
-    # build-time tool only — it is not in the service's runtime closure, and the
-    # build runs sandboxed against a pinned lockfile. unstable resolved this by
-    # moving karakeep to pnpm_11 alongside a karakeep bump; that can't be
-    # backported on its own here because 26.05's karakeep ships a pnpm-9-era
-    # pnpm-lock.yaml. Scoped to this module, so it only applies to hosts running
-    # these services. Drop once 26.05 ships a karakeep built on a clean pnpm.
-    nixpkgs.config.permittedInsecurePackages = [ "pnpm-9.15.9" ];
-
     # Karakeep bookmark / read-it-later app
     # meilisearch (127.0.0.1:7700) and headless chromium (127.0.0.1:9222) are
     # enabled by default by the upstream module. MEILI_MASTER_KEY and
