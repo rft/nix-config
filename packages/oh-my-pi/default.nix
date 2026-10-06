@@ -7,7 +7,7 @@
 }:
 
 let
-  version = "18.3.2";
+  version = "18.6.1";
 
   # Upstream is a bun monorepo with napi-rs natives, puppeteer and
   # transformers.js — building it from source is not practical, so use the
@@ -15,19 +15,19 @@ let
   sources = {
     x86_64-linux = {
       asset = "omp-linux-x64";
-      hash = "sha256-jLvNS+p6e4YRahM1LzHjd4/U2T35MQNrsXcXOLBwJTQ=";
+      hash = "sha256-ySpoRtAphOhPB8Y2LRit03g/Uo9JT/zx4PJuWU8ydGM=";
     };
     aarch64-linux = {
       asset = "omp-linux-arm64";
-      hash = "sha256-9W9Hdau/JpxIHHh5lpHqpZp9aWRPp9WSx3Xixl97E9o=";
+      hash = "sha256-y3gVMwuxF4d+ThM1YuqC4wAe5HDkc5NVJQe1p/BAf0o=";
     };
     aarch64-darwin = {
       asset = "omp-darwin-arm64";
-      hash = "sha256-n8zyzdekcsk8tU2Z2V2RTIa19BZSBU483QsXxdKDk6Y=";
+      hash = "sha256-tcpc0XuMwJ7ONoRZiP1AH30QAuGrW5VgDg8yiSQkbVI=";
     };
     x86_64-darwin = {
       asset = "omp-darwin-x64";
-      hash = "sha256-aV08/T3DEZg2LwvkNE3+ZNzEZV+57zMW2UNorXrylNY=";
+      hash = "sha256-TIyl+N/pgHb7aIj3ZGWkO+VQOrOhg8viDMF0j51bm6g=";
     };
   };
 
