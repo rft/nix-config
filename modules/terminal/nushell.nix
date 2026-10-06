@@ -15,6 +15,10 @@ delib.module {
 
       nushell = {
         enable = true;
+        # home.sessionVariables doesn't reach nushell.
+        extraEnv = ''
+          $env.FZF_DEFAULT_OPTS_FILE = ($env.HOME | path join ".config/fzf/fzfrc")
+        '';
         extraConfig = ''
           let carapace_completer = {|spans|
           carapace $spans.0 nushell ...$spans | from json

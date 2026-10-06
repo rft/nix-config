@@ -25,6 +25,7 @@ delib.module {
 
       # home.sessionVariables aren't picked up by xonsh either
       $EDITOR = "nvim"
+      $FZF_DEFAULT_OPTS_FILE = os.path.expanduser("~/.config/fzf/fzfrc")
 
       $XONSH_SHOW_TRACEBACK = True
       if $TERM and $TERM.startswith("xterm-kitty"):

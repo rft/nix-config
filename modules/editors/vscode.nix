@@ -6,6 +6,13 @@
 }:
 let
   t = import ../../lib/titanium-palette.nix;
+  ansi = import ../../lib/titanium-terminal.nix;
+  syntax = import ../../lib/titanium-syntax.nix;
+  ansiNames =
+    let
+      base = [ "Black" "Red" "Green" "Yellow" "Blue" "Magenta" "Cyan" "White" ];
+    in
+    base ++ map (n: "Bright${n}") base;
 in
 delib.module {
   name = "editors.vscode";
@@ -229,64 +236,21 @@ delib.module {
           "terminal.background" = t.brushedTitanium;
           "terminal.foreground" = t.brightAluminum;
           "terminalCursor.foreground" = t.electricBlue;
-          "terminal.ansiBlack" = t.subtleGray;
-          "terminal.ansiRed" = t.alertRed;
-          "terminal.ansiGreen" = t.readoutGreen;
-          "terminal.ansiYellow" = t.warningAmber;
-          "terminal.ansiBlue" = t.deepBlue;
-          "terminal.ansiMagenta" = t.titaniumGold;
-          "terminal.ansiCyan" = t.electricBlue;
-          "terminal.ansiWhite" = t.dimAluminum;
-          "terminal.ansiBrightBlack" = t.comment;
-          "terminal.ansiBrightRed" = t.alertRed;
-          "terminal.ansiBrightGreen" = t.readoutGreen;
-          "terminal.ansiBrightYellow" = t.warningAmber;
-          "terminal.ansiBrightBlue" = t.electricBlue;
-          "terminal.ansiBrightMagenta" = t.titaniumGold;
-          "terminal.ansiBrightCyan" = t.electricBlue;
-          "terminal.ansiBrightWhite" = t.brightAluminum;
-        };
+        }
+        // lib.listToAttrs (
+          lib.zipListsWith (name: value: {
+            name = "terminal.ansi${name}";
+            inherit value;
+          }) ansiNames ansi
+        );
         "editor.tokenColorCustomizations" = {
-          "textMateRules" =
-            let
-              rule = scope: foreground: extra: {
-                inherit scope;
-                settings = {
-                  inherit foreground;
-                }
-                // extra;
-              };
-            in
-            [
-              (rule [ "comment" "punctuation.definition.comment" ] t.comment { fontStyle = "italic"; })
-              (rule [ "keyword" "storage" "storage.type" "keyword.control" ] t.electricBlue { })
-              (rule [ "keyword.operator" "punctuation" ] t.dimAluminum { })
-              (rule [ "string" "string.quoted" "string.template" ] t.readoutGreen { })
-              (rule [ "constant.character.escape" "string.regexp" ] t.warningAmber { })
-              (rule [ "constant.numeric" "constant.language" "constant.other" ] t.warningAmber { })
-              (rule [ "entity.name.function" "support.function" "meta.function-call" ] t.titaniumGold { })
-              (rule [
-                "entity.name.type"
-                "entity.name.class"
-                "support.type"
-                "support.class"
-                "entity.other.inherited-class"
-              ] t.deepBlue { })
-              (rule [ "variable" "variable.other" "meta.definition.variable" ] t.brightAluminum { })
-              (rule [ "variable.parameter" ] t.dimAluminum { fontStyle = "italic"; })
-              (rule [ "variable.language" "support.variable" ] t.electricBlue { fontStyle = "italic"; })
-              (rule [ "entity.name.tag" ] t.electricBlue { })
-              (rule [ "entity.other.attribute-name" ] t.titaniumGold { })
-              (rule [ "invalid" ] t.alertRed { })
-              (rule [ "markup.heading" ] t.electricBlue { fontStyle = "bold"; })
-              (rule [ "markup.bold" ] t.titaniumGold { fontStyle = "bold"; })
-              (rule [ "markup.italic" ] t.brightAluminum { fontStyle = "italic"; })
-              (rule [ "markup.inline.raw" "markup.fenced_code" ] t.readoutGreen { })
-              (rule [ "markup.underline.link" ] t.electricBlue { })
-              (rule [ "markup.inserted" ] t.readoutGreen { })
-              (rule [ "markup.deleted" ] t.alertRed { })
-              (rule [ "markup.changed" ] t.warningAmber { })
-            ];
+          "textMateRules" = map (r: {
+            inherit (r) scope;
+            settings = {
+              inherit (r) foreground;
+            }
+            // lib.optionalAttrs (r.fontStyle != null) { inherit (r) fontStyle; };
+          }) syntax;
         };
       };
 
