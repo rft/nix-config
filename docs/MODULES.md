@@ -380,6 +380,18 @@ Editor configurations. Enabled by default (`singleEnableOption true`).
 - **Default behavior:** Auto-enables when `myconfig.editors.enable` is true.
 - **Dependencies:** `editors`. Overlays (`nix-vscode-extensions` for marketplace packages).
 
+#### Shared VSpaceCode / Neovim keys
+
+The [keybinding reference](KEYBINDINGS.md) documents the shared editor layout,
+editor-specific actions and differences, and the complete active Niri keymap.
+VSpaceCode uses `vspacecode.bindingOverrides`; Neovim's matching bindings live
+in `rft/nixcat-nvim`.
+
+For unpublished changes in a local Neovim checkout, follow the
+[local input override instructions](KEYBINDINGS.md#local-neovim-checkout).
+Without an override or updated lock entry, this flake still selects the
+published Neovim revision rather than the local checkout.
+
 ### editors.opencode
 
 - **Path:** `modules/editors/opencode.nix`

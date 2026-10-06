@@ -38,6 +38,27 @@ delib.module {
             '';
           };
 
+      commandBinding = keys: name: command: {
+        inherit keys name command;
+        type = "command";
+      };
+
+      # WhichKey's when conditions are tags supplied by triggerKey, not
+      # expressions it evaluates. The matching relays live in keybindings.
+      selectionBinding = keys: name: command: selectedCommand: {
+        inherit keys name;
+        type = "conditional";
+        bindings = [
+          { key = ""; type = "command"; inherit name command; }
+          {
+            key = "when:selection";
+            type = "command";
+            inherit name;
+            command = selectedCommand;
+          }
+        ];
+      };
+
       general = {
         "vim.easymotion" = true;
         "vim.useSystemClipboard" = true;
@@ -48,14 +69,66 @@ delib.module {
             "before" = [ "<space>" ];
             "commands" = [ "vspacecode.space" ];
           }
+        ];
+        "vspacecode.bindingOverrides" = [
+          (commandBinding "f.f" "Find project file" "workbench.action.quickOpen")
+          (commandBinding "f.o" "Browse filesystem" "file-browser.open")
+          (commandBinding "f.O" "Open with" "explorer.openWith")
+          (commandBinding "f.r" "Recent files and workspaces" "workbench.action.openRecent")
+          (commandBinding "b.N" "New buffer" "workbench.action.files.newUntitledFile")
+          (commandBinding "b.P" "Close unpinned buffers" "workbench.action.closeAllEditors")
           {
-            "before" = [ "," ];
-            "commands" = [
-              "vspacecode.space"
-              {
-                "command" = "whichkey.triggerKey";
-                "args" = "m";
-              }
+            keys = "b.y";
+            name = "Paste clipboard into new buffer";
+            type = "commands";
+            commands = [
+              "workbench.action.files.newUntitledFile"
+              "editor.action.clipboardPasteAction"
+            ];
+          }
+          {
+            keys = "b.t";
+            name = "Toggle buffer pin";
+            type = "conditional";
+            bindings = [
+              { key = ""; name = "Pin buffer"; type = "command"; command = "workbench.action.pinEditor"; }
+              { key = "when:pinned"; name = "Unpin buffer"; type = "command"; command = "workbench.action.unpinEditor"; }
+              { key = "when:pinned-tree"; name = "Unpin buffer"; type = "command"; command = "workbench.action.unpinEditor"; }
+            ];
+          }
+          # Preserve the explorer toggle when the pin relay supplies both tags.
+          {
+            keys = [ "f" "t" "when:pinned-tree" ];
+            name = "Hide side bar";
+            type = "command";
+            command = "workbench.action.toggleSidebarVisibility";
+          }
+          (commandBinding "c.d" "Go to definition" "editor.action.revealDefinition")
+          (commandBinding "c.r" "Find references" "editor.action.referenceSearch.trigger")
+          (commandBinding "c.R" "Rename symbol" "editor.action.rename")
+          (commandBinding "c.k" "Hover documentation" "editor.action.showHover")
+          (commandBinding "c.t" "Go to type definition" "editor.action.goToTypeDefinition")
+          (selectionBinding "c.f" "Format buffer or selection" "editor.action.formatDocument" "editor.action.formatSelection")
+          { keys = "c.l"; position = -1; }
+          { keys = "s.r"; position = -1; }
+          (commandBinding "s.R" "Replace in project" "workbench.action.replaceInFiles")
+          (commandBinding "s.a" "References in side bar" "references-view.find")
+          (commandBinding "s.C" "Toggle search case sensitivity" "toggleFindCaseSensitive")
+          { keys = "t.c"; position = -1; }
+          (commandBinding ";" "Toggle comment" "editor.action.commentLine")
+          (commandBinding "g.g" "Git status" "magit.status")
+          (selectionBinding "g.s" "Stage hunk or selection" "git.diff.stageHunk" "git.stageSelectedRanges")
+          (commandBinding "g.S" "Stage file" "git.stage")
+          (commandBinding "w.c" "Close split" "workbench.action.closeEditorsInGroup")
+          (commandBinding "w.o" "Keep only current split" "workbench.action.joinAllGroups")
+          (commandBinding "w.f" "Switch application window" "workbench.action.quickSwitchWindow")
+          { keys = "w.d"; position = -1; }
+          {
+            keys = "o";
+            name = "+Open";
+            type = "bindings";
+            bindings = [
+              { key = "t"; name = "Terminal"; type = "command"; command = "workbench.action.terminal.toggleTerminal"; }
             ];
           }
         ];
@@ -63,16 +136,6 @@ delib.module {
           {
             "before" = [ "<space>" ];
             "commands" = [ "vspacecode.space" ];
-          }
-          {
-            "before" = [ "," ];
-            "commands" = [
-              "vspacecode.space"
-              {
-                "command" = "whichkey.triggerKey";
-                "args" = "m";
-              }
-            ];
           }
         ];
       };
@@ -389,6 +452,30 @@ delib.module {
             ]);
           userSettings = general // editor // theme // git // languages;
           keybindings = [
+            {
+              key = "f";
+              command = "whichkey.triggerKey";
+              args = { key = "f"; when = "selection"; };
+              when = "whichkeyVisible && vim.mode =~ /^Visual/";
+            }
+            {
+              key = "s";
+              command = "whichkey.triggerKey";
+              args = { key = "s"; when = "selection"; };
+              when = "whichkeyVisible && vim.mode =~ /^Visual/";
+            }
+            {
+              key = "t";
+              command = "whichkey.triggerKey";
+              args = { key = "t"; when = "pinned"; };
+              when = "whichkeyVisible && activeEditorIsPinned && !(sideBarVisible && explorerViewletVisible)";
+            }
+            {
+              key = "t";
+              command = "whichkey.triggerKey";
+              args = { key = "t"; when = "pinned-tree"; };
+              when = "whichkeyVisible && activeEditorIsPinned && sideBarVisible && explorerViewletVisible";
+            }
             {
               "key" = "space";
               "command" = "vspacecode.space";

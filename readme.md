@@ -9,6 +9,7 @@ terminal, and editors.
 
 - [Architecture diagram](docs/nix-config-architecture.png)
 - [Modules Reference](docs/MODULES.md) -- every module, its options, and default behavior
+- [Keybindings](docs/KEYBINDINGS.md) -- shared editor shortcuts, editor-specific actions, and the complete configured Niri keymap
 - [Setup Guide](docs/SETUP.md) -- directory structure, rebuilding, adding hosts/modules
 - [Services Reference](docs/SERVICES.md) -- self-hosted services on bristlecone, ports, recovery procedures
 - [Templates](docs/TEMPLATES.md) -- devenv project templates for Python, Rust, Node, etc.
@@ -98,9 +99,7 @@ Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
 
 ## Niri Keybinds
 
-- `Mod+Shift+Slash` shows the built-in hotkey overlay.
-- `Mod+Return` launches `kitty`; `Mod+Space` opens rofi run; `Mod+P` raises the rofi window switcher; `Mod+Q` starts Helium.
-- `Mod+Shift+C` closes the focused window; `Mod+Ctrl+Space` toggles floating; `Mod+Shift+Q` quits the session without confirmation.
-- `Mod+H/J/K/L` focus columns or windows; `Mod+Ctrl+H/J/K/L` move them; `Mod+Shift+H/J/K/L` focus adjacent monitors.
-- `Mod+1…9` jump to workspaces; `Mod+Ctrl+1…9` move the current column; paging keys (`Mod+Page_Down/Page_Up`) and wheel binds navigate or move workspaces.
-- All other defaults (overview on `Mod+O`, column resizing, screenshots, media/volume keys, etc.) remain unchanged from upstream Niri.
+- [Full Niri keybinding reference](docs/KEYBINDINGS.md#niri-window-manager), including launchers, columns, monitors, workspaces, media keys, and session control.
+- `Mod` is Super in a normal desktop session. `Mod+Shift+Slash` shows the built-in hotkey overlay.
+- `Mod+Shift+C` closes one window; **`Mod+Shift+Q` quits the session without confirmation**.
+- See [conflicts and safety](docs/KEYBINDINGS.md#conflicts-and-safety) for compositor/editor overlaps such as `Ctrl+Space`.
