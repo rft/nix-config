@@ -47,7 +47,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`helix`/`claude-code`/`kando` to unstable, custom `oh-my-pi` package, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, custom `oh-my-pi` package, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
@@ -379,15 +379,6 @@ Editor configurations. Enabled by default (`singleEnableOption true`).
 - **Description:** Configures VSCodium with Wayland support (ozone flags). Installs 30+ extensions (Copilot, Vim, VSpaceCode, Nix IDE, Jupyter, Magit, Claude Code, etc.). Sets up VSpaceCode keybindings, Vim integration, language servers (nixd, Svelte, Python/Jedi with Ruff), and editor settings (FiraCode font, format-on-save, sticky scroll).
 - **Default behavior:** Auto-enables when `myconfig.editors.enable` is true.
 - **Dependencies:** `editors`. Overlays (`nix-vscode-extensions` for marketplace packages).
-
-### editors.helix
-
-- **Path:** `modules/editors/helix.nix`
-- **Name:** `editors.helix`
-- **Enable option:** `myconfig.editors.helix.enable` (default: `true`)
-- **Description:** Configures the Helix editor with Monokai Pro Spectrum theme, cursor shapes (block/bar/underline for normal/insert/select), and Nix language support with nixfmt auto-formatting.
-- **Default behavior:** Auto-enables when `myconfig.editors.enable` is true.
-- **Dependencies:** `editors`.
 
 ### editors.opencode
 

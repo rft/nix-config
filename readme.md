@@ -77,7 +77,7 @@ for the full reference.
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
 | **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
-| **Editors** | `modules/editors/` | VSCodium, Helix, Doom Emacs |
+| **Editors** | `modules/editors/` | VSCodium, Doom Emacs |
 | **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |
 
 ---

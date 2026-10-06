@@ -122,7 +122,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "editors" as edMod {
-    component "VSCodium (30+ ext)\nhelix, doom-emacs" as edAll
+    component "VSCodium (30+ ext)\ndoom-emacs" as edAll
   }
 
   package "desktop" as deskMod {

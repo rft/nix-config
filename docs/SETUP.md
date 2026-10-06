@@ -22,7 +22,7 @@ modules/                Shared modules (delib.module)
   programming/          Development tools (analysis, cloud)
   services/             Self-hosted services (see [SERVICES.md](SERVICES.md))
   terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij)
-  editors/              Editor configurations (vscode, helix, doom-emacs)
+  editors/              Editor configurations (vscode, doom-emacs)
   fonts/                Font packages and fontconfig
 config/                 Static app configs (niri, kando)
 lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages)
@@ -260,7 +260,7 @@ to the `darwin` block.
 ## Installer ISO
 
 Build a custom NixOS installer ISO with KDE Plasma 6, Calamares, and your
-terminal tools (starship, kitty, helix, etc.) pre-configured.
+terminal tools (starship, kitty, etc.) pre-configured.
 
 ### Building
 
@@ -415,7 +415,7 @@ from every module. This includes:
 
 - Shell configuration (xonsh, nushell, starship, zellij)
 - Terminal emulator config (kitty)
-- Editor config (VSCodium extensions/settings, Helix)
+- Editor config (VSCodium extensions/settings)
 - Git configuration
 - User packages installed via `home.packages`
 - Dotfiles managed via `home.file` and `xdg.configFile`
