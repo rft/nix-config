@@ -198,6 +198,15 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Default behavior:** Does NOT auto-enable with `applications`. Must be explicitly enabled per-host (e.g., myrtle).
 - **Dependencies:** None (no auto-enable from parent).
 
+### applications.gaming
+
+- **Path:** `modules/applications/gaming.nix`
+- **Name:** `applications.gaming`
+- **Enable option:** `myconfig.applications.gaming.enable` (default: `false`)
+- **Description:** Gaming stack. NixOS: Steam (with extest, protontricks, Proton-GE), gamescope, gamemode, heroic, lutris, mangohud, prismlauncher, protonup-qt. Darwin: Steam via Homebrew cask.
+- **Default behavior:** Does NOT auto-enable with `applications`. Must be explicitly enabled per-host (currently enabled on none).
+- **Dependencies:** None (no auto-enable from parent).
+
 ---
 
 ## Applications (Home Manager)
