@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+let
+  t = import ../../lib/titanium-palette.nix;
+in
 delib.module {
   name = "editors.vscode";
 
@@ -86,6 +89,205 @@ delib.module {
         "editor.fontFamily" = "FiraCode Nerd Font Mono";
         "terminal.integrated.fontFamily" = "'FiraCode Nerd Font Mono'";
         "terminal.integrated.fontLigatures" = true;
+      };
+
+      # Titanium palette layered over the built-in dark theme, so the editor
+      # matches nvim, zellij, rofi and the rest without a theme extension.
+      theme = {
+        "workbench.colorTheme" = "Default Dark Modern";
+        "workbench.colorCustomizations" = {
+          "focusBorder" = t.electricBlue;
+          "foreground" = t.brightAluminum;
+          "descriptionForeground" = t.dimAluminum;
+          "errorForeground" = t.alertRed;
+          "widget.border" = t.subtleGray;
+          "selection.background" = t.subtleGray;
+          "textLink.foreground" = t.electricBlue;
+          "textLink.activeForeground" = t.electricBlue;
+
+          "button.background" = t.deepBlue;
+          "button.foreground" = t.brightAluminum;
+          "button.hoverBackground" = t.electricBlue;
+          "badge.background" = t.electricBlue;
+          "badge.foreground" = t.darkTitanium;
+          "progressBar.background" = t.electricBlue;
+
+          "input.background" = t.borderMuted;
+          "input.border" = t.subtleGray;
+          "input.foreground" = t.brightAluminum;
+          "input.placeholderForeground" = t.comment;
+          "dropdown.background" = t.darkTitanium;
+          "dropdown.border" = t.subtleGray;
+
+          "titleBar.activeBackground" = t.darkTitanium;
+          "titleBar.activeForeground" = t.brightAluminum;
+          "titleBar.inactiveBackground" = t.darkTitanium;
+          "titleBar.inactiveForeground" = t.comment;
+          "titleBar.border" = t.subtleGray;
+          "menu.background" = t.darkTitanium;
+          "menu.foreground" = t.brightAluminum;
+          "menu.selectionBackground" = t.subtleGray;
+          "menu.border" = t.subtleGray;
+
+          "activityBar.background" = t.darkTitanium;
+          "activityBar.foreground" = t.brightAluminum;
+          "activityBar.inactiveForeground" = t.comment;
+          "activityBar.activeBorder" = t.electricBlue;
+          "activityBar.border" = t.subtleGray;
+          "activityBarBadge.background" = t.electricBlue;
+          "activityBarBadge.foreground" = t.darkTitanium;
+
+          "sideBar.background" = t.darkTitanium;
+          "sideBar.foreground" = t.dimAluminum;
+          "sideBar.border" = t.subtleGray;
+          "sideBarTitle.foreground" = t.brightAluminum;
+          "sideBarSectionHeader.background" = t.darkTitanium;
+          "sideBarSectionHeader.foreground" = t.titaniumGold;
+          "sideBarSectionHeader.border" = t.subtleGray;
+
+          "list.activeSelectionBackground" = t.subtleGray;
+          "list.activeSelectionForeground" = t.brightAluminum;
+          "list.inactiveSelectionBackground" = t.borderMuted;
+          "list.hoverBackground" = t.borderMuted;
+          "list.focusOutline" = t.electricBlue;
+          "list.highlightForeground" = t.electricBlue;
+
+          "editorGroupHeader.tabsBackground" = t.darkTitanium;
+          "editorGroupHeader.tabsBorder" = t.subtleGray;
+          "editorGroup.border" = t.subtleGray;
+          "tab.activeBackground" = t.brushedTitanium;
+          "tab.activeForeground" = t.brightAluminum;
+          "tab.activeBorderTop" = t.electricBlue;
+          "tab.inactiveBackground" = t.darkTitanium;
+          "tab.inactiveForeground" = t.comment;
+          "tab.border" = t.subtleGray;
+          "breadcrumb.foreground" = t.dimAluminum;
+          "breadcrumb.background" = t.brushedTitanium;
+
+          "editor.background" = t.brushedTitanium;
+          "editor.foreground" = t.brightAluminum;
+          "editor.lineHighlightBackground" = t.borderMuted;
+          "editor.lineHighlightBorder" = t.borderMuted;
+          "editor.selectionBackground" = t.subtleGray;
+          "editor.inactiveSelectionBackground" = t.borderMuted;
+          "editor.findMatchBackground" = "${t.warningAmber}55";
+          "editor.findMatchHighlightBackground" = "${t.warningAmber}30";
+          "editor.wordHighlightBackground" = t.slate;
+          "editorCursor.foreground" = t.electricBlue;
+          "editorLineNumber.foreground" = t.comment;
+          "editorLineNumber.activeForeground" = t.titaniumGold;
+          "editorIndentGuide.background1" = t.borderMuted;
+          "editorIndentGuide.activeBackground1" = t.subtleGray;
+          "editorWhitespace.foreground" = t.subtleGray;
+          "editorBracketMatch.border" = t.electricBlue;
+          "editorBracketMatch.background" = t.subtleGray;
+          "editorWidget.background" = t.darkTitanium;
+          "editorWidget.border" = t.subtleGray;
+          "editorSuggestWidget.background" = t.darkTitanium;
+          "editorSuggestWidget.border" = t.subtleGray;
+          "editorSuggestWidget.selectedBackground" = t.subtleGray;
+          "editorSuggestWidget.highlightForeground" = t.electricBlue;
+          "editorHoverWidget.background" = t.darkTitanium;
+          "editorHoverWidget.border" = t.subtleGray;
+          "editorError.foreground" = t.alertRed;
+          "editorWarning.foreground" = t.warningAmber;
+          "editorInfo.foreground" = t.electricBlue;
+          "editorGutter.addedBackground" = t.readoutGreen;
+          "editorGutter.modifiedBackground" = t.electricBlue;
+          "editorGutter.deletedBackground" = t.alertRed;
+
+          "panel.background" = t.darkTitanium;
+          "panel.border" = t.subtleGray;
+          "panelTitle.activeForeground" = t.brightAluminum;
+          "panelTitle.activeBorder" = t.electricBlue;
+          "panelTitle.inactiveForeground" = t.comment;
+
+          "statusBar.background" = t.darkTitanium;
+          "statusBar.foreground" = t.dimAluminum;
+          "statusBar.border" = t.subtleGray;
+          "statusBar.debuggingBackground" = t.warningAmber;
+          "statusBar.debuggingForeground" = t.darkTitanium;
+          "statusBar.noFolderBackground" = t.darkTitanium;
+          "statusBarItem.remoteBackground" = t.deepBlue;
+          "statusBarItem.remoteForeground" = t.brightAluminum;
+
+          "quickInput.background" = t.darkTitanium;
+          "quickInputList.focusBackground" = t.subtleGray;
+          "notifications.background" = t.darkTitanium;
+          "notifications.border" = t.subtleGray;
+          "scrollbarSlider.background" = "${t.subtleGray}80";
+          "scrollbarSlider.hoverBackground" = t.subtleGray;
+          "scrollbarSlider.activeBackground" = t.slate;
+
+          "gitDecoration.addedResourceForeground" = t.readoutGreen;
+          "gitDecoration.untrackedResourceForeground" = t.readoutGreen;
+          "gitDecoration.modifiedResourceForeground" = t.electricBlue;
+          "gitDecoration.deletedResourceForeground" = t.alertRed;
+          "gitDecoration.conflictingResourceForeground" = t.warningAmber;
+          "gitDecoration.ignoredResourceForeground" = t.comment;
+
+          "terminal.background" = t.brushedTitanium;
+          "terminal.foreground" = t.brightAluminum;
+          "terminalCursor.foreground" = t.electricBlue;
+          "terminal.ansiBlack" = t.subtleGray;
+          "terminal.ansiRed" = t.alertRed;
+          "terminal.ansiGreen" = t.readoutGreen;
+          "terminal.ansiYellow" = t.warningAmber;
+          "terminal.ansiBlue" = t.deepBlue;
+          "terminal.ansiMagenta" = t.titaniumGold;
+          "terminal.ansiCyan" = t.electricBlue;
+          "terminal.ansiWhite" = t.dimAluminum;
+          "terminal.ansiBrightBlack" = t.comment;
+          "terminal.ansiBrightRed" = t.alertRed;
+          "terminal.ansiBrightGreen" = t.readoutGreen;
+          "terminal.ansiBrightYellow" = t.warningAmber;
+          "terminal.ansiBrightBlue" = t.electricBlue;
+          "terminal.ansiBrightMagenta" = t.titaniumGold;
+          "terminal.ansiBrightCyan" = t.electricBlue;
+          "terminal.ansiBrightWhite" = t.brightAluminum;
+        };
+        "editor.tokenColorCustomizations" = {
+          "textMateRules" =
+            let
+              rule = scope: foreground: extra: {
+                inherit scope;
+                settings = {
+                  inherit foreground;
+                }
+                // extra;
+              };
+            in
+            [
+              (rule [ "comment" "punctuation.definition.comment" ] t.comment { fontStyle = "italic"; })
+              (rule [ "keyword" "storage" "storage.type" "keyword.control" ] t.electricBlue { })
+              (rule [ "keyword.operator" "punctuation" ] t.dimAluminum { })
+              (rule [ "string" "string.quoted" "string.template" ] t.readoutGreen { })
+              (rule [ "constant.character.escape" "string.regexp" ] t.warningAmber { })
+              (rule [ "constant.numeric" "constant.language" "constant.other" ] t.warningAmber { })
+              (rule [ "entity.name.function" "support.function" "meta.function-call" ] t.titaniumGold { })
+              (rule [
+                "entity.name.type"
+                "entity.name.class"
+                "support.type"
+                "support.class"
+                "entity.other.inherited-class"
+              ] t.deepBlue { })
+              (rule [ "variable" "variable.other" "meta.definition.variable" ] t.brightAluminum { })
+              (rule [ "variable.parameter" ] t.dimAluminum { fontStyle = "italic"; })
+              (rule [ "variable.language" "support.variable" ] t.electricBlue { fontStyle = "italic"; })
+              (rule [ "entity.name.tag" ] t.electricBlue { })
+              (rule [ "entity.other.attribute-name" ] t.titaniumGold { })
+              (rule [ "invalid" ] t.alertRed { })
+              (rule [ "markup.heading" ] t.electricBlue { fontStyle = "bold"; })
+              (rule [ "markup.bold" ] t.titaniumGold { fontStyle = "bold"; })
+              (rule [ "markup.italic" ] t.brightAluminum { fontStyle = "italic"; })
+              (rule [ "markup.inline.raw" "markup.fenced_code" ] t.readoutGreen { })
+              (rule [ "markup.underline.link" ] t.electricBlue { })
+              (rule [ "markup.inserted" ] t.readoutGreen { })
+              (rule [ "markup.deleted" ] t.alertRed { })
+              (rule [ "markup.changed" ] t.warningAmber { })
+            ];
+        };
       };
 
       git = {
@@ -185,7 +387,7 @@ delib.module {
             ++ (with openVsx; [
               ms-python.python
             ]);
-          userSettings = general // editor // git // languages;
+          userSettings = general // editor // theme // git // languages;
           keybindings = [
             {
               "key" = "space";

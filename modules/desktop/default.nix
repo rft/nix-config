@@ -106,6 +106,35 @@ delib.module {
       # Default minus the launcher and the wallpaper picker (mpvpaper owns
       # the wallpaper), plus the AI usage widget. `end` is noctalia's default
       # list — setting it replaces the whole thing.
+      # Flush, square bar spanning the full screen width instead of floating.
+      settings.bar.main.margin_ends = 0;
+      settings.bar.main.margin_edge = 0;
+      settings.bar.main.radius = 0;
+      settings.bar.main.shadow = false;
+      settings.shell = {
+        font_family = "FiraCode Nerd Font";
+        time_format = "{:%I:%M %p}";
+        corner_radius_scale = 0.5;
+        # Nothing else in the session provides one.
+        polkit_agent = true;
+      };
+      # mpvpaper owns the wallpaper.
+      settings.wallpaper.enabled = false;
+      # Entries don't inherit example.toml's values; timeout/action default to 0/empty.
+      settings.idle.behavior = {
+        lock = { enabled = true; timeout = 600; action = "lock"; };
+        screen-off = { enabled = true; timeout = 660; action = "screen_off"; };
+      };
+      # Feeds night light and weather.
+      settings.location.auto_locate = true;
+      settings.nightlight.enabled = true;
+      settings.weather = {
+        enabled = true;
+        unit = "fahrenheit";
+      };
+      # Tighter to the edge now that the bar is flush.
+      settings.notification = { offset_x = 8; offset_y = 8; };
+      settings.osd = { offset_x = 8; offset_y = 8; };
       settings.bar.main.start = [ "workspaces" ];
       settings.bar.main.end = [
         "ai_usage" "media" "tray" "notifications" "clipboard" "network"
