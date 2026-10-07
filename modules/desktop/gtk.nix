@@ -67,4 +67,14 @@ delib.module {
     gtk4.theme = null;
     gtk4.extraCss = css;
   };
+
+  # No cursor theme means niri and Electron apps fall back to a built-in set
+  # without resize/grab shapes. This also links ~/.icons/default, which is
+  # what niri's XCURSOR_THEME=default resolves to.
+  home.ifEnabled.home.pointerCursor = {
+    name = "breeze_cursors";
+    package = pkgs.kdePackages.breeze;
+    size = 24;
+    gtk.enable = true;
+  };
 }
