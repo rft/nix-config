@@ -55,6 +55,9 @@ let
   # Merged into the profile's Preferences on activation (no policy exists for these).
   preferences = {
     extensions.pinned_extensions = pinnedExtensions;
+    # Split view has its own pin pref; other toolbar buttons are pinned by action ID.
+    browser.pin_split_tab_button = true;
+    toolbar.pinned_actions = [ "kActionDevTools" ];
     # 0 classic, 1 compact, 2 vertical, 3 dynamic (HeliumLayoutType in Helium's patches).
     helium.browser.layout = 2;
   };

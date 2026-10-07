@@ -218,7 +218,7 @@ GUI application configs managed through Home Manager. Located in `modules/applic
 - **Path:** `modules/applications-home/helium.nix`
 - **Name:** `applications.helium`
 - **Enable option:** `myconfig.applications.helium.enable` (default: `false`, auto-enabled by `applications`)
-- **Description:** Installs Helium (Linux only, via the `helium` flake input) with managed Chromium policies: Kagi default search, `r`/`y`/`a` site searches (subreddit, YouTube, Amazon), blank new tab, and force-installed Chrome Web Store extensions. Loads a titanium-palette theme with `--force-dark-mode`, seeds pinned toolbar order on activation, and sets Helium as BROWSER and (via xdg-mime) default for http/https/html.
+- **Description:** Installs Helium (Linux only, via the `helium` flake input) with managed Chromium policies: Kagi default search, `r`/`y`/`a` site searches (subreddit, YouTube, Amazon), blank new tab, and force-installed Chrome Web Store extensions. Loads a titanium-palette theme with `--force-dark-mode`, seeds pinned toolbar order plus the split tab and DevTools toolbar buttons on activation, and sets Helium as BROWSER and (via xdg-mime) default for http/https/html.
 
 ### applications.kando
 
