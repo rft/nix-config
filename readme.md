@@ -19,7 +19,21 @@ The same palette is applied across the desktop, terminal, editors, and browser.
 |------------------|------|
 | ![Neovim dashboard](docs/screenshots/nvim-dashboard.png) | ![Yazi file manager with a file preview](docs/screenshots/yazi.png) |
 
-![Rofi application launcher](docs/screenshots/rofi.jpg)
+| VSCodium |
+|----------|
+| ![VSCodium with a Python file, the OCP CAD viewer, and an interactive window](docs/screenshots/vscodium.png) |
+
+| VSCodium with a marimo notebook |
+|---------------------------------|
+| ![VSCodium running a marimo notebook with sliders and a matplotlib plot](docs/screenshots/vscodium-marimo.png) |
+
+| Kitty | Rofi |
+|-------|------|
+| ![Kitty running fastfetch with the Starship prompt](docs/screenshots/kitty.png) | ![Rofi application launcher](docs/screenshots/rofi.jpg) |
+
+| Kando main menu | Kando window menu |
+|-----------------|-------------------|
+| ![Kando pie menu with application, launcher, window, screenshot, media, and power submenus](docs/screenshots/kando-main.jpg) | ![Kando window menu with close, fullscreen, float, and move actions](docs/screenshots/kando-window.jpg) |
 
 ![Empty Niri desktop with the Noctalia bar](docs/screenshots/wallpaper.jpg)
 
