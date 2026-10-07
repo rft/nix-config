@@ -167,7 +167,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/default.nix`
 - **Name:** `applications`
 - **Enable option:** `myconfig.applications.enable` (default: `false`)
-- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, dolphin, kitty, mpv, nsxiv, obs-studio, ollama, pciutils, plover, rofi, spotify.
+- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, dolphin, imv (default image viewer), kitty, mpv, obs-studio, ollama, pciutils, plover, rofi, spotify.
 - **Default behavior:** Disabled by default. Enabled per-host.
 - **Dependencies:** None.
 
