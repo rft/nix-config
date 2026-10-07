@@ -31,10 +31,19 @@ delib.module {
             inherit (pkgs.vscodium) pname version meta;
             paths = [ pkgs.vscodium ];
             nativeBuildInputs = [ pkgs.makeWrapper ];
+            # Auto-updated ruff/ty extensions ship generic-linux binaries that
+            # NixOS cannot run. Both look on PATH before their bundled copy, so
+            # offer the nixpkgs builds as a fallback; a devenv's own wins.
             postBuild = ''
               wrapProgram $out/bin/codium \
                 --set ELECTRON_OZONE_PLATFORM_HINT auto \
-                --set NIXOS_OZONE_WL 1
+                --set NIXOS_OZONE_WL 1 \
+                --suffix PATH : ${
+                  lib.makeBinPath [
+                    pkgs.ruff
+                    pkgs.ty
+                  ]
+                }
             '';
           };
 
@@ -157,7 +166,7 @@ delib.module {
       # Titanium palette layered over the built-in dark theme, so the editor
       # matches nvim, zellij, rofi and the rest without a theme extension.
       theme = {
-        "workbench.colorTheme" = "Default Dark Modern";
+        "workbench.colorTheme" = "Dark Modern";
         "workbench.colorCustomizations" = {
           "focusBorder" = t.electricBlue;
           "foreground" = t.brightAluminum;
