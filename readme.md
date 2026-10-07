@@ -5,6 +5,26 @@ declarative host and module management. Each host picks from a shared set of
 toggleable modules covering desktop, applications, programming, services,
 terminal, and editors.
 
+![Niri desktop with Neovim, Helium, and Yazi](docs/screenshots/desktop.png)
+
+## Screenshots
+
+The same palette is applied across the desktop, terminal, editors, and browser.
+
+| Neovim | Helium |
+|--------|--------|
+| ![Neovim editing a Nix module](docs/screenshots/nvim.png) | ![Helium browser](docs/screenshots/helium.png) |
+
+| Neovim dashboard | Yazi |
+|------------------|------|
+| ![Neovim dashboard](docs/screenshots/nvim-dashboard.png) | ![Yazi file manager with a file preview](docs/screenshots/yazi.png) |
+
+![Rofi application launcher](docs/screenshots/rofi.jpg)
+
+![Empty Niri desktop with the Noctalia bar](docs/screenshots/wallpaper.jpg)
+
+---
+
 ## Documentation
 
 - [Architecture diagram](docs/nix-config-architecture.png)
