@@ -176,7 +176,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/creative.nix`
 - **Name:** `applications.creative`
 - **Enable option:** `myconfig.applications.creative.enable` (default: `false`)
-- **Description:** Creative tools: aseprite, blender, kdenlive, krita, reaper.
+- **Description:** Creative tools: aseprite, blender (plus the Blender Lab MCP server and add-on), kdenlive, krita, reaper.
 - **Default behavior:** Auto-enables when `myconfig.applications.enable` is true. Can be explicitly disabled per-host (e.g., myrtle sets `false`).
 - **Dependencies:** `applications`.
 
