@@ -106,7 +106,7 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Name:** `desktop.paneru`
 - **Enable option:** `myconfig.desktop.paneru.enable` (default: `false`)
 - **Description:** Installs and configures paneru, a sliding tiling window manager for macOS. Manages windows on an infinite horizontal strip — opening new windows never resizes existing ones. Configured via Home Manager with a launchd agent for automatic startup.
-- **Default behavior:** Does NOT auto-enable with `desktop`. Must be explicitly enabled per-host. Darwin only.
+- **Default behavior:** Does NOT auto-enable with `desktop`. Must be explicitly enabled per-host (currently enabled on none — lemon moved to `desktop.nehir`). Darwin only.
 - **Dependencies:** `paneru` flake input.
 - **Keybindings:**
 
@@ -116,10 +116,10 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 | Focus east | `Cmd + L` |
 | Focus north | `Cmd + K` |
 | Focus south | `Cmd + J` |
-| Swap west | `Alt + H` |
-| Swap east | `Alt + L` |
-| Swap north | `Alt + K` |
-| Swap south | `Alt + J` |
+| Swap west | `Shift + Cmd + H` |
+| Swap east | `Shift + Cmd + L` |
+| Swap north | `Shift + Cmd + K` |
+| Swap south | `Shift + Cmd + J` |
 | Resize (grow) | `Alt + R` |
 | Shrink | `Alt + S` |
 | Full width | `Alt + F` |
@@ -128,6 +128,15 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 | Stack | `Alt + ]` |
 | Unstack | `Alt + [` |
 | Quit | `Ctrl + Alt + Q` |
+
+### desktop.nehir
+
+- **Path:** `modules/desktop/nehir.nix`
+- **Name:** `desktop.nehir`
+- **Enable option:** `myconfig.desktop.nehir.enable` (default: `false`)
+- **Description:** Installs [Nehir](https://github.com/guria/nehir), a macOS scrolling tiling window manager built on Niri's column model, from the `guria/tap/nehir@rc` Homebrew cask (pinned to the release-candidate cask until 0.6.0 ships stable, to avoid windows being stranded off-screen after lid-open wake). Starts it at login via a launchd user agent.
+- **Default behavior:** Does NOT auto-enable with `desktop`. Must be explicitly enabled per-host (lemon). Darwin only.
+- **Dependencies:** Homebrew (`modules/config/darwin.nix`). lemon disables the macOS `⌥⌘Space` Finder-search shortcut so Nehir's command palette can use it.
 
 ### desktop.login
 
@@ -155,6 +164,33 @@ Desktop environment modules. The top-level `desktop` module gates all sub-module
 - **Description:** Configures Rofi launcher with a "titanium" theme generated from `lib/titanium-palette.nix`.
 - **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
 - **Dependencies:** `desktop`.
+
+### desktop.gtk
+
+- **Path:** `modules/desktop/gtk.nix`
+- **Name:** `desktop.gtk`
+- **Enable option:** `myconfig.desktop.gtk.enable` (default: `false`)
+- **Description:** Dark GTK theming: adw-gtk3-dark theme, breeze-dark icons, and GTK3/GTK4 colour overrides generated from `lib/titanium-palette.nix` (libadwaita ignores themes, so the overrides carry GTK4). Sets the `breeze_cursors` pointer theme (size 24) so niri and Electron apps get resize/grab cursor shapes. Enables dconf on NixOS.
+- **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
+- **Dependencies:** `desktop`.
+
+### desktop.qt
+
+- **Path:** `modules/desktop/qt.nix`
+- **Name:** `desktop.qt`
+- **Enable option:** `myconfig.desktop.qt.enable` (default: `false`)
+- **Description:** Themes Qt/KDE apps (e.g. Dolphin) outside Plasma using the KDE platform theme with the Breeze style, breeze-dark icons, and a "Titanium" `kdeglobals` colour scheme from `lib/titanium-palette.nix`.
+- **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
+- **Dependencies:** `desktop`.
+
+### desktop.wallpaper
+
+- **Path:** `modules/desktop/wallpaper.nix`
+- **Name:** `desktop.wallpaper`
+- **Enable option:** `myconfig.desktop.wallpaper.enable` (default: `false`)
+- **Description:** Animated "Melancholic Forest" live wallpaper played by mpvpaper as a systemd user service (pauses while windows fully cover it). Disables Noctalia's own wallpaper and uses the video's first frame as the lock-screen image.
+- **Default behavior:** Auto-enables when `myconfig.desktop.enable` is true.
+- **Dependencies:** `desktop` (Noctalia settings).
 
 ---
 
@@ -282,7 +318,7 @@ Self-hosted services. Gated by `services.enable`.
 - **Path:** `modules/services/default.nix`
 - **Name:** `services`
 - **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and installs borgmatic for backup configuration. See `docs/SERVICES.md` for the full reference.
+- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and installs borgmatic for backup configuration. See `docs/SERVICES.md` for the full reference.
 - **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
 - **Services and ports:**
   - **Jellyfin** — media server (firewall auto-opened, port 8096)
@@ -294,7 +330,24 @@ Self-hosted services. Gated by `services.enable`.
   - **Kasm Workspaces** — browser/desktop streaming (port 8443 HTTPS, firewall opened manually)
   - **changedetection.io** — website change monitoring (port 5000, firewall opened manually)
   - **Karakeep** — bookmarks / read-it-later (port 3000, firewall opened manually; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222)
+  - **Zigbee2MQTT** — Zigbee coordinator bridged into Mosquitto/Home Assistant (frontend on port 8080, firewall opened manually)
+  - **9router** — AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
 - **Dependencies:** None.
+
+---
+
+## Security
+
+Opt-in system hardening.
+
+### security
+
+- **Path:** `modules/security/default.nix`
+- **Name:** `security`
+- **Enable option:** `myconfig.security.enable` (default: `false`)
+- **Description:** Enables [nix-mineral](https://github.com/cynicsketch/nix-mineral) with its default preset plus opt-in extras from the maximum preset (`lock-root`, `minimize-swapping`, `secure-chrony`, `bluetooth-kmodules`, `tcp-window-scaling`). DNSSEC is deliberately left off. Because nix-mineral mounts `/home` noexec, it punches a narrow exec bind mount for `~/.omp/natives` so oh-my-pi can load its native modules.
+- **Default behavior:** Disabled by default. Enabled on bristlecone. NixOS only.
+- **Dependencies:** `nix-mineral` flake input (imported on every NixOS host, active only when enabled).
 
 ---
 
@@ -376,9 +429,9 @@ Editor configurations. Enabled by default (`singleEnableOption true`).
 - **Path:** `modules/editors/default.nix`
 - **Name:** `editors`
 - **Enable option:** `myconfig.editors.enable` (default: `true`)
-- **Description:** Base editor module. Imports the nix-doom-emacs-unstraightened HM module. Doom Emacs is declared but currently disabled (`enable = false`).
+- **Description:** Parent toggle for the editor sub-modules (`editors.vscode`, `editors.opencode`). Has no configuration of its own. Neovim (nixcat-nvim) is installed by `core`, not here.
 - **Default behavior:** Enabled by default for all hosts.
-- **Dependencies:** `nix-doom-emacs-unstraightened` flake input.
+- **Dependencies:** None.
 
 ### editors.vscode
 

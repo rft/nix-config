@@ -46,7 +46,8 @@ The same palette is applied across the desktop, terminal, editors, and browser.
 - [Keybindings](docs/KEYBINDINGS.md) -- shared editor shortcuts, editor-specific actions, and the complete configured Niri keymap
 - [Setup Guide](docs/SETUP.md) -- directory structure, rebuilding, adding hosts/modules
 - [Services Reference](docs/SERVICES.md) -- self-hosted services on bristlecone, ports, recovery procedures
-- [Templates](docs/TEMPLATES.md) -- devenv project templates for Python, Rust, Node, etc.
+- [Templates](docs/TEMPLATES.md) -- devenv project templates for Python, Rust, Node, Lean, TLA+/Alloy, etc.
+- [VPS Guide](docs/VPS.md) -- installing and deploying juniper with nixos-anywhere and deploy-rs
 
 ---
 
@@ -60,13 +61,14 @@ The same palette is applied across the desktop, terminal, editors, and browser.
 
 | Host | Type | Description |
 |------|------|-------------|
-| **bristlecone** | server | Self-hosted services (Jellyfin, Home Assistant, n8n, Paperless + scanner ingest, Kasm Workspaces, changedetection.io, Karakeep) with nix-mineral hardening |
+| **bristlecone** | server | Self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless + scanner ingest, Kasm Workspaces, changedetection.io, Karakeep, 9router) with nix-mineral hardening |
+| **juniper** | server | Barebones VPS, installed with nixos-anywhere and updated with deploy-rs (see [VPS.md](docs/VPS.md)) |
 | **cottonwood** | desktop | Vertical screen rotation |
 | **redwood** | desktop | Full creative + engineering modules |
 | **sequoia** | desktop | VMware guest |
 | **myrtle** | desktop | VMware guest, archiving-focused |
 | **mistletoe** | wsl | Programming + analysis + cloud |
-| **lemon** | darwin | Apple Silicon Mac with Homebrew casks |
+| **lemon** | darwin | Apple Silicon Mac with Homebrew casks and the Nehir tiling WM |
 | **pineapple** | darwin | Apple Silicon Mac with Homebrew casks |
 | **installer** | installer | Live ISO with KDE Plasma 6 + Calamares |
 
@@ -88,10 +90,23 @@ For example:
 sudo nixos-rebuild switch --flake .#mistletoe
 ```
 
-Standalone Home Manager (user-level config only):
+Apply a Darwin host (after the one-time nix-darwin bootstrap in
+[SETUP.md](docs/SETUP.md#darwin-macos)):
 
 ```bash
-home-manager switch --flake .#nano
+darwin-rebuild switch --flake .#lemon
+```
+
+Deploy the juniper VPS remotely (see [VPS.md](docs/VPS.md)):
+
+```bash
+nix run nixpkgs#deploy-rs -- .#juniper
+```
+
+Standalone Home Manager (user-level config only), keyed by `user@host`:
+
+```bash
+home-manager switch --flake .#nano@HOSTNAME
 ```
 
 ---
@@ -105,14 +120,15 @@ for the full reference.
 | Category | Path | Description |
 |----------|------|-------------|
 | **Config** | `modules/config/` | Infrastructure: constants, user account, overlays (always active) |
-| **Core** | `modules/core/` | 60+ system packages, Podman, xonsh shell (always active) |
-| **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, Rofi, greetd login |
-| **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving |
+| **Core** | `modules/core/` | 60+ system packages, Neovim (nixcat-nvim), Podman, SSH, xonsh shell (always active) |
+| **Desktop** | `modules/desktop/` | Noctalia shell, Niri compositor, Rofi, greetd login, GTK/Qt theming, animated wallpaper; Nehir/Paneru on macOS |
+| **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving, gaming |
 | **Applications (HM)** | `modules/applications-home/` | Helium browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
-| **Services** | `modules/services/` | Self-hosted: borgmatic, jellyfin, home-assistant, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep |
-| **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij |
-| **Editors** | `modules/editors/` | VSCodium, Doom Emacs |
+| **Services** | `modules/services/` | Self-hosted: jellyfin, home-assistant, mosquitto, zigbee2mqtt, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep, 9router, borgmatic |
+| **Security** | `modules/security/` | nix-mineral hardening (bristlecone) |
+| **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij, Yazi |
+| **Editors** | `modules/editors/` | VSCodium (VSpaceCode), OpenCode |
 | **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |
 
 ---
@@ -127,7 +143,8 @@ nix flake init -t github:rft/nix-config#python
 ```
 
 Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
-`rust`, `node`, `gleam`, `haskell`, `prolog`, `ada`, `amaranth`.
+`rust`, `node`, `gleam`, `haskell`, `prolog`, `ada`, `amaranth`, `lean`,
+`formal`.
 
 ---
 
