@@ -1,4 +1,6 @@
 @startuml nix-config-architecture
+' Regenerate the PNG (the default 4096px limit clips the right edge):
+'   PLANTUML_LIMIT_SIZE=8192 nix shell nixpkgs#graphviz nixpkgs#plantuml -c plantuml -tpng docs/architecture.puml
 !theme plain
 skinparam backgroundColor #FAFAFA
 skinparam defaultFontName "Fira Code"
@@ -6,7 +8,6 @@ skinparam packageStyle rectangle
 skinparam componentStyle rectangle
 skinparam nodesep 15
 skinparam ranksep 25
-skinparam padding 3
 
 title rft's NixOS Flake Architecture
 header denix-based modular NixOS + Darwin + Home Manager configuration
@@ -21,6 +22,10 @@ package "flake.nix" as flake #BBDEFB {
     scans **paths**: ./hosts + ./modules
     host types: desktop | server | wsl | installer | darwin
     homeManagerUser: "nano"
+    nixos/darwin outputs filtered by host type
+    ....
+    also exports: deploy.nodes.juniper (deploy-rs),
+    templates.* (13), packages.installer-iso
   end note
 }
 
@@ -35,6 +40,7 @@ package "hosts/ — delib.host" as hosts #C8E6C9 {
   note as hostTable
     |= Host |= Type |= System |
     | bristlecone | server | x86_64-linux |
+    | juniper | server (VPS) | x86_64-linux |
     | cottonwood | desktop | x86_64-linux |
     | redwood | desktop | x86_64-linux |
     | sequoia | desktop | x86_64-linux |
@@ -98,15 +104,16 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
 
   note as enableTable
     **Module enablement by host**
-    |= Module |= bristlecone |= cottonwood |= redwood |= sequoia |= myrtle |= mistletoe |= lemon |= pineapple |
-    | config, core | all | all | all | all | all | all | all | all |
-    | terminal, editors | all | all | all | all | all | all | all | all |
-    | desktop |  -  | Y | Y | Y | Y |  -  |  -  |  -  |
-    | desktop.paneru |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
-    | applications |  -  | Y | Y | Y | Y |  -  | Y | Y |
-    | programming |  -  | Y | Y | Y |  -  | Y | Y | Y |
-    | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
-    | security | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    |= Module |= bristlecone |= juniper |= cottonwood |= redwood |= sequoia |= myrtle |= mistletoe |= lemon |= pineapple |
+    | config, core | all | all | all | all | all | all | all | all | all |
+    | terminal, editors | all | all | all | all | all | all | all | all | all |
+    | desktop |  -  |  -  | Y | Y | Y | Y |  -  |  -  |  -  |
+    | desktop.nehir |  -  |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
+    | applications |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
+    | programming |  -  |  -  | Y | Y | Y |  -  | Y | Y | Y |
+    | fonts |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
+    | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    | security | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
   end note
 
   package "config //(always on)//" as cfgMod {
@@ -114,23 +121,23 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "core //(always on)//" as coreMod {
-    component "~60 CLI packages\npodman, GC, ssh\nxonsh (system)" as coreAll
+    component "~60 CLI packages\nneovim (nixcat-nvim)\npodman, GC, ssh\nxonsh (system)" as coreAll
   }
 
   package "terminal" as termMod {
-    component "bash, zsh, atuin, zoxide\nkitty, starship, nushell\nxonsh (home), zellij" as termAll
+    component "bash, zsh, atuin, zoxide\nkitty, starship, nushell\nxonsh (home), zellij, yazi" as termAll
   }
 
   package "editors" as edMod {
-    component "VSCodium (30+ ext)\ndoom-emacs" as edAll
+    component "VSCodium (30+ ext)\nopencode" as edAll
   }
 
   package "desktop" as deskMod {
-    component "noctalia, niri\nrofi, greetd\npaneru" as deskAll
+    component "noctalia, niri\nrofi, greetd\ngtk, qt, wallpaper\nnehir, paneru (macOS)" as deskAll
   }
 
   package "applications" as appMod {
-    component "base, creative\nengineering, archiving\nhelium, kando, kdenlive" as appAll
+    component "base, creative\nengineering, archiving\ngaming\nhelium, kando, kdenlive" as appAll
   }
 
   package "programming" as progMod {
@@ -138,7 +145,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "services" as svcMod {
-    component "jellyfin, karakeep\nhome-assistant, n8n\npaperless + samba/sftp\nscanner ingest\nkasm, changedetection\nborgmatic" as svcAll
+    component "jellyfin, karakeep\nhome-assistant, mosquitto\nzigbee2mqtt, n8n\npaperless + samba/sftp\nscanner ingest\nkasm, changedetection\n9router, borgmatic" as svcAll
   }
 
   package "security" as secMod {
@@ -165,20 +172,29 @@ mods -down-> homeOut : home.* blocks
 ' ═══════════════════════════════════════════════════
 
 package "lib/" as libPkg #F3E5F5 {
-  component "python-core-packages\nxonsh-extra-packages" as libAll
+  component "python-core-packages\nxonsh-extra-packages\ntitanium-palette" as libAll
 }
 
 package "packages/" as pkgPkg #FCE4EC {
-  component "installer-iso" as pkgAll
+  component "oh-my-pi\nai-usagebar" as pkgAll
 }
 
 package "config/" as cfgPkg #E0F7FA {
-  component "niri/, kando/" as cfgDots
+  component "niri/, kando/, espanso/" as cfgDots
+}
+
+package "hardware/" as hwPkg #EDE7F6 {
+  component "per-host hardware configs\ndisko layout (juniper)" as hwAll
+}
+
+package "templates/" as tmplPkg #DCEDC8 {
+  component "python (+cad, electronics, datascience)\nrust, node, gleam, haskell\nprolog, ada, amaranth\nlean, formal" as tmplAll
 }
 
 libPkg -up-> mods : imported by\nmodules
 pkgPkg -up-> mods : installed by\nmodules
 cfgPkg -up-> mods : symlinked by\nmodules
+hwPkg -up-> hosts : imported by\nhosts
 
 ' ═══════════════════════════════════════════════════
 ' LAYOUT CONTROL
@@ -204,6 +220,8 @@ deskMod -[hidden]down- fontMod
 ' Support layer
 libPkg -[hidden]right- pkgPkg
 pkgPkg -[hidden]right- cfgPkg
+cfgPkg -[hidden]right- hwPkg
+hwPkg -[hidden]right- tmplPkg
 
 ' ═══════════════════════════════════════════════════
 ' LEGEND
@@ -217,6 +235,8 @@ legend bottom right
   |<#F3E5F5> | Shared Libraries |
   |<#FCE4EC> | Custom Packages |
   |<#E0F7FA> | Dotfile Configs |
+  |<#EDE7F6> | Hardware / Disk Layouts |
+  |<#DCEDC8> | Project Templates |
 endlegend
 
 @enduml

@@ -18,6 +18,7 @@ Enabled via `myconfig.services.enable = true` in the host config.
 | Karakeep             | 3000  | HTTP     | 0.0.0.0      |
 | Mosquitto (MQTT)     | 1883  | MQTT     | 0.0.0.0      |
 | Zigbee2MQTT frontend | 8080  | HTTP     | 0.0.0.0      |
+| 9router (AI gateway) | 20128 | HTTP     | 0.0.0.0 (firewall: `wt0` only) |
 | Meilisearch          | 7700  | HTTP     | 127.0.0.1    |
 | Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
 | Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
@@ -396,6 +397,23 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
   `lib.mkMerge` value, so the merged attrset carries `_type = "merge"` and the module
   system keeps only `contents`, silently dropping the variable. `CacheDirectory` does
   come from upstream and is no longer set here.
+- **AI tagging:** Inference goes through the local 9router gateway
+  (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`). It only switches on once
+  `OPENAI_API_KEY` (a 9router API key) is appended to `/var/lib/karakeep/settings.env`.
+
+### 9router
+
+- **What:** Shared AI gateway, so provider logins, OAuth refresh, and quota tracking
+  live in one place. Agents on the other hosts point their Anthropic/OpenAI base URLs
+  at it over Netbird.
+- **Port:** 20128, opened only on the Netbird interface (`wt0`). The dashboard login
+  defaults to `123456` and `/v1` needs no API key until one is required in the
+  dashboard, so keep it off the LAN.
+- **Data:** `/var/lib/9router` (`DynamicUser`, mode `0700`)
+- **Unit:** `9router` runs the bundled Next.js server (`custom-server.js`) directly
+  rather than the interactive `9router` CLI, which detaches and npm-installs deps
+  into `$HOME` at startup.
+- **Hardening:** Shared baseline plus `ProtectSystem = strict`.
 
 ---
 

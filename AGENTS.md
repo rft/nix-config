@@ -6,13 +6,13 @@ Guidelines for AI agents working in this nix-config repository.
 
 - **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
 - **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
-- **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, programming, terminal, editors, fonts, services)
-- **`config/`** — Static app config files (niri, kando)
-- **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix)
-- **`packages/`** — Custom packages (oh-my-pi)
+- **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, applications-home, programming, terminal, editors, fonts, services, security)
+- **`config/`** — Static app config files (niri, kando, espanso)
+- **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix)
+- **`packages/`** — Custom packages (oh-my-pi, ai-usagebar)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
-- **`templates/`** — 11 devenv project templates
-- **`docs/`** — Documentation (MODULES.md, SETUP.md, TEMPLATES.md, VPS.md, architecture diagrams)
+- **`templates/`** — 13 devenv project templates (registered in `flake.nix` and listed in docs/TEMPLATES.md and readme.md)
+- **`docs/`** — Documentation (MODULES.md, SETUP.md, SERVICES.md, KEYBINDINGS.md, TEMPLATES.md, VPS.md, architecture diagram `architecture.puml` → `nix-config-architecture.png`)
 
 ## Verify the target first
 
@@ -134,7 +134,7 @@ delib.host {
 - This repo targets NixOS (x86_64-linux), Darwin (aarch64-darwin), and WSL.
 - When editing a module, check whether it uses `nixos.*`, `darwin.*`, or both — ensure changes work on all applicable platforms.
 - Darwin uses Homebrew casks for GUI apps (configured in `modules/config/darwin.nix`). NixOS installs GUI apps via `environment.systemPackages`.
-- macOS hosts use `paneru` for tiling; NixOS desktops use `niri` (Wayland).
+- lemon uses Nehir (Homebrew cask, `desktop.nehir`) for tiling; the `desktop.paneru` module remains but is unused. NixOS desktops use `niri` (Wayland).
 
 ## Naming conventions
 

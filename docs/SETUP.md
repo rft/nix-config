@@ -16,17 +16,20 @@ hosts/                  Per-host configurations (delib.host)
 modules/                Shared modules (delib.module)
   config/               Infrastructure (constants, user, overlays)
   core/                 Always-on system packages and xonsh
-  desktop/              Desktop environment (noctalia, niri, rofi, login)
-  applications/         NixOS-level GUI apps (creative, engineering, archiving)
+  desktop/              Desktop environment (noctalia, niri, rofi, login, gtk, qt, wallpaper; nehir/paneru on macOS)
+  applications/         NixOS-level GUI apps (creative, engineering, archiving, gaming)
   applications-home/    Home Manager GUI app configs (helium, kando, kdenlive)
   programming/          Development tools (analysis, cloud)
   services/             Self-hosted services (see [SERVICES.md](SERVICES.md))
-  terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij)
-  editors/              Editor configurations (vscode, doom-emacs)
+  security/             nix-mineral hardening
+  terminal/             Shell and terminal configs (kitty, starship, nushell, xonsh, zellij, yazi)
+  editors/              Editor configurations (vscode, opencode)
   fonts/                Font packages and fontconfig
-config/                 Static app configs (niri, kando)
-lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages)
-packages/               Custom packages (oh-my-pi)
+config/                 Static app configs (niri, kando, espanso)
+hardware/               Hardware configs for physical/VM hosts and disko layouts for remote servers
+lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages, titanium-palette)
+packages/               Custom packages (oh-my-pi, ai-usagebar)
+templates/              devenv project templates (see [TEMPLATES.md](TEMPLATES.md))
 docs/                   This documentation
 ```
 
@@ -38,15 +41,21 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
-| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Ollama, Home Assistant, n8n, Paperless), GRUB+EFI |
+| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless, Kasm, changedetection.io, Karakeep, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
 | **juniper** | server | America/Phoenix | Barebones VPS: core only, SSH (key-only, root prohibit-password), Netbird, disko disk layout, hybrid BIOS/UEFI GRUB, zram swap. Deployed remotely — see [VPS.md](VPS.md) |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
-| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, paneru tiling WM. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
-| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Homebrew casks: discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina, plover, utm, espanso, obsidian, claude. App Store: Amphetamine, ProDrafts |
+| **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nehir tiling WM, Karabiner Caps Lock → Esc/Ctrl. Shared Homebrew casks + topnotch, handy, cotabby |
+| **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Shared Homebrew casks + google-chrome |
+
+Both Darwin hosts get the shared Homebrew casks from `modules/config/darwin.nix`:
+discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper,
+rustdesk, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina,
+plover, utm, espanso, obsidian, claude, chatgpt, vorssaint. App Store:
+Amphetamine, ProDrafts.
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
@@ -58,14 +67,15 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | applications.creative | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
 | applications.engineering | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
 | applications.archiving | -- | -- | -- | -- | -- | yes | -- | -- | -- | -- |
-| desktop.paneru | -- | -- | -- | -- | -- | -- | -- | yes | -- | -- |
+| desktop.nehir | -- | -- | -- | -- | -- | -- | -- | yes | -- | -- |
 | programs.programming | -- | -- | yes | yes | yes | no | yes | yes | yes | -- |
 | programs.programming.analysis | -- | -- | auto | auto | auto | -- | yes | auto | auto | -- |
 | programs.programming.cloud | -- | -- | -- | -- | -- | -- | yes | yes | yes | -- |
 | services | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| security | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
 | terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
 | editors | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
-| fonts | auto | auto | auto | auto | auto | auto | -- | yes | yes | yes |
+| fonts | -- | -- | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -680,6 +690,7 @@ denix.lib.configurations {
   paths = [ ./hosts ./modules ];
   extensions = with denix.lib.extensions; [
     args
+    (overlays.withConfig { defaultTargets = [ "nixos" "home" "darwin" ]; })
     (base.withConfig {
       args.enable = true;
       rices.enable = false;
@@ -691,7 +702,9 @@ denix.lib.configurations {
 
 This generates `nixosConfigurations`, `darwinConfigurations`, and
 `homeConfigurations` from the same host/module definitions. The `base` extension provides the host type
-system and `myconfig` option merging.
+system and `myconfig` option merging. `nixosConfigurations` and
+`darwinConfigurations` are filtered by each host's declared `type`, so a new
+host needs no change to `flake.nix`.
 
 ### Key inputs
 
@@ -711,7 +724,8 @@ below them follows `nixpkgs`, except `nixcats-nvim`, which deliberately follows
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nixos-wsl | NixOS on WSL support |
-| paneru | macOS tiling window manager |
+| paneru | macOS tiling window manager (module kept; lemon now uses Nehir via Homebrew) |
+| helium | Helium browser |
 | quickshell | Quickshell (available as input) |
 | nix-mineral | Opt-in system hardening |
 | disko | Declarative disk layouts (remote servers) |
