@@ -3,7 +3,8 @@
 {
   languages.python = {
     enable = true;
-    version = "3.12";
+    package = pkgs.python312;
+    venv.enable = true;
     uv = {
       enable = true;
       sync.enable = true;
@@ -14,7 +15,7 @@
     pkgs.mesa
     pkgs.libGL
     pkgs.libx11
-    pkgs.xorg.libXrender
+    pkgs.libxrender
     pkgs.expat
     pkgs.zlib
   ];

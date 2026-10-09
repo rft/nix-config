@@ -4,8 +4,10 @@ version = "0.1.0"
 description = ""
 requires-python = ">=3.12,<3.13"
 dependencies = [
-    "build123d",
-    "cadquery",
+    # build123d 0.13+ moved to OCP 8, which cadquery does not support yet;
+    # keep both on OCP 7.9 so they don't clobber each other's OCP package.
+    "build123d>=0.12,<0.13",
+    "cadquery>=2.8",
     "ocp-vscode",
 ]
 
@@ -13,3 +15,9 @@ dependencies = [
 dev = [
     "ipykernel",
 ]
+
+[tool.uv]
+# build123d depends on cadquery-ocp-novtk, cadquery on cadquery-ocp; both ship
+# the same OCP module and overwrite each other. Drop novtk so the full (VTK)
+# build cadquery needs is the only one installed.
+override-dependencies = ["cadquery-ocp-novtk; sys_platform == 'never'"]
