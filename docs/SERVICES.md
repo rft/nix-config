@@ -638,11 +638,52 @@ the scanner's firmware first. `server min protocol = NT1` plus
 
 ---
 
-## Utilities
+## Backups (borgmatic)
 
-### borgmatic
+`services.borgmatic` runs daily via upstream's `borgmatic.timer` and backs up
+`/srv/share` plus the state of every service above (Home Assistant,
+Zigbee2MQTT, Mosquitto, Paperless, n8n, Karakeep, changedetection.io,
+Jellyfin, 9router, Samba's passdb). `/srv/projects` is excluded — it lives in
+remote git repos. Kasm, meilisearch and redis are skipped as rebuildable.
 
-Installed as a system package for backup management. Not a running service — invoked on-demand or via cron/timer.
+| | |
+|---|---|
+| Repository | `/var/lib/borg/bristlecone` (local, repokey-blake2) |
+| Passphrase | `/var/lib/borgmatic/passphrase` (root, 0400, created out-of-band) |
+| Retention | 7 daily, 4 weekly, 6 monthly |
+| Checks | repository every 2 weeks, archives monthly |
+
+SQLite databases (HA recorder, Paperless, n8n, Karakeep, Jellyfin) are dumped
+by borgmatic's `sqlite_databases` hook rather than copied raw, so restores are
+consistent even though the services keep running. The hook creates an empty DB
+at any configured path that doesn't exist, so update the list if a service
+moves its database.
+
+The repo shares a disk with everything it backs up — it protects against
+deletion and corruption, not drive failure. Add an off-machine entry to
+`repositories` for that.
+
+### First-time setup
+
+```bash
+# Passphrase (keep a copy somewhere off this machine)
+sudo install -d -m 0700 /var/lib/borgmatic
+sudo install -m 0400 /dev/stdin /var/lib/borgmatic/passphrase   # paste, then Ctrl-D
+sudo borgmatic repo-create --encryption repokey-blake2
+# Export the key too — without it AND the passphrase the repo is unreadable
+sudo borgmatic key export
+sudo systemctl start borgmatic   # first run; then the timer takes over
+```
+
+### Common operations
+
+```bash
+sudo borgmatic list                                  # archives
+sudo borgmatic info
+sudo borgmatic extract --archive latest --path var/lib/hass --destination /tmp/restore
+sudo borgmatic restore --archive latest --data-source home-assistant   # stop the service first
+journalctl -u borgmatic
+```
 
 ---
 

@@ -318,7 +318,7 @@ Self-hosted services. Gated by `services.enable`.
 - **Path:** `modules/services/default.nix`
 - **Name:** `services`
 - **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and installs borgmatic for backup configuration. See `docs/SERVICES.md` for the full reference.
+- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and runs daily borgmatic backups of `/srv/share` and service state. See `docs/SERVICES.md` for the full reference.
 - **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
 - **Services and ports:**
   - **Jellyfin** — media server (firewall auto-opened, port 8096)

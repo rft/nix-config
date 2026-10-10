@@ -41,9 +41,93 @@ delib.module {
 
   nixos.ifEnabled = {
     environment.systemPackages = with pkgs; [
-      borgmatic
       mosquitto # mosquitto_passwd / mosquitto_sub for broker bootstrap + debugging
     ];
+
+    # Borgmatic backups of /srv/share and the state of the services below.
+    # /srv/projects is left out on purpose — it lives in remote git repos.
+    # Upstream ships the daily timer and a sandboxed unit (ProtectSystem=full,
+    # so /var stays writable for the repo below).
+    #
+    # The repo is local for now — same disk as the sources, so this guards
+    # against deletion/corruption, not drive failure. Add an off-machine entry
+    # to `repositories` to fix that; borgmatic backs up to each in turn.
+    #
+    # One-time bootstrap (see docs/SERVICES.md):
+    #   install -m 0400 /dev/stdin /var/lib/borgmatic/passphrase
+    #   borgmatic repo-create --encryption repokey-blake2
+    services.borgmatic = {
+      enable = true;
+      settings = {
+        # DynamicUser services are listed by their real /var/lib/private path:
+        # borg archives the /var/lib/<name> symlink itself, not its target.
+        source_directories = [
+          "/srv/share"
+          "/var/lib/hass"
+          "/var/lib/zigbee2mqtt" # coordinator state; losing it means re-pairing
+          "/var/lib/zigbee2mqtt-mqtt.env"
+          "/var/lib/mosquitto" # password files + retained messages
+          "/var/lib/paperless"
+          "/var/lib/private/n8n"
+          "/var/lib/karakeep"
+          "/var/lib/changedetection-io"
+          "/var/lib/jellyfin"
+          "/var/lib/private/9router" # provider logins / OAuth tokens
+          "/var/lib/samba/private" # smbpasswd database
+        ];
+        repositories = [{ path = "/var/lib/borg/bristlecone"; label = "local"; }];
+
+        # A plain file rather than the unit's LoadCredentialEncrypted, so
+        # manual `sudo borgmatic list/extract` works outside systemd too.
+        encryption_passcommand = "cat /var/lib/borgmatic/passphrase";
+
+        # Live SQLite files can be torn mid-write, so each is dumped by the
+        # hook and the raw file (plus -wal/-shm) excluded below. The hook runs
+        # sqlite3 as root and a missing path gets created empty, so keep these
+        # in sync with where the services actually put their DBs.
+        sqlite_databases = [
+          { name = "home-assistant"; path = "/var/lib/hass/home-assistant_v2.db"; }
+          { name = "paperless"; path = "/var/lib/paperless/db.sqlite3"; }
+          { name = "n8n"; path = "/var/lib/private/n8n/.n8n/database.sqlite"; }
+          { name = "karakeep"; path = "/var/lib/karakeep/db.db"; }
+          { name = "jellyfin"; path = "/var/lib/jellyfin/data/jellyfin.db"; }
+        ];
+
+        exclude_patterns = [
+          "/var/lib/hass/home-assistant_v2.db*"
+          "/var/lib/hass/*.log*"
+          "/var/lib/hass/backups" # HA's own backups duplicate everything here
+          "/var/lib/hass/tts"
+          "/var/lib/paperless/db.sqlite3*"
+          "/var/lib/paperless/celerybeat-schedule.db*"
+          "/var/lib/paperless/index" # rebuildable: paperless-manage document_index reindex
+          "/var/lib/paperless/log"
+          "/var/lib/paperless/consume"
+          "/var/lib/private/n8n/.n8n/database.sqlite*"
+          "/var/lib/private/n8n/.cache"
+          "/var/lib/karakeep/db.db*"
+          "/var/lib/karakeep/queue.db*" # job queue, transient
+          "/var/lib/jellyfin/data/jellyfin.db*"
+          "/var/lib/jellyfin/log"
+        ];
+        exclude_caches = true;
+
+        keep_daily = 7;
+        keep_weekly = 4;
+        keep_monthly = 6;
+
+        checks = [
+          { name = "repository"; frequency = "2 weeks"; }
+          { name = "archives"; frequency = "1 month"; }
+        ];
+      };
+    };
+    # Upstream bounds root to CAP_DAC_READ_SEARCH (read-only), but even a
+    # .dump of a live WAL-mode DB must write the service-owned -shm file, so
+    # sqlite3 fails with "attempt to write a readonly database" (seen on
+    # jellyfin.db). Bounding-set assignments are additive, so this extends
+    # upstream's list rather than replacing it.
+    systemd.services.borgmatic.serviceConfig.CapabilityBoundingSet = [ "CAP_DAC_OVERRIDE" ];
 
     # Jellyfin media server
     services.jellyfin = {
@@ -406,6 +490,8 @@ delib.module {
       # Chroot root: must be root-owned and not group/world-writable.
       # The consume dir inside it is created by the paperless module.
       "d ${scanDir} 0755 root root -"
+      # Parent of the local borg repo; borg creates the repo dir itself.
+      "d /var/lib/borg 0700 root root -"
     ] ++ map (tag: "d ${scanDir}/consume/${tag} 0777 - - -") scanTags;
 
     systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
