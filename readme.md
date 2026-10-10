@@ -61,7 +61,7 @@ The same palette is applied across the desktop, terminal, editors, and browser.
 
 | Host | Type | Description |
 |------|------|-------------|
-| **bristlecone** | server | Self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless + scanner ingest, Kasm Workspaces, changedetection.io, Karakeep, 9router) with nix-mineral hardening |
+| **bristlecone** | server | Self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless + scanner ingest, changedetection.io, Karakeep, 9router) with nix-mineral hardening |
 | **juniper** | server | Barebones VPS, installed with nixos-anywhere and updated with deploy-rs (see [VPS.md](docs/VPS.md)) |
 | **cottonwood** | desktop | Vertical screen rotation |
 | **redwood** | desktop | Full creative + engineering modules |
@@ -125,7 +125,7 @@ for the full reference.
 | **Applications** | `modules/applications/` | GUI apps: base, creative, engineering, archiving, gaming |
 | **Applications (HM)** | `modules/applications-home/` | Helium browser, Kando, KDEnlive configs |
 | **Programming** | `modules/programming/` | Dev tools, Python, Node.js, analysis, cloud |
-| **Services** | `modules/services/` | Self-hosted: jellyfin, home-assistant, mosquitto, zigbee2mqtt, n8n, paperless (+ samba/sftp scanner ingest), kasm, changedetection.io, karakeep, 9router, borgmatic |
+| **Services** | `modules/services/` | Self-hosted: jellyfin, home-assistant, mosquitto, zigbee2mqtt, n8n, paperless (+ samba/sftp scanner ingest), changedetection.io, karakeep, 9router, borgmatic |
 | **Security** | `modules/security/` | nix-mineral hardening (bristlecone) |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij, Yazi |
 | **Editors** | `modules/editors/` | VSCodium (VSpaceCode), OpenCode |

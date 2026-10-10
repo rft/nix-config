@@ -41,7 +41,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
-| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless, Kasm, changedetection.io, Karakeep, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
+| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless, changedetection.io, Karakeep, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
 | **juniper** | server | America/Phoenix | Barebones VPS: core only, SSH (key-only, root prohibit-password), Netbird, disko disk layout, hybrid BIOS/UEFI GRUB, zram swap. Deployed remotely — see [VPS.md](VPS.md) |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |

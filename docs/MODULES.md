@@ -318,7 +318,7 @@ Self-hosted services. Gated by `services.enable`.
 - **Path:** `modules/services/default.nix`
 - **Name:** `services`
 - **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), Kasm Workspaces (browser/desktop streaming), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and runs daily borgmatic backups of `/srv/share` and service state. See `docs/SERVICES.md` for the full reference.
+- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and runs daily borgmatic backups of `/srv/share` and service state. See `docs/SERVICES.md` for the full reference.
 - **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
 - **Services and ports:**
   - **Jellyfin** — media server (firewall auto-opened, port 8096)
@@ -327,7 +327,6 @@ Self-hosted services. Gated by `services.enable`.
   - **n8n** — workflow automation (firewall auto-opened, default port 5678)
   - **Paperless** — document management (port 28981, firewall opened manually; consume dir at `/var/lib/scan/consume`, subdirs become tags)
   - **Samba** — SMB share `//bristlecone/scan` for the document scanner (ports 139/445, firewall auto-opened; SFTP on port 22 is the primary transport)
-  - **Kasm Workspaces** — browser/desktop streaming (port 8443 HTTPS, firewall opened manually)
   - **changedetection.io** — website change monitoring (port 5000, firewall opened manually)
   - **Karakeep** — bookmarks / read-it-later (port 3000, firewall opened manually; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222)
   - **Zigbee2MQTT** — Zigbee coordinator bridged into Mosquitto/Home Assistant (frontend on port 8080, firewall opened manually)
