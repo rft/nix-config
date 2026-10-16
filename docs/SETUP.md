@@ -118,6 +118,11 @@ To update a single specific input:
 nix flake lock --update-input <input-name>
 ```
 
+OpenCode 2 temporarily comes from `numtide/llm-agents.nix` rather than nixpkgs.
+Update it independently with `nix flake update llm-agents`, rebuild, then launch
+`opencode2`. See [editors.opencode](MODULES.md#editorsopencode) for the provider
+configuration and eventual return to nixpkgs.
+
 ## Darwin (macOS)
 
 Darwin hosts use [nix-darwin](https://github.com/nix-darwin/nix-darwin) instead
@@ -708,10 +713,10 @@ host needs no change to `flake.nix`.
 
 ### Key inputs
 
-All 15 inputs. Only `nixpkgs`, `home-manager`, and `nix-darwin` pin a release
-branch — bumping to a new NixOS release means changing those three. Everything
-below them follows `nixpkgs`, except `nixcats-nvim`, which deliberately follows
-`nixpkgs-unstable`.
+Only `nixpkgs`, `home-manager`, and `nix-darwin` pin a release branch — bumping
+to a new NixOS release means changing those three. Most other inputs follow
+`nixpkgs`; `nixcats-nvim` deliberately follows `nixpkgs-unstable`, while the
+temporary `llm-agents` input keeps its upstream nixpkgs pin.
 
 | Input | Purpose |
 |-------|---------|
@@ -722,6 +727,7 @@ below them follows `nixpkgs`, except `nixcats-nvim`, which deliberately follows
 | denix | Module/host framework |
 | noctalia | Noctalia shell (desktop shell) |
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
+| llm-agents | Temporary OpenCode 2 package source (upstream nixpkgs pin) |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nixos-wsl | NixOS on WSL support |
 | paneru | macOS tiling window manager (module kept; lemon now uses Nehir via Homebrew) |

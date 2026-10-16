@@ -1,4 +1,4 @@
-{ delib, lib, ... }:
+{ delib, lib, pkgs, inputs, ... }:
 delib.module {
   name = "editors.opencode";
 
@@ -9,13 +9,15 @@ delib.module {
   };
 
   home.ifEnabled = {
+    home.packages = [ inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2 ];
+
     xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
       "$schema" = "https://opencode.ai/config.json";
-      provider = {
+      providers = {
         llama-cpp = {
-          npm = "@ai-sdk/openai-compatible";
+          package = "@opencode/ai/providers/openai-compatible";
           name = "llama.cpp";
-          options = {
+          settings = {
             baseURL = "http://pineapple.netbird.cloud:8080/v1";
           };
           models = {
@@ -26,7 +28,13 @@ delib.module {
         };
       };
       model = "llama-cpp/default";
-      disabled_providers = [ "opencode" ];
+      policies = [
+        {
+          action = "provider.use";
+          resource = "opencode";
+          effect = "deny";
+        }
+      ];
     };
   };
 }

@@ -34,6 +34,9 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    # Temporary OpenCode 2 source until nixpkgs provides it.
+    llm-agents.url = "github:numtide/llm-agents.nix";
+
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
       inputs.nixpkgs.follows = "nixpkgs";

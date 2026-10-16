@@ -143,7 +143,7 @@ for the full reference.
 | **Services** | `modules/services/` | Self-hosted: jellyfin, home-assistant, mosquitto, zigbee2mqtt, n8n, paperless (+ samba/sftp scanner ingest), changedetection.io, karakeep, 9router, borgmatic |
 | **Security** | `modules/security/` | nix-mineral hardening (bristlecone) |
 | **Terminal** | `modules/terminal/` | Shells (zsh, nushell, xonsh), Kitty, Starship, Zellij, Yazi |
-| **Editors** | `modules/editors/` | VSCodium (VSpaceCode), OpenCode |
+| **Editors** | `modules/editors/` | VSCodium (VSpaceCode), OpenCode 2 (`opencode2`) |
 | **Fonts** | `modules/fonts/` | Nerd Fonts, Inter, fontconfig defaults |
 
 ---
