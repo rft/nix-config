@@ -37,6 +37,21 @@ The same palette is applied across the desktop, terminal, editors, and browser.
 
 ![Empty Niri desktop with the Noctalia bar](docs/screenshots/wallpaper.jpg)
 
+### macOS
+
+lemon runs the same Neovim, Yazi, kitty, and Starship setup through
+nix-darwin and home-manager, tiled by Nehir.
+
+![Nehir on macOS with Neovim, fastfetch, and Yazi](docs/screenshots/macos/desktop.png)
+
+| Neovim | Yazi |
+|--------|------|
+| ![Neovim editing the lemon host config](docs/screenshots/macos/nvim.png) | ![Yazi previewing flake.nix](docs/screenshots/macos/yazi.png) |
+
+| Kitty |
+|-------|
+| ![Kitty running fastfetch with the Starship prompt on macOS](docs/screenshots/macos/kitty.png) |
+
 ---
 
 ## Documentation
