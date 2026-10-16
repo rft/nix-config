@@ -52,6 +52,15 @@ nix-darwin and home-manager, tiled by Nehir.
 |-------|
 | ![Kitty running fastfetch with the Starship prompt on macOS](docs/screenshots/macos/kitty.png) |
 
+### WSL
+
+mistletoe runs NixOS under WSL2 with the same Neovim and Starship setup,
+shown here in zellij inside Windows Terminal.
+
+| fastfetch | Neovim |
+|-----------|--------|
+| ![fastfetch on NixOS under WSL2 in zellij](docs/screenshots/wsl/fastfetch.png) | ![Neovim editing the mistletoe host config](docs/screenshots/wsl/nvim.png) |
+
 ---
 
 ## Documentation
