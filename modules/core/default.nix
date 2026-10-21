@@ -20,6 +20,7 @@ let
     ffmpeg-headless
     fzf
     gh
+    herdr
     git
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq
