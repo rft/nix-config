@@ -111,10 +111,14 @@ delib.module {
       settings.bar.main.margin_edge = 0;
       settings.bar.main.radius = 0;
       settings.bar.main.shadow = false;
+      # Square workspace indicators and widget hover pills (default is a
+      # full pill); corner_radius_scale doesn't reach these.
+      settings.bar.main.capsule_radius = 0.0;
       settings.shell = {
         font_family = "FiraCode Nerd Font";
         time_format = "{:%I:%M %p}";
-        corner_radius_scale = 0.5;
+        # Square panels, popups, notifications and controls.
+        corner_radius_scale = 0.0;
         # Nothing else in the session provides one.
         polkit_agent = true;
       };
