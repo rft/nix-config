@@ -47,7 +47,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, custom `oh-my-pi` package, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, `oh-my-pi` from `numtide/llm-agents.nix` (wrapped with bun/node/git/python3 for plugins), and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
@@ -458,14 +458,9 @@ published Neovim revision rather than the local checkout.
 - **Path:** `modules/editors/opencode.nix`
 - **Name:** `editors.opencode`
 - **Enable option:** `myconfig.editors.opencode.enable` (default: `true`)
-- **Description:** Installs OpenCode 2 (`opencode2`) through Home Manager on NixOS and Darwin, replacing the nixpkgs v1 package with `numtide/llm-agents.nix`. Writes the global v2 config (`~/.config/opencode/opencode.json`) with an OpenAI-compatible llama.cpp provider at `http://pineapple.netbird.cloud:8080/v1`, using `llama-cpp/default` as the default model. A provider policy disables the built-in OpenCode provider; other authenticated providers remain available.
+- **Description:** Installs OpenCode 2 (`pkgs.opencode`, pinned to nixpkgs-unstable in `modules/config/overlays/unstable.nix`) through Home Manager on NixOS and Darwin. Writes the global v2 config (`~/.config/opencode/opencode.json`) with an OpenAI-compatible llama.cpp provider at `http://pineapple.netbird.cloud:8080/v1`, using `llama-cpp/default` as the default model. A provider policy disables the built-in OpenCode provider; other authenticated providers remain available.
 - **Default behavior:** Auto-enables when `myconfig.editors.enable` is true. To disable on a specific host, set `myconfig.editors.opencode.enable = false`.
-- **Dependencies:** `editors` and the temporary `llm-agents` flake input (keeps its upstream nixpkgs pin). Requires Netbird connectivity to reach llama.cpp on pineapple.
-
-Launch with `opencode2`, not `opencode`. Update the temporary package source with
-`nix flake update llm-agents`, then rebuild. Once nixpkgs provides v2, switch the
-module back to `pkgs.opencode` and remove the `llm-agents` input and its lock entries;
-keep the v2 configuration format.
+- **Dependencies:** `editors`. Requires Netbird connectivity to reach llama.cpp on pineapple.
 
 ---
 

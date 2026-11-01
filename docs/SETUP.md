@@ -28,7 +28,7 @@ modules/                Shared modules (delib.module)
 config/                 Static app configs (niri, kando, espanso)
 hardware/               Hardware configs for physical/VM hosts and disko layouts for remote servers
 lib/                    Shared Nix functions (python-core-packages, xonsh-extra-packages, titanium-palette)
-packages/               Custom packages (oh-my-pi, ai-usagebar)
+packages/               Custom packages (ai-usagebar)
 templates/              devenv project templates (see [TEMPLATES.md](TEMPLATES.md))
 docs/                   This documentation
 ```
@@ -118,10 +118,17 @@ To update a single specific input:
 nix flake lock --update-input <input-name>
 ```
 
-OpenCode 2 temporarily comes from `numtide/llm-agents.nix` rather than nixpkgs.
-Update it independently with `nix flake update llm-agents`, rebuild, then launch
-`opencode2`. See [editors.opencode](MODULES.md#editorsopencode) for the provider
-configuration and eventual return to nixpkgs.
+oh-my-pi (`omp`) comes from `numtide/llm-agents.nix`, which trails upstream
+releases by a day or two. Update it with `nix flake update llm-agents`, then
+rebuild. Its builds are served by `cache.numtide.com` (configured in
+`modules/config/user.nix`); on a host that has not yet activated that setting,
+pass it for the first rebuild so omp isn't compiled from source:
+
+```bash
+sudo darwin-rebuild switch --flake . \
+  --option extra-substituters https://cache.numtide.com \
+  --option extra-trusted-public-keys niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
+```
 
 ## Darwin (macOS)
 
@@ -715,8 +722,8 @@ host needs no change to `flake.nix`.
 
 Only `nixpkgs`, `home-manager`, and `nix-darwin` pin a release branch — bumping
 to a new NixOS release means changing those three. Most other inputs follow
-`nixpkgs`; `nixcats-nvim` deliberately follows `nixpkgs-unstable`, while the
-temporary `llm-agents` input keeps its upstream nixpkgs pin.
+`nixpkgs`; `nixcats-nvim` deliberately follows `nixpkgs-unstable`, while
+`llm-agents` keeps its upstream nixpkgs pin so `cache.numtide.com` hits.
 
 | Input | Purpose |
 |-------|---------|
@@ -727,7 +734,7 @@ temporary `llm-agents` input keeps its upstream nixpkgs pin.
 | denix | Module/host framework |
 | noctalia | Noctalia shell (desktop shell) |
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
-| llm-agents | Temporary OpenCode 2 package source (upstream nixpkgs pin) |
+| llm-agents | oh-my-pi (`omp`) package source (upstream nixpkgs pin, cache.numtide.com) |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nixos-wsl | NixOS on WSL support |
 | paneru | macOS tiling window manager (module kept; lemon now uses Nehir via Homebrew) |

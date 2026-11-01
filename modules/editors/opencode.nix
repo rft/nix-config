@@ -1,4 +1,4 @@
-{ delib, lib, pkgs, inputs, ... }:
+{ delib, lib, pkgs, ... }:
 delib.module {
   name = "editors.opencode";
 
@@ -9,7 +9,7 @@ delib.module {
   };
 
   home.ifEnabled = {
-    home.packages = [ inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.opencode2 ];
+    home.packages = [ pkgs.opencode ];
 
     xdg.configFile."opencode/opencode.json".text = builtins.toJSON {
       "$schema" = "https://opencode.ai/config.json";

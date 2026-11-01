@@ -176,7 +176,7 @@ package "lib/" as libPkg #F3E5F5 {
 }
 
 package "packages/" as pkgPkg #FCE4EC {
-  component "oh-my-pi\nai-usagebar" as pkgAll
+  component "ai-usagebar" as pkgAll
 }
 
 package "config/" as cfgPkg #E0F7FA {

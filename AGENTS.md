@@ -4,12 +4,12 @@ Guidelines for AI agents working in this nix-config repository.
 
 ## Repository structure
 
-- **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
+- **`flake.nix`** — Flake definition with 16 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
 - **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, applications-home, programming, terminal, editors, fonts, services, security)
 - **`config/`** — Static app config files (niri, kando, espanso)
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix)
-- **`packages/`** — Custom packages (oh-my-pi, ai-usagebar)
+- **`packages/`** — Custom packages (ai-usagebar)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
 - **`templates/`** — 13 devenv project templates (registered in `flake.nix` and listed in docs/TEMPLATES.md and readme.md)
 - **`docs/`** — Documentation (MODULES.md, SETUP.md, SERVICES.md, KEYBINDINGS.md, TEMPLATES.md, VPS.md, architecture diagram `architecture.puml` → `nix-config-architecture.png`)

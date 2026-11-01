@@ -34,7 +34,8 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    # Temporary OpenCode 2 source until nixpkgs provides it.
+    # Source of pkgs.oh-my-pi (modules/config/overlays/oh-my-pi.nix). Keeps its
+    # own nixpkgs pin so cache.numtide.com hits — do not add a follows.
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     nix-vscode-extensions = {
