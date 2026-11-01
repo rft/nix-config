@@ -15,7 +15,12 @@ delib.module {
   # bar. Fixed upstream in 0.6.0-rc.34; the stable cask's livecheck uses
   # :github_latest and never sees prereleases. Revisit once 0.6.0 ships.
   darwin.ifEnabled = {
-    homebrew.taps = [ "guria/tap" ];
+    homebrew.taps = [
+      {
+        name = "guria/tap";
+        trusted = true;
+      }
+    ];
     homebrew.casks = [ "guria/tap/nehir@rc" ];
 
     # Nehir has no built-in "launch at login" option, so start it via launchd.

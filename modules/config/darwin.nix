@@ -28,7 +28,6 @@ delib.module {
         enable = lib.mkDefault true;
         onActivation.cleanup = lib.mkDefault "zap";
         taps = [
-          "guria/tap"
           # trusted: Homebrew 6 refuses to load casks from untrusted third-party taps.
           {
             name = "abue-ammar/tinycast";
@@ -40,7 +39,6 @@ delib.module {
           "discord"
           "spotify"
           "obs"
-          "mpv"
           "calibre"
           "anki"
           "audacity"

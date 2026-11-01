@@ -52,7 +52,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Shared Homebrew casks + google-chrome |
 
 Both Darwin hosts get the shared Homebrew casks from `modules/config/darwin.nix`:
-discord, spotify, obs, mpv, calibre, anki, audacity, blender, krita, reaper,
+discord, spotify, obs, calibre, anki, audacity, blender, krita, reaper,
 rustdesk, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina,
 plover, utm, espanso, obsidian, claude, chatgpt, vorssaint. App Store:
 Amphetamine, ProDrafts.
