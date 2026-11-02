@@ -55,7 +55,8 @@ Both Darwin hosts get the shared Homebrew casks from `modules/config/darwin.nix`
 discord, spotify, obs, calibre, anki, audacity, blender, krita, reaper,
 rustdesk, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina,
 plover, utm, espanso, obsidian, claude, chatgpt, vorssaint. App Store:
-Amphetamine, ProDrafts.
+Amphetamine, ProDrafts, Bitwarden, uBlock Origin Lite, Save to Raindrop.io,
+SingleFile for Safari, and Kagi for Safari.
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
@@ -200,6 +201,39 @@ Alternatively, upgrade casks manually at any time:
 ```bash
 brew upgrade --cask
 ```
+
+### Safari extensions
+
+Both Darwin hosts install the free Safari apps through `homebrew.masApps`:
+[Bitwarden](https://apps.apple.com/us/app/bitwarden/id1352778147),
+[uBlock Origin Lite](https://apps.apple.com/us/app/ublock-origin-lite/id6745342698),
+[Save to Raindrop.io](https://apps.apple.com/us/app/save-to-raindrop-io/id1549370672),
+[SingleFile for Safari](https://apps.apple.com/us/app/singlefile-for-safari/id6444322545),
+and [Kagi for Safari](https://apps.apple.com/us/app/kagi-search-for-safari/id1622835804).
+Raindrop has optional paid features; no paid Safari apps are added.
+uBlock Origin Lite is not the full uBlock Origin bundled with Helium.
+
+Sign into the Mac App Store before rebuilding; if an app cannot be installed
+through `mas`, acquire it in the App Store first. After installation, launch
+Bitwarden once, then enable the extensions in **Safari > Settings > Extensions**
+and approve the website access each needs. Installation does not automatically
+enable extensions or grant permissions. Bitwarden must come from the Mac App
+Store, not the Homebrew cask, for its Safari extension
+([Bitwarden instructions](https://bitwarden.com/help/install-safari-app-extension)).
+
+For Kagi, enable the extension and approve website access. Set Safari's search
+engine to DuckDuckGo or Ecosia and select the same engine in Kagi's extension
+settings to redirect those searches. For private browsing, add your Kagi Session
+Link in the extension's settings; keep that credential out of Nix
+([Kagi setup instructions](https://help.kagi.com/kagi/getting-started/setting-default/safari-mac.html)).
+The extension is free; the Kagi search service has its own account/subscription requirements.
+
+Homebrew Bundle tries `mas install` and falls back to `mas get`, so an initial
+`No downloads initiated` message can be followed by a successful installation.
+Check `mas list` for the final installed state. An HTTP 500 during a download is
+a server error, not evidence of an incorrect app ID; if the app is still missing,
+open its App Store link above and install it there. Spotlight indexing warnings
+after installation do not mean the download failed.
 
 ### Finding Mac App Store IDs
 

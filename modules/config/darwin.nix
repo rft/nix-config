@@ -63,6 +63,14 @@ delib.module {
         masApps = {
           "Amphetamine" = 937984704;
           "ProDrafts" = 1545810067;
+
+          # Free Safari extensions; enable and grant website access in Safari Settings.
+          # Bitwarden's Safari extension requires the Mac App Store desktop app.
+          "Bitwarden" = 1352778147;
+          "uBlock Origin Lite" = 6745342698;
+          "Save to Raindrop.io" = 1549370672;
+          "SingleFile for Safari" = 6444322545;
+          "Kagi for Safari" = 1622835804;
         };
       };
 
