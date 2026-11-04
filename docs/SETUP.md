@@ -56,7 +56,8 @@ discord, spotify, obs, calibre, anki, audacity, blender, krita, reaper,
 rustdesk, tinycast, shortcat, linearmouse, orion, karabiner-elements, iina,
 plover, utm, espanso, obsidian, claude, chatgpt, vorssaint. App Store:
 Amphetamine, ProDrafts, Bitwarden, uBlock Origin Lite, Save to Raindrop.io,
-SingleFile for Safari, and Kagi for Safari.
+SingleFile for Safari, Kagi for Safari, Userscripts, Vimari, Kitty Progress Bar,
+and Hover for Safari.
 | **installer** | installer | -- | Live ISO, KDE Plasma 6 + Calamares, autologin as `nano`, flake embedded at `/etc/nixos-config` |
 
 ### Module enablement by host
@@ -209,8 +210,15 @@ Both Darwin hosts install the free Safari apps through `homebrew.masApps`:
 [uBlock Origin Lite](https://apps.apple.com/us/app/ublock-origin-lite/id6745342698),
 [Save to Raindrop.io](https://apps.apple.com/us/app/save-to-raindrop-io/id1549370672),
 [SingleFile for Safari](https://apps.apple.com/us/app/singlefile-for-safari/id6444322545),
-and [Kagi for Safari](https://apps.apple.com/us/app/kagi-search-for-safari/id1622835804).
-Raindrop has optional paid features; no paid Safari apps are added.
+[Kagi for Safari](https://apps.apple.com/us/app/kagi-search-for-safari/id1622835804),
+[Userscripts](https://apps.apple.com/us/app/userscripts/id1463298887),
+[Vimari](https://apps.apple.com/us/app/vimari/id1480933944),
+[Kitty Progress Bar](https://apps.apple.com/us/app/kitty-progress-bar/id6780563808),
+and [Hover for Safari](https://apps.apple.com/us/app/hover-for-safari/id1540705431).
+Raindrop has optional paid features; no paid Safari apps or Dark Reader/Nightshift
+extensions are added. Kitty Progress Bar requires macOS 26.4 or later.
+Userscripts, Vimari, and Kitty Progress Bar are open source; Hover is a free
+download, but is not verified open source.
 uBlock Origin Lite is not the full uBlock Origin bundled with Helium.
 
 Sign into the Mac App Store before rebuilding; if an app cannot be installed
@@ -220,6 +228,24 @@ and approve the website access each needs. Installation does not automatically
 enable extensions or grant permissions. Bitwarden must come from the Mac App
 Store, not the Homebrew cask, for its Safari extension
 ([Bitwarden instructions](https://bitwarden.com/help/install-safari-app-extension)).
+
+Userscripts installs the script manager only, not individual scripts. For the
+free userscript-based Helium alternatives, enable Userscripts, then visit a
+project's `.user.js` install link in Safari and open the Userscripts toolbar
+popup to approve installation
+([Userscripts instructions](https://github.com/quoid/userscripts#usage)):
+
+- **uAutoPagerize alternative:** [Pagetual](https://pagetual.hoothin.com/setup),
+  whose setup guide supports Safari with Userscripts.
+- **Return YouTube Dislike:** the [official userscript](https://returnyoutubedislike.com/install).
+- **SponsorBlock alternative:** [SB.js](https://github.com/mchangrh/sb.js).
+  This is a limited alternative to the paid native Safari extension: no segment
+  submission, voting, or seekbar markers; mobile YouTube is unsupported.
+
+These scripts are free and open source, but are not installed or configured by
+Nix. Review scripts before installing and grant access only to the sites they
+need. Vimari is a lightweight Vimium alternative, not a full Vimium C port;
+Hover likewise does not reproduce every Imagus Reborn feature.
 
 For Kagi, enable the extension and approve website access. Set Safari's search
 engine to DuckDuckGo or Ecosia and select the same engine in Kagi's extension

@@ -71,6 +71,10 @@ delib.module {
           "Save to Raindrop.io" = 1549370672;
           "SingleFile for Safari" = 6444322545;
           "Kagi for Safari" = 1622835804;
+          "Userscripts" = 1463298887;
+          "Vimari" = 1480933944;
+          "Kitty Progress Bar" = 6780563808;
+          "Hover for Safari" = 1540705431;
         };
       };
 
