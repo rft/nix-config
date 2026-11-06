@@ -188,7 +188,7 @@ package "hardware/" as hwPkg #EDE7F6 {
 }
 
 package "templates/" as tmplPkg #DCEDC8 {
-  component "python (+cad, electronics, datascience)\nrust, node, gleam, haskell\nprolog, ada, amaranth\nlean, formal" as tmplAll
+  component "python (+cad, electronics, datascience)\nrust, node, gleam, haskell\namaranth, lean, formal" as tmplAll
 }
 
 libPkg -up-> mods : imported by\nmodules

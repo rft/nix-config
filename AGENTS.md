@@ -11,7 +11,7 @@ Guidelines for AI agents working in this nix-config repository.
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix)
 - **`packages/`** — Custom packages (ai-usagebar)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
-- **`templates/`** — 13 devenv project templates (registered in `flake.nix` and listed in docs/TEMPLATES.md and readme.md)
+- **`templates/`** — 11 devenv project templates (registered in `flake.nix` and listed in docs/TEMPLATES.md and readme.md)
 - **`docs/`** — Documentation (MODULES.md, SETUP.md, SERVICES.md, KEYBINDINGS.md, TEMPLATES.md, VPS.md, architecture diagram `architecture.puml` → `nix-config-architecture.png`)
 
 ## Verify the target first

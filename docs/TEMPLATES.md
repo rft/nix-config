@@ -16,8 +16,6 @@ development shells. Each template provides a ready-to-use `flake.nix`,
 | `node`   | [Node.js](https://nodejs.org) with TypeScript and npm |
 | `gleam`  | [Gleam](https://gleam.run) with Erlang/OTP |
 | `haskell` | [Haskell](https://www.haskell.org) with GHC, Cabal, and HLS |
-| `prolog` | [SWI-Prolog](https://www.swi-prolog.org) |
-| `ada`    | [Ada](https://www.adacore.com) with GNAT and gprbuild |
 | `amaranth` | [Amaranth](https://amaranth-lang.org) HDL with yosys and Surfer |
 | `lean`   | [Lean 4](https://lean-lang.org) theorem prover with Lake |
 | `formal` | [TLA+](https://lamport.azurewebsites.net/tla/tla.html) and [Alloy](https://alloytools.org) formal methods |
@@ -246,35 +244,6 @@ built-in language support.
 - `ghc` -- Glasgow Haskell Compiler
 - `cabal-install` -- Cabal build tool (provided by devenv)
 - `haskell-language-server` -- LSP server
-
-### Prolog
-
-Sets up SWI-Prolog for logic programming.
-
-**Files:**
-- `flake.nix` -- Flake with devenv integration
-- `devenv.nix` -- SWI-Prolog
-- `.envrc` -- direnv integration
-- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
-- `.gitignore` -- Ignores for devenv, direnv, Prolog, and Nix artifacts
-
-**Included tools:**
-- `swiProlog` -- SWI-Prolog interpreter and compiler
-
-### Ada
-
-Sets up Ada with the GNAT compiler (GCC-based) and gprbuild project manager.
-
-**Files:**
-- `flake.nix` -- Flake with devenv integration
-- `devenv.nix` -- GNAT + gprbuild
-- `.envrc` -- direnv integration
-- `.vscode/settings.json` -- Restarts direnv automatically so the devenv toolchain is available to VS Code
-- `.gitignore` -- Ignores for devenv, direnv, Ada, and Nix artifacts
-
-**Included tools:**
-- `gnat` -- GNAT Ada compiler (part of GCC)
-- `gprbuild` -- GNAT project build tool
 
 ### Amaranth
 

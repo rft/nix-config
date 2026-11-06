@@ -185,14 +185,6 @@
           path = ./templates/haskell;
           description = "Haskell development environment with devenv";
         };
-        prolog = {
-          path = ./templates/prolog;
-          description = "Prolog development environment with SWI-Prolog";
-        };
-        ada = {
-          path = ./templates/ada;
-          description = "Ada development environment with GNAT and gprbuild";
-        };
         amaranth = {
           path = ./templates/amaranth;
           description = "Amaranth HDL development environment with yosys and surfer";

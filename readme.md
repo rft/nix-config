@@ -167,8 +167,7 @@ nix flake init -t github:rft/nix-config#python
 ```
 
 Available: `python`, `python-cad`, `python-electronics`, `python-datascience`,
-`rust`, `node`, `gleam`, `haskell`, `prolog`, `ada`, `amaranth`, `lean`,
-`formal`.
+`rust`, `node`, `gleam`, `haskell`, `amaranth`, `lean`, `formal`.
 
 ---
 
