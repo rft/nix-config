@@ -54,6 +54,7 @@ delib.module {
           "iina"
           "plover"
           "utm"
+          "prismlauncher"
           "espanso"
           "obsidian"
           "claude"
