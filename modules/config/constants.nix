@@ -7,6 +7,8 @@ delib.module {
     userfullname = strOption "nano";
     useremail = strOption "nano@nomolabs.net";
     gitname = strOption "rft";
+    # Read by the desktop module, the server hosts and Home Assistant.
+    timezone = strOption "America/Phoenix";
     sshKeys = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = {

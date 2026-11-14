@@ -21,7 +21,6 @@ delib.host {
     # Deliberately different from the host name: this machine took over
     # archive duty from sequoia and keeps its old network identity.
     networking.hostName = "sequoia-archive";
-    time.timeZone = "America/Phoenix";
   };
 
   myconfig = {

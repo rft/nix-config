@@ -40,7 +40,7 @@ delib.host {
     # Small VPSes rarely have swap partitions — compress RAM instead
     zramSwap.enable = true;
 
-    time.timeZone = "America/Phoenix";
+    time.timeZone = myconfig.constants.timezone;
 
     networking.firewall.enable = true;
     # Keep SSH reachable over the netbird tunnel (wt0) even if port 22

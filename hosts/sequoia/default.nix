@@ -64,8 +64,6 @@ delib.host {
 
     virtualisation.vmware.guest.enable = true;
 
-    time.timeZone = "America/Phoenix";
-
     # Running under VMware: the emulated HD-Audio driver returns bad timing info
     # (snd_pcm_avail "Broken pipe"), so PipeWire's default timer-based scheduling
     # underruns and stutters during video playback (146 xruns/15s observed).

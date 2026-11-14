@@ -16,8 +16,9 @@ delib.module {
   home.always.imports = [ inputs.noctalia.homeModules.default ];
 
   # Baseline for all NixOS desktop hosts; everything uses mkDefault so hosts
-  # can override individual values (e.g. sequoia/myrtle set a different timezone).
-  nixos.ifEnabled = {
+  # can override individual values. The timezone follows constants.timezone
+  # (cottonwood/redwood set a different one there).
+  nixos.ifEnabled = { myconfig, ... }: {
     environment.systemPackages = [
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
       pkgs.netbird-ui
@@ -54,7 +55,7 @@ delib.module {
       };
 
     networking.networkmanager.enable = lib.mkDefault true;
-    time.timeZone = lib.mkDefault "America/Los_Angeles";
+    time.timeZone = lib.mkDefault myconfig.constants.timezone;
 
     i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
     i18n.extraLocaleSettings = lib.genAttrs [
