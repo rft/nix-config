@@ -30,7 +30,9 @@ delib.module {
       _: lib.mkForce
     ) hardenedServiceConfig;
 
-    networking.firewall.allowedTCPPorts = [ 28981 ];
+    # Web UI only, so NetBird-only rather than LAN-open. The scanner does not
+    # use this port — it uploads over SFTP/SMB (services.scanner).
+    networking.firewall.interfaces.wt0.allowedTCPPorts = [ 28981 ];
 
     services.borgmatic.settings = {
       source_directories = [ "/var/lib/paperless" ];

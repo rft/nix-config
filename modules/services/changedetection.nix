@@ -30,7 +30,8 @@ delib.module {
       }
     );
 
-    networking.firewall.allowedTCPPorts = [ 5000 ];
+    # Web UI only, so NetBird-only rather than LAN-open.
+    networking.firewall.interfaces.wt0.allowedTCPPorts = [ 5000 ];
 
     services.borgmatic.settings.source_directories = [ "/var/lib/changedetection-io" ];
   };

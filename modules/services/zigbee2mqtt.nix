@@ -50,8 +50,10 @@ delib.module {
     # Created out-of-band like the mosquitto password files.
     systemd.services.zigbee2mqtt.serviceConfig.EnvironmentFile = "/var/lib/zigbee2mqtt-mqtt.env";
 
-    # The Zigbee2MQTT frontend (pairing, device settings, map).
-    networking.firewall.allowedTCPPorts = [ 8080 ];
+    # The Zigbee2MQTT frontend (pairing, device settings, map). Web UI only,
+    # so NetBird-only rather than LAN-open: Zigbee devices talk to the dongle
+    # over radio and Wi-Fi ones to mosquitto on 1883.
+    networking.firewall.interfaces.wt0.allowedTCPPorts = [ 8080 ];
 
     services.borgmatic.settings.source_directories = [
       "/var/lib/zigbee2mqtt" # coordinator state; losing it means re-pairing

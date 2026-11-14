@@ -24,9 +24,9 @@ delib.module {
       services.karakeep = {
         enable = true;
         extraEnvironment = {
-          # Reached over the LAN by hostname, not localhost, so pin the origin
-          # instead of letting next-auth infer it from request headers.
-          NEXTAUTH_URL = "http://${myconfig.host.name}:3000";
+          # Reached over NetBird by its mesh name, not localhost, so pin the
+          # origin instead of letting next-auth infer it from request headers.
+          NEXTAUTH_URL = "http://${myconfig.host.name}.netbird.cloud:3000";
           DISABLE_NEW_RELEASE_CHECK = "true";
 
           # AI tagging/summaries go through the local 9router gateway
@@ -71,7 +71,8 @@ delib.module {
         }
       );
 
-      networking.firewall.allowedTCPPorts = [ 3000 ];
+      # Web UI only, so NetBird-only rather than LAN-open.
+      networking.firewall.interfaces.wt0.allowedTCPPorts = [ 3000 ];
 
       services.borgmatic.settings = {
         source_directories = [ "/var/lib/karakeep" ];
