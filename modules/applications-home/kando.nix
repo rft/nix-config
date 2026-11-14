@@ -1,17 +1,27 @@
-{ delib, inputs, lib, pkgs, ... }:
+{
+  delib,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   t = import ../../lib/titanium-palette.nix;
 
   item = name: icon: command: {
     type = "command";
-    data = { inherit command; delayed = false; };
+    data = {
+      inherit command;
+      delayed = false;
+    };
     inherit name icon;
     iconTheme = "material-symbols-rounded";
   };
 
   # Runs once the menu has faded out, so actions hit the window that had focus
   # before Kando opened (and screenshots don't capture the menu itself).
-  delayedItem = name: icon: command:
+  delayedItem =
+    name: icon: command:
     lib.recursiveUpdate (item name icon command) { data.delayed = true; };
 
   submenu = name: icon: children: {
@@ -51,7 +61,9 @@ let
     (delayedItem "Maximize Column" "open_in_full" "niri msg action maximize-column")
     (delayedItem "Center Column" "center_focus_strong" "niri msg action center-column")
     (delayedItem "Move Up a Workspace" "arrow_upward" "niri msg action move-column-to-workspace-up")
-    (delayedItem "Move Down a Workspace" "arrow_downward" "niri msg action move-column-to-workspace-down")
+    (delayedItem "Move Down a Workspace" "arrow_downward"
+      "niri msg action move-column-to-workspace-down"
+    )
   ];
 
   screenshot = submenu "Screenshot" "screenshot_region" [
@@ -101,8 +113,14 @@ let
       "wedge-color" = "${t.darkTitanium}99";
     };
     layers = [
-      { class = "quick-key"; content = "quick-select-key"; }
-      { class = "icon-layer"; content = "icon"; }
+      {
+        class = "quick-key";
+        content = "quick-select-key";
+      }
+      {
+        class = "icon-layer";
+        content = "icon";
+      }
     ];
   };
 in
@@ -139,7 +157,16 @@ delib.module {
 
     xdg.configFile."kando/menus.json".text = builtins.toJSON {
       menus = [
-        (menu (submenu "Noctalia Menu" "apps" [ applications launchers window screenshot media power ]))
+        (menu (
+          submenu "Noctalia Menu" "apps" [
+            applications
+            launchers
+            window
+            screenshot
+            media
+            power
+          ]
+        ))
         (menu (window // { name = "Window Menu"; }))
         (menu (screenshot // { name = "Screenshot Menu"; }))
         (menu (media // { name = "Media Menu"; }))

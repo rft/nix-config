@@ -10,9 +10,11 @@ delib.module {
   options = delib.singleEnableOption false;
 
   nixos.ifEnabled = {
-    environment.systemPackages = sharedPackages ++ (with pkgs; [
-      hydrus
-    ]);
+    environment.systemPackages =
+      sharedPackages
+      ++ (with pkgs; [
+        hydrus
+      ]);
   };
 
   darwin.ifEnabled = {

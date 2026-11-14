@@ -58,7 +58,11 @@ delib.module {
         inherit keys name;
         type = "conditional";
         bindings = [
-          { key = ""; type = "command"; inherit name command; }
+          {
+            key = "";
+            type = "command";
+            inherit name command;
+          }
           {
             key = "when:selection";
             type = "command";
@@ -100,14 +104,33 @@ delib.module {
             name = "Toggle buffer pin";
             type = "conditional";
             bindings = [
-              { key = ""; name = "Pin buffer"; type = "command"; command = "workbench.action.pinEditor"; }
-              { key = "when:pinned"; name = "Unpin buffer"; type = "command"; command = "workbench.action.unpinEditor"; }
-              { key = "when:pinned-tree"; name = "Unpin buffer"; type = "command"; command = "workbench.action.unpinEditor"; }
+              {
+                key = "";
+                name = "Pin buffer";
+                type = "command";
+                command = "workbench.action.pinEditor";
+              }
+              {
+                key = "when:pinned";
+                name = "Unpin buffer";
+                type = "command";
+                command = "workbench.action.unpinEditor";
+              }
+              {
+                key = "when:pinned-tree";
+                name = "Unpin buffer";
+                type = "command";
+                command = "workbench.action.unpinEditor";
+              }
             ];
           }
           # Preserve the explorer toggle when the pin relay supplies both tags.
           {
-            keys = [ "f" "t" "when:pinned-tree" ];
+            keys = [
+              "f"
+              "t"
+              "when:pinned-tree"
+            ];
             name = "Hide side bar";
             type = "command";
             command = "workbench.action.toggleSidebarVisibility";
@@ -117,13 +140,24 @@ delib.module {
           (commandBinding "c.R" "Rename symbol" "editor.action.rename")
           (commandBinding "c.k" "Hover documentation" "editor.action.showHover")
           (commandBinding "c.t" "Go to type definition" "editor.action.goToTypeDefinition")
-          (selectionBinding "c.f" "Format buffer or selection" "editor.action.formatDocument" "editor.action.formatSelection")
-          { keys = "c.l"; position = -1; }
-          { keys = "s.r"; position = -1; }
+          (selectionBinding "c.f" "Format buffer or selection" "editor.action.formatDocument"
+            "editor.action.formatSelection"
+          )
+          {
+            keys = "c.l";
+            position = -1;
+          }
+          {
+            keys = "s.r";
+            position = -1;
+          }
           (commandBinding "s.R" "Replace in project" "workbench.action.replaceInFiles")
           (commandBinding "s.a" "References in side bar" "references-view.find")
           (commandBinding "s.C" "Toggle search case sensitivity" "toggleFindCaseSensitive")
-          { keys = "t.c"; position = -1; }
+          {
+            keys = "t.c";
+            position = -1;
+          }
           (commandBinding ";" "Toggle comment" "editor.action.commentLine")
           (commandBinding "g.g" "Git status" "magit.status")
           (selectionBinding "g.s" "Stage hunk or selection" "git.diff.stageHunk" "git.stageSelectedRanges")
@@ -131,13 +165,21 @@ delib.module {
           (commandBinding "w.c" "Close split" "workbench.action.closeEditorsInGroup")
           (commandBinding "w.o" "Keep only current split" "workbench.action.joinAllGroups")
           (commandBinding "w.f" "Switch application window" "workbench.action.quickSwitchWindow")
-          { keys = "w.d"; position = -1; }
+          {
+            keys = "w.d";
+            position = -1;
+          }
           {
             keys = "o";
             name = "+Open";
             type = "bindings";
             bindings = [
-              { key = "t"; name = "Terminal"; type = "command"; command = "workbench.action.terminal.toggleTerminal"; }
+              {
+                key = "t";
+                name = "Terminal";
+                type = "command";
+                command = "workbench.action.terminal.toggleTerminal";
+              }
             ];
           }
         ];
@@ -464,25 +506,37 @@ delib.module {
             {
               key = "f";
               command = "whichkey.triggerKey";
-              args = { key = "f"; when = "selection"; };
+              args = {
+                key = "f";
+                when = "selection";
+              };
               when = "whichkeyVisible && vim.mode =~ /^Visual/";
             }
             {
               key = "s";
               command = "whichkey.triggerKey";
-              args = { key = "s"; when = "selection"; };
+              args = {
+                key = "s";
+                when = "selection";
+              };
               when = "whichkeyVisible && vim.mode =~ /^Visual/";
             }
             {
               key = "t";
               command = "whichkey.triggerKey";
-              args = { key = "t"; when = "pinned"; };
+              args = {
+                key = "t";
+                when = "pinned";
+              };
               when = "whichkeyVisible && activeEditorIsPinned && !(sideBarVisible && explorerViewletVisible)";
             }
             {
               key = "t";
               command = "whichkey.triggerKey";
-              args = { key = "t"; when = "pinned-tree"; };
+              args = {
+                key = "t";
+                when = "pinned-tree";
+              };
               when = "whichkeyVisible && activeEditorIsPinned && sideBarVisible && explorerViewletVisible";
             }
             {

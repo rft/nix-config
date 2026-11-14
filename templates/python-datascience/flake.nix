@@ -11,7 +11,12 @@
   };
 
   outputs =
-    { self, nixpkgs, devenv, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      devenv,
+      ...
+    }@inputs:
     let
       forEachSystem = nixpkgs.lib.genAttrs [
         "x86_64-linux"
@@ -25,7 +30,8 @@
         devenv-up = self.devShells.${system}.default.config.procfileScript;
       });
 
-      devShells = forEachSystem (system:
+      devShells = forEachSystem (
+        system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in

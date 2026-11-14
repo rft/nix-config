@@ -9,7 +9,19 @@ delib.overlayModule {
       };
     })
     (_final: prev: {
-      inherit (prev.unstable) vscodium claude-code kando llama-cpp colima docker-client lima handy _9router herdr opencode;
+      inherit (prev.unstable)
+        vscodium
+        claude-code
+        kando
+        llama-cpp
+        colima
+        docker-client
+        lima
+        handy
+        _9router
+        herdr
+        opencode
+        ;
     })
   ];
 }

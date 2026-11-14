@@ -5,7 +5,12 @@ let
   # focus. Bridge the two clipboards directly so copy/paste with the host works.
   clipboardBridge = pkgs.writeShellApplication {
     name = "x11-wayland-clipboard-bridge";
-    runtimeInputs = with pkgs; [ wl-clipboard xclip clipnotify coreutils ];
+    runtimeInputs = with pkgs; [
+      wl-clipboard
+      xclip
+      clipnotify
+      coreutils
+    ];
     text = ''
       # Wayland -> X11 (wl-paste --watch re-invokes this script per change)
       if [ "''${1:-}" = to-x11 ]; then

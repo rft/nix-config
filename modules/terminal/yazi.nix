@@ -2,10 +2,21 @@
 let
   t = import ../../lib/titanium-palette.nix;
 
-  border = { fg = t.subtleGray; };
-  accentBorder = { fg = t.electricBlue; };
-  main = color: { fg = t.darkTitanium; bg = color; bold = true; };
-  alt = color: { fg = color; bg = t.subtleGray; };
+  border = {
+    fg = t.subtleGray;
+  };
+  accentBorder = {
+    fg = t.electricBlue;
+  };
+  main = color: {
+    fg = t.darkTitanium;
+    bg = color;
+    bold = true;
+  };
+  alt = color: {
+    fg = color;
+    bg = t.subtleGray;
+  };
 in
 delib.module {
   name = "terminal.yazi";
@@ -19,20 +30,48 @@ delib.module {
       shellWrapperName = "y";
 
       theme = {
-        app.overall = { fg = t.brightAluminum; bg = t.brushedTitanium; };
+        app.overall = {
+          fg = t.brightAluminum;
+          bg = t.brushedTitanium;
+        };
 
         mgr = {
-          cwd = { fg = t.electricBlue; };
+          cwd = {
+            fg = t.electricBlue;
+          };
 
-          find_keyword = { fg = t.warningAmber; bold = true; underline = true; };
-          find_position = { fg = t.titaniumGold; bold = true; italic = true; };
+          find_keyword = {
+            fg = t.warningAmber;
+            bold = true;
+            underline = true;
+          };
+          find_position = {
+            fg = t.titaniumGold;
+            bold = true;
+            italic = true;
+          };
 
-          symlink_target = { fg = t.dimAluminum; italic = true; };
+          symlink_target = {
+            fg = t.dimAluminum;
+            italic = true;
+          };
 
-          marker_copied = { fg = t.readoutGreen; bg = t.readoutGreen; };
-          marker_cut = { fg = t.alertRed; bg = t.alertRed; };
-          marker_marked = { fg = t.electricBlue; bg = t.electricBlue; };
-          marker_selected = { fg = t.titaniumGold; bg = t.titaniumGold; };
+          marker_copied = {
+            fg = t.readoutGreen;
+            bg = t.readoutGreen;
+          };
+          marker_cut = {
+            fg = t.alertRed;
+            bg = t.alertRed;
+          };
+          marker_marked = {
+            fg = t.electricBlue;
+            bg = t.electricBlue;
+          };
+          marker_selected = {
+            fg = t.titaniumGold;
+            bg = t.titaniumGold;
+          };
 
           count_copied = main t.readoutGreen;
           count_cut = main t.alertRed;
@@ -57,96 +96,224 @@ delib.module {
         };
 
         indicator = {
-          parent = { fg = t.dimAluminum; bg = t.borderMuted; };
-          current = { fg = t.brightAluminum; bg = t.subtleGray; bold = true; };
-          preview = { bg = t.borderMuted; };
+          parent = {
+            fg = t.dimAluminum;
+            bg = t.borderMuted;
+          };
+          current = {
+            fg = t.brightAluminum;
+            bg = t.subtleGray;
+            bold = true;
+          };
+          preview = {
+            bg = t.borderMuted;
+          };
         };
 
         status = {
-          overall = { fg = t.dimAluminum; bg = t.darkTitanium; };
+          overall = {
+            fg = t.dimAluminum;
+            bg = t.darkTitanium;
+          };
 
-          perm_sep = { fg = t.comment; };
-          perm_type = { fg = t.electricBlue; };
-          perm_read = { fg = t.titaniumGold; };
-          perm_write = { fg = t.alertRed; };
-          perm_exec = { fg = t.readoutGreen; };
+          perm_sep = {
+            fg = t.comment;
+          };
+          perm_type = {
+            fg = t.electricBlue;
+          };
+          perm_read = {
+            fg = t.titaniumGold;
+          };
+          perm_write = {
+            fg = t.alertRed;
+          };
+          perm_exec = {
+            fg = t.readoutGreen;
+          };
 
-          progress_label = { fg = t.brightAluminum; bold = true; };
-          progress_normal = { fg = t.electricBlue; bg = t.subtleGray; };
-          progress_error = { fg = t.alertRed; bg = t.subtleGray; };
+          progress_label = {
+            fg = t.brightAluminum;
+            bold = true;
+          };
+          progress_normal = {
+            fg = t.electricBlue;
+            bg = t.subtleGray;
+          };
+          progress_error = {
+            fg = t.alertRed;
+            bg = t.subtleGray;
+          };
         };
 
         which = {
-          mask = { bg = t.darkTitanium; };
-          cand = { fg = t.electricBlue; };
-          rest = { fg = t.comment; };
-          desc = { fg = t.dimAluminum; };
-          separator_style = { fg = t.comment; };
+          mask = {
+            bg = t.darkTitanium;
+          };
+          cand = {
+            fg = t.electricBlue;
+          };
+          rest = {
+            fg = t.comment;
+          };
+          desc = {
+            fg = t.dimAluminum;
+          };
+          separator_style = {
+            fg = t.comment;
+          };
         };
 
         confirm = {
           border = accentBorder;
-          title = { fg = t.electricBlue; bold = true; };
+          title = {
+            fg = t.electricBlue;
+            bold = true;
+          };
           btn_yes = main t.electricBlue;
-          btn_no = { fg = t.dimAluminum; };
+          btn_no = {
+            fg = t.dimAluminum;
+          };
         };
 
         spot = {
           border = accentBorder;
-          title = { fg = t.electricBlue; bold = true; };
-          tbl_col = { fg = t.electricBlue; };
-          tbl_cell = { fg = t.brightAluminum; bg = t.subtleGray; };
+          title = {
+            fg = t.electricBlue;
+            bold = true;
+          };
+          tbl_col = {
+            fg = t.electricBlue;
+          };
+          tbl_cell = {
+            fg = t.brightAluminum;
+            bg = t.subtleGray;
+          };
         };
 
         notify = {
-          title_info = { fg = t.readoutGreen; };
-          title_warn = { fg = t.warningAmber; };
-          title_error = { fg = t.alertRed; };
+          title_info = {
+            fg = t.readoutGreen;
+          };
+          title_warn = {
+            fg = t.warningAmber;
+          };
+          title_error = {
+            fg = t.alertRed;
+          };
         };
 
         pick = {
           border = accentBorder;
-          active = { fg = t.electricBlue; bold = true; };
+          active = {
+            fg = t.electricBlue;
+            bold = true;
+          };
         };
 
         input = {
           border = accentBorder;
-          title = { fg = t.electricBlue; };
-          selected = { bg = t.subtleGray; };
+          title = {
+            fg = t.electricBlue;
+          };
+          selected = {
+            bg = t.subtleGray;
+          };
         };
 
         cmp = {
           border = accentBorder;
-          active = { fg = t.brightAluminum; bg = t.subtleGray; bold = true; };
-          inactive = { fg = t.dimAluminum; };
+          active = {
+            fg = t.brightAluminum;
+            bg = t.subtleGray;
+            bold = true;
+          };
+          inactive = {
+            fg = t.dimAluminum;
+          };
         };
 
         tasks = {
           border = accentBorder;
-          title = { fg = t.electricBlue; };
-          hovered = { fg = t.electricBlue; bold = true; };
+          title = {
+            fg = t.electricBlue;
+          };
+          hovered = {
+            fg = t.electricBlue;
+            bold = true;
+          };
         };
 
         help = {
-          on = { fg = t.electricBlue; };
-          run = { fg = t.readoutGreen; };
-          desc = { fg = t.dimAluminum; };
-          hovered = { bg = t.subtleGray; bold = true; };
-          footer = { fg = t.brightAluminum; bg = t.subtleGray; };
+          on = {
+            fg = t.electricBlue;
+          };
+          run = {
+            fg = t.readoutGreen;
+          };
+          desc = {
+            fg = t.dimAluminum;
+          };
+          hovered = {
+            bg = t.subtleGray;
+            bold = true;
+          };
+          footer = {
+            fg = t.brightAluminum;
+            bg = t.subtleGray;
+          };
         };
 
         filetype.rules = [
-          { mime = "image/*"; fg = t.titaniumGold; }
-          { mime = "{audio,video}/*"; fg = t.deepBlue; }
-          { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}"; fg = t.warningAmber; }
-          { mime = "application/{pdf,doc,rtf}"; fg = t.dimAluminum; }
-          { mime = "vfs/{absent,stale}"; fg = t.comment; }
-          { url = "*"; is = "orphan"; fg = t.alertRed; }
-          { url = "*"; is = "exec"; fg = t.readoutGreen; }
-          { url = "*"; is = "dummy"; fg = t.alertRed; }
-          { url = "*/"; is = "dummy"; fg = t.alertRed; }
-          { url = "*/"; fg = t.electricBlue; bold = true; }
-          { url = "*"; fg = t.brightAluminum; }
+          {
+            mime = "image/*";
+            fg = t.titaniumGold;
+          }
+          {
+            mime = "{audio,video}/*";
+            fg = t.deepBlue;
+          }
+          {
+            mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}";
+            fg = t.warningAmber;
+          }
+          {
+            mime = "application/{pdf,doc,rtf}";
+            fg = t.dimAluminum;
+          }
+          {
+            mime = "vfs/{absent,stale}";
+            fg = t.comment;
+          }
+          {
+            url = "*";
+            is = "orphan";
+            fg = t.alertRed;
+          }
+          {
+            url = "*";
+            is = "exec";
+            fg = t.readoutGreen;
+          }
+          {
+            url = "*";
+            is = "dummy";
+            fg = t.alertRed;
+          }
+          {
+            url = "*/";
+            is = "dummy";
+            fg = t.alertRed;
+          }
+          {
+            url = "*/";
+            fg = t.electricBlue;
+            bold = true;
+          }
+          {
+            url = "*";
+            fg = t.brightAluminum;
+          }
         ];
       };
     };

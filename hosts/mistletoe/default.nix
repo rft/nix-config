@@ -1,4 +1,9 @@
-{ delib, inputs, lib, ... }:
+{
+  delib,
+  inputs,
+  lib,
+  ...
+}:
 delib.host {
   name = "mistletoe";
   type = "wsl";

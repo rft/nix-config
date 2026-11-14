@@ -1,4 +1,9 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # "Melancholic Forest" live wallpaper from moewalls.com (3840x2160, 60fps, 15s loop).
   # The download URL is an opaque token; the hash pins the exact file.

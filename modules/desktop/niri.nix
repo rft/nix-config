@@ -1,4 +1,9 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "desktop.niri";
 
@@ -10,7 +15,8 @@ delib.module {
 
   home.ifEnabled = {
     home.file.".config/niri".source =
-      pkgs.runCommandLocal "niri-config-symlink" {} "ln -s /home/nano/nix-config/config/niri $out";
+      pkgs.runCommandLocal "niri-config-symlink" { }
+        "ln -s /home/nano/nix-config/config/niri $out";
 
     home.packages = with pkgs; [
       niri

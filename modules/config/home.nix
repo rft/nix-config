@@ -1,4 +1,9 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "home";
 
@@ -7,9 +12,10 @@ delib.module {
 
     home.username = lib.mkForce myconfig.constants.username;
     home.homeDirectory = lib.mkForce (
-      if pkgs.stdenv.hostPlatform.isDarwin
-      then "/Users/${myconfig.constants.username}"
-      else "/home/${myconfig.constants.username}"
+      if pkgs.stdenv.hostPlatform.isDarwin then
+        "/Users/${myconfig.constants.username}"
+      else
+        "/home/${myconfig.constants.username}"
     );
 
     # Claude Code settings.json is not managed by Nix because home.file creates

@@ -1,4 +1,9 @@
-{ delib, pkgs, lib, ... }:
+{
+  delib,
+  pkgs,
+  lib,
+  ...
+}:
 let
   # SFTP chroot root for the document scanner. sshd refuses to chroot into a
   # path it doesn't own, so this stays root-owned and the paperless consume
@@ -7,7 +12,11 @@ let
 
   # One subdir per scanner profile — PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS turns
   # each directory name into a paperless tag on ingest.
-  scanTags = [ "receipts" "tax" "manuals" ];
+  scanTags = [
+    "receipts"
+    "tax"
+    "manuals"
+  ];
 
   # Shared baseline for all service sandboxes
   hardenedServiceConfig = {
@@ -75,7 +84,12 @@ delib.module {
           "/var/lib/private/9router" # provider logins / OAuth tokens
           "/var/lib/samba/private" # smbpasswd database
         ];
-        repositories = [{ path = "/var/lib/borg/bristlecone"; label = "local"; }];
+        repositories = [
+          {
+            path = "/var/lib/borg/bristlecone";
+            label = "local";
+          }
+        ];
 
         # A plain file rather than the unit's LoadCredentialEncrypted, so
         # manual `sudo borgmatic list/extract` works outside systemd too.
@@ -86,11 +100,26 @@ delib.module {
         # sqlite3 as root and a missing path gets created empty, so keep these
         # in sync with where the services actually put their DBs.
         sqlite_databases = [
-          { name = "home-assistant"; path = "/var/lib/hass/home-assistant_v2.db"; }
-          { name = "paperless"; path = "/var/lib/paperless/db.sqlite3"; }
-          { name = "n8n"; path = "/var/lib/private/n8n/.n8n/database.sqlite"; }
-          { name = "karakeep"; path = "/var/lib/karakeep/db.db"; }
-          { name = "jellyfin"; path = "/var/lib/jellyfin/data/jellyfin.db"; }
+          {
+            name = "home-assistant";
+            path = "/var/lib/hass/home-assistant_v2.db";
+          }
+          {
+            name = "paperless";
+            path = "/var/lib/paperless/db.sqlite3";
+          }
+          {
+            name = "n8n";
+            path = "/var/lib/private/n8n/.n8n/database.sqlite";
+          }
+          {
+            name = "karakeep";
+            path = "/var/lib/karakeep/db.db";
+          }
+          {
+            name = "jellyfin";
+            path = "/var/lib/jellyfin/data/jellyfin.db";
+          }
         ];
 
         exclude_patterns = [
@@ -117,8 +146,14 @@ delib.module {
         keep_monthly = 6;
 
         checks = [
-          { name = "repository"; frequency = "2 weeks"; }
-          { name = "archives"; frequency = "1 month"; }
+          {
+            name = "repository";
+            frequency = "2 weeks";
+          }
+          {
+            name = "archives";
+            frequency = "1 month";
+          }
         ];
       };
     };
@@ -144,33 +179,35 @@ delib.module {
     # authenticates as a named user and gets only the topics it needs.
     services.mosquitto = {
       enable = true;
-      listeners = [{
-        users.hass = {
-          acl = [ "readwrite #" ];
-          hashedPasswordFile = "/var/lib/mosquitto/hass-password";
-        };
-        # Livegrid OpenMatrix LED panel. It publishes its own HA discovery
-        # payloads under homeassistant/ and subscribes to homeassistant/status
-        # to re-announce after a restart; its own state lives under livegrid/.
-        # https://livegrid.github.io/mqtt/
-        users.livegrid = {
-          acl = [
-            "readwrite livegrid/#"
-            "readwrite homeassistant/#"
-          ];
-          hashedPasswordFile = "/var/lib/mosquitto/livegrid-password";
-        };
-        # Zigbee2MQTT. Its own state lives under zigbee2mqtt/; it also needs
-        # homeassistant/# to publish MQTT discovery payloads for every paired
-        # device and to watch homeassistant/status for HA restarts.
-        users.zigbee2mqtt = {
-          acl = [
-            "readwrite zigbee2mqtt/#"
-            "readwrite homeassistant/#"
-          ];
-          hashedPasswordFile = "/var/lib/mosquitto/zigbee2mqtt-password";
-        };
-      }];
+      listeners = [
+        {
+          users.hass = {
+            acl = [ "readwrite #" ];
+            hashedPasswordFile = "/var/lib/mosquitto/hass-password";
+          };
+          # Livegrid OpenMatrix LED panel. It publishes its own HA discovery
+          # payloads under homeassistant/ and subscribes to homeassistant/status
+          # to re-announce after a restart; its own state lives under livegrid/.
+          # https://livegrid.github.io/mqtt/
+          users.livegrid = {
+            acl = [
+              "readwrite livegrid/#"
+              "readwrite homeassistant/#"
+            ];
+            hashedPasswordFile = "/var/lib/mosquitto/livegrid-password";
+          };
+          # Zigbee2MQTT. Its own state lives under zigbee2mqtt/; it also needs
+          # homeassistant/# to publish MQTT discovery payloads for every paired
+          # device and to watch homeassistant/status for HA restarts.
+          users.zigbee2mqtt = {
+            acl = [
+              "readwrite zigbee2mqtt/#"
+              "readwrite homeassistant/#"
+            ];
+            hashedPasswordFile = "/var/lib/mosquitto/zigbee2mqtt-password";
+          };
+        }
+      ];
     };
 
     # Home Assistant
@@ -197,7 +234,7 @@ delib.module {
           unit_system = "metric";
           time_zone = "America/Phoenix";
         };
-        default_config = {};
+        default_config = { };
 
         # The UI editors write to these files and then reload; without the
         # matching !include they are never read, so a saved automation/script/
@@ -255,8 +292,7 @@ delib.module {
     # (applyEnvironmentVariables in z2m's settings.js). systemd reads this as
     # root before dropping to the zigbee2mqtt user, so 0400 root:root is fine.
     # Created out-of-band like the mosquitto password files.
-    systemd.services.zigbee2mqtt.serviceConfig.EnvironmentFile =
-      "/var/lib/zigbee2mqtt-mqtt.env";
+    systemd.services.zigbee2mqtt.serviceConfig.EnvironmentFile = "/var/lib/zigbee2mqtt-mqtt.env";
 
     # n8n workflow automation
     services.n8n = {
@@ -456,7 +492,13 @@ delib.module {
 
     # 1883 is mosquitto: LAN IoT devices (Livegrid panel) need to reach it.
     # 8080 is the Zigbee2MQTT frontend (pairing, device settings, map).
-    networking.firewall.allowedTCPPorts = [ 1883 28981 5000 3000 8080 ];
+    networking.firewall.allowedTCPPorts = [
+      1883
+      28981
+      5000
+      3000
+      8080
+    ];
 
     # mDNS. Home Assistant's zeroconf listener binds UDP 5353 and receives
     # replies on that same port, so the default deny drops every response and
@@ -468,11 +510,18 @@ delib.module {
     # Systemd service hardening
     # ──────────────────────────────────────────────
 
-    systemd.services.jellyfin.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      RestrictNamespaces = false;
-      ReadWritePaths = [ "/var/lib/jellyfin" "/var/cache/jellyfin" "/var/log/jellyfin" ];
-    });
+    systemd.services.jellyfin.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        ProtectSystem = "strict";
+        RestrictNamespaces = false;
+        ReadWritePaths = [
+          "/var/lib/jellyfin"
+          "/var/cache/jellyfin"
+          "/var/log/jellyfin"
+        ];
+      }
+    );
     systemd.services.jellyfin.environment.JELLYFIN_HttpListenerHost__BindAddresses = "0.0.0.0";
     systemd.tmpfiles.rules = [
       "d /var/log/jellyfin 0750 jellyfin jellyfin -"
@@ -481,36 +530,53 @@ delib.module {
       "d ${scanDir} 0755 root root -"
       # Parent of the local borg repo; borg creates the repo dir itself.
       "d /var/lib/borg 0700 root root -"
-    ] ++ map (tag: "d ${scanDir}/consume/${tag} 0777 - - -") scanTags;
+    ]
+    ++ map (tag: "d ${scanDir}/consume/${tag} 0777 - - -") scanTags;
 
-    systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      PrivateDevices = false; # May need device access for integrations
-      RestrictNamespaces = false;
-    });
+    systemd.services.home-assistant.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        PrivateDevices = false; # May need device access for integrations
+        RestrictNamespaces = false;
+      }
+    );
 
-    systemd.services.n8n.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      ReadWritePaths = [ "/var/lib/n8n" ];
-    });
+    systemd.services.n8n.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/var/lib/n8n" ];
+      }
+    );
 
     systemd.services.paperless-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
-    systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
-    systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (_: lib.mkForce) hardenedServiceConfig;
+    systemd.services.paperless-scheduler.serviceConfig = lib.mapAttrs (
+      _: lib.mkForce
+    ) hardenedServiceConfig;
+    systemd.services.paperless-consumer.serviceConfig = lib.mapAttrs (
+      _: lib.mkForce
+    ) hardenedServiceConfig;
 
-    systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      ReadWritePaths = [ "/var/lib/changedetection-io" ];
-    });
+    systemd.services.changedetection-io.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/var/lib/changedetection-io" ];
+      }
+    );
 
     # karakeep-init is left alone (oneshot that must run openssl + migrations),
     # as is karakeep-browser (upstream already sandboxes it more strictly).
-    systemd.services.karakeep-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      # CacheDirectory now comes from 26.05's karakeep module (it used to be
-      # backported here); it is not in hardenedServiceConfig, so the mkForce
-      # above leaves upstream's value intact.
-      ReadWritePaths = [ "/var/lib/karakeep" ];
-    });
+    systemd.services.karakeep-web.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        ProtectSystem = "strict";
+        # CacheDirectory now comes from 26.05's karakeep module (it used to be
+        # backported here); it is not in hardenedServiceConfig, so the mkForce
+        # above leaves upstream's value intact.
+        ReadWritePaths = [ "/var/lib/karakeep" ];
+      }
+    );
     # NEXT_CACHE_DIR still has to be set here. 26.05's karakeep module writes
     # `environment = { NEXT_CACHE_DIR = "%C/karakeep"; } // karakeepEnv;`, but
     # karakeepEnv is a lib.mkMerge value, so `//` yields an attrset carrying
@@ -520,9 +586,12 @@ delib.module {
     # makes fatal. Verified absent from the rendered environment on 26.05.
     systemd.services.karakeep-web.environment.NEXT_CACHE_DIR = "%C/karakeep";
 
-    systemd.services.karakeep-workers.serviceConfig = lib.mapAttrs (_: lib.mkForce) (hardenedServiceConfig // {
-      ProtectSystem = "strict";
-      ReadWritePaths = [ "/var/lib/karakeep" ];
-    });
+    systemd.services.karakeep-workers.serviceConfig = lib.mapAttrs (_: lib.mkForce) (
+      hardenedServiceConfig
+      // {
+        ProtectSystem = "strict";
+        ReadWritePaths = [ "/var/lib/karakeep" ];
+      }
+    );
   };
 }
