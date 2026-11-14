@@ -1,25 +1,26 @@
 { delib, pkgs, ... }:
+let
+  xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
+in
 delib.module {
   name = "core.xonsh";
 
   nixos.always =
-    let
-      xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
-    in
+    { myconfig, ... }:
     {
       programs.xonsh = {
         enable = true;
-        extraPackages = xonshExtraPackages;
+        extraPackages = xonshExtraPackages { full = myconfig.core.workstation.enable; };
       };
     };
 
   darwin.always =
-    let
-      xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
-    in
+    { myconfig, ... }:
     {
       environment.systemPackages = [
-        (pkgs.xonsh.override { extraPackages = xonshExtraPackages; })
+        (pkgs.xonsh.override {
+          extraPackages = xonshExtraPackages { full = myconfig.core.workstation.enable; };
+        })
       ];
     };
 }

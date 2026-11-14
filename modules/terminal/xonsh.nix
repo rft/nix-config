@@ -5,8 +5,11 @@ delib.module {
   options = delib.singleEnableOption true;
 
   home.ifEnabled =
+    { myconfig, ... }:
     let
-      xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
+      xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix {
+        full = myconfig.core.workstation.enable;
+      };
     in
     {
       home.packages = [
