@@ -43,18 +43,11 @@ delib.module {
             mkdir $dir
             cd $dir
           }
-          $env.PATH = ($env.PATH |
-          split row (char esep) |
-          prepend /home/myuser/.apps |
-          append /usr/bin/env
-          )
         '';
       };
 
       yazi.enableNushellIntegration = true;
       starship.enableNushellIntegration = true;
-      broot.enableNushellIntegration = true;
-      eza.enableNushellIntegration = true;
       carapace.enableNushellIntegration = true;
     };
   };

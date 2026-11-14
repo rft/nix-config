@@ -9,8 +9,9 @@ delib.module {
   darwin.always =
     { myconfig, ... }:
     {
+      # Determinate Nix manages the Nix installation, so nix-darwin's own
+      # nix.* machinery (settings, gc, nixPath) is switched off here.
       nix.enable = lib.mkDefault false;
-      nix.gc.automatic = lib.mkForce false;
       system.primaryUser = myconfig.constants.username;
       system.stateVersion = lib.mkDefault 6;
 

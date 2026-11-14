@@ -2,6 +2,7 @@
   delib,
   inputs,
   lib,
+  pkgs,
   ...
 }:
 delib.host {
@@ -11,12 +12,12 @@ delib.host {
 
   home.home.stateVersion = "24.05";
 
-  nixos = {
+  nixos = { myconfig, ... }: {
     system.stateVersion = "25.05";
     imports = [ inputs.nixos-wsl.nixosModules.wsl ];
 
     wsl.enable = true;
-    wsl.defaultUser = "nano";
+    wsl.defaultUser = myconfig.constants.username;
 
     programs.nix-ld.enable = true;
 
@@ -31,7 +32,7 @@ delib.host {
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
-        ExecStart = "/run/current-system/sw/bin/ip link set eth0 mtu 1500";
+        ExecStart = "${pkgs.iproute2}/bin/ip link set eth0 mtu 1500";
         RemainAfterExit = true;
       };
     };
