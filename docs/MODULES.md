@@ -20,6 +20,7 @@ Infrastructure modules that are always active. They have no enable option.
   - `constants.userfullname` -- default `"nano"`
   - `constants.useremail` -- default `"nano@nomolabs.net"`
   - `constants.gitname` -- default `"rft"`
+  - `constants.timezone` -- default `"America/Phoenix"`. Read by the `desktop` module (as the `time.timeZone` default), the server hosts and Home Assistant.
   - `constants.sshKeys` -- attrset of SSH public keys keyed by machine name (e.g. `{ lemon = "ssh-ed25519 ..."; }`). All keys are automatically authorized for the user on every NixOS host via the `user` module.
 - **Default behavior:** Always active. Values are published to `args.shared.constants`.
 - **Overriding:** Set any constant in a host's `myconfig` block, e.g. `constants.username = "astro"` for a machine with a different user. To add SSH keys, extend the `sshKeys` attrset.
@@ -56,16 +57,25 @@ Infrastructure modules that are always active. They have no enable option.
 
 ## Core
 
-System-level packages and shell configuration. Always enabled, no toggle.
+System-level packages and shell configuration. Always enabled, except `core.workstation`, which follows the host type.
 
 ### core
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs ~40 system packages shared across platforms (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, yt-dlp, zellij, etc.) plus a small Linux-only set (distrobox, podman, podman-tui, wl-clipboard, picat). Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection (delete older than 30 days).
+- **Description:** Installs ~30 system packages on every host (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, zellij, etc.) plus podman and podman-tui on Linux. Tools that only make sense on a machine someone sits at live in `core.workstation`. Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection on NixOS (delete older than 30 days); on Darwin, Determinate Nix manages the store.
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
+
+### core.workstation
+
+- **Path:** `modules/core/workstation.nix`
+- **Name:** `core.workstation`
+- **Enable option:** `myconfig.core.workstation.enable` (default: `true` except on `server` and `installer` hosts)
+- **Description:** Marks a host as a machine someone sits at. Installs aria2, ffmpeg, pandoc, pass, rink, syncthing, tio, visidata and yt-dlp (plus distrobox, wl-clipboard and picat on Linux), and is the default for `editors`, `terminal.kitty` and the data-science Python set in xonsh. Leaving it off saves a server roughly 4.5 GiB of store.
+- **Default behavior:** On for desktops, WSL and Macs; off for bristlecone, juniper and the installer ISO. Set it, or any module that follows it, explicitly in a host to override.
+- **Dependencies:** None.
 
 ### core.ssh
 
@@ -80,7 +90,7 @@ System-level packages and shell configuration. Always enabled, no toggle.
 
 - **Path:** `modules/core/xonsh.nix`
 - **Name:** `core.xonsh`
-- **Description:** Enables the xonsh shell system-wide with extra packages from `lib/xonsh-extra-packages.nix`.
+- **Description:** Enables the xonsh shell system-wide with extra packages from `lib/xonsh-extra-packages.nix`: the xontribs everywhere, plus the shared data-science Python set when `core.workstation` is on.
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts.
 - **Dependencies:** `lib/xonsh-extra-packages.nix`.
@@ -203,7 +213,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/default.nix`
 - **Name:** `applications`
 - **Enable option:** `myconfig.applications.enable` (default: `false`)
-- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, dolphin, imv (default image viewer), kitty, mpv, obs-studio, ollama, pciutils, plover, rofi, spotify.
+- **Description:** Installs base GUI applications: anki, audacity, calibre, discord, flameshot, dolphin, imv (default image viewer), kitty, mpv, obs-studio, ollama, pciutils, plover, rofi, spotify. Darwin: mpv from nixpkgs plus Homebrew casks for anki, audacity, calibre, discord, obs, plover, rustdesk and spotify.
 - **Default behavior:** Disabled by default. Enabled per-host.
 - **Dependencies:** None.
 
@@ -212,7 +222,7 @@ GUI applications installed at the NixOS level. Gated by `applications.enable`.
 - **Path:** `modules/applications/creative.nix`
 - **Name:** `applications.creative`
 - **Enable option:** `myconfig.applications.creative.enable` (default: `false`)
-- **Description:** Creative tools: aseprite, blender (plus the Blender Lab MCP server and add-on), kdenlive, krita, reaper.
+- **Description:** Creative tools: aseprite, blender (plus the Blender Lab MCP server and add-on), kdenlive, krita, reaper. Darwin: Homebrew casks for blender, krita and reaper.
 - **Default behavior:** Auto-enables when `myconfig.applications.enable` is true. Can be explicitly disabled per-host (e.g., myrtle sets `false`).
 - **Dependencies:** `applications`.
 
@@ -315,22 +325,23 @@ Self-hosted services. Gated by `services.enable`.
 
 ### services
 
-- **Path:** `modules/services/default.nix`
-- **Name:** `services`
-- **Enable option:** `myconfig.services.enable` (default: `false`)
-- **Description:** Self-hosted services for headless servers. Enables: Jellyfin (media server), Mosquitto (MQTT broker), Home Assistant (home automation), n8n (workflow automation), Paperless (document management), changedetection.io (website monitoring), Karakeep (bookmarks), Zigbee2MQTT (Zigbee → MQTT bridge), and 9router (shared AI gateway). Also sets up scanner ingest into Paperless (SFTP jail + Samba share) and runs daily borgmatic backups of `/srv/share` and service state. See `docs/SERVICES.md` for the full reference.
-- **Default behavior:** Disabled by default. Enabled on bristlecone (server host).
-- **Services and ports:**
-  - **Jellyfin** — media server (firewall auto-opened, port 8096)
-  - **Mosquitto** — MQTT broker (port 1883, firewall opened manually; per-user ACLs for `hass` and the `livegrid` panel)
-  - **Home Assistant** — home automation (firewall auto-opened, default port 8123)
-  - **n8n** — workflow automation (firewall auto-opened, default port 5678)
-  - **Paperless** — document management (port 28981, firewall opened manually; consume dir at `/var/lib/scan/consume`, subdirs become tags)
-  - **Samba** — SMB share `//bristlecone/scan` for the document scanner (ports 139/445, firewall auto-opened; SFTP on port 22 is the primary transport)
-  - **changedetection.io** — website change monitoring (port 5000, firewall opened manually)
-  - **Karakeep** — bookmarks / read-it-later (port 3000, firewall opened manually; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222)
-  - **Zigbee2MQTT** — Zigbee coordinator bridged into Mosquitto/Home Assistant (frontend on port 8080, firewall opened manually)
-  - **9router** — AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
+- **Path:** `modules/services/` (one file per service; `default.nix` holds only the parent toggle)
+- **Name:** `services`, `services.<name>`
+- **Enable option:** `myconfig.services.enable` (default: `false`) turns on every service below. Each also has its own `myconfig.services.<name>.enable`, which follows the parent by default, so a host can take the whole set or individual services.
+- **Description:** Self-hosted services for headless servers. Each module carries its service's firewall ports, systemd hardening (shared baseline in `lib/hardened-service-config.nix`) and the paths borgmatic should back up. See `docs/SERVICES.md` for the full reference.
+- **Default behavior:** Disabled by default. `services.enable` is set on bristlecone (server host).
+- **Modules and ports:**
+  - `services.jellyfin` — media server (firewall auto-opened, port 8096)
+  - `services.mqtt` — Mosquitto MQTT broker (port 1883, firewall opened manually; per-user ACLs for `hass`, the `livegrid` panel and `zigbee2mqtt`)
+  - `services.home-assistant` — home automation (firewall auto-opened, default port 8123; also opens UDP 5353 for mDNS)
+  - `services.zigbee2mqtt` — Zigbee coordinator bridged into Mosquitto/Home Assistant (frontend on port 8080, NetBird-only)
+  - `services.paperless` — document management (port 28981, NetBird-only)
+  - `services.scanner` — document scanner ingest into Paperless: SFTP jail plus the `//<host>/scan` SMB share, consume dir at `/var/lib/scan/consume`, subdirs become tags. Enables `services.paperless` and `services.samba`. Note that it relaxes sshd's host-key and MAC algorithms host-wide for the scanner's firmware.
+  - `services.samba` — Samba base setup (ports 139/445, firewall auto-opened); shares are declared by `services.scanner` and by hosts
+  - `services.changedetection` — changedetection.io website monitoring (port 5000, NetBird-only)
+  - `services.karakeep` — bookmarks / read-it-later (port 3000, NetBird-only; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222; AI tagging points at `services.ai-gateway`)
+  - `services.ai-gateway` — 9router AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
+  - `services.backup` — daily borgmatic backups of whatever the enabled services and the host declare (bristlecone adds `/srv/share`)
 - **Dependencies:** None.
 
 ---
@@ -345,7 +356,7 @@ Opt-in system hardening.
 - **Name:** `security`
 - **Enable option:** `myconfig.security.enable` (default: `false`)
 - **Description:** Enables [nix-mineral](https://github.com/cynicsketch/nix-mineral) with its default preset plus opt-in extras from the maximum preset (`lock-root`, `minimize-swapping`, `secure-chrony`, `bluetooth-kmodules`, `tcp-window-scaling`). DNSSEC is deliberately left off. Because nix-mineral mounts `/home` noexec, it punches a narrow exec bind mount for `~/.omp/natives` so oh-my-pi can load its native modules.
-- **Default behavior:** Disabled by default. Enabled on bristlecone. NixOS only.
+- **Default behavior:** Disabled by default. Enabled on bristlecone and juniper (juniper turns `minimize-swapping` back off because its only swap is zram). NixOS only.
 - **Dependencies:** `nix-mineral` flake input (imported on every NixOS host, active only when enabled).
 
 ---
@@ -367,9 +378,9 @@ Shell and terminal emulator configuration. Enabled by default (`singleEnableOpti
 
 - **Path:** `modules/terminal/kitty.nix`
 - **Name:** `terminal.kitty`
-- **Enable option:** `myconfig.terminal.kitty.enable` (default: `true`)
+- **Enable option:** `myconfig.terminal.kitty.enable` (default: follows `core.workstation`)
 - **Description:** Configures the Kitty terminal emulator with cursor trail, FiraCode Nerd Font, and disabled close confirmations.
-- **Default behavior:** Enabled by default for all hosts.
+- **Default behavior:** Enabled on workstations; off on servers and the installer ISO.
 - **Dependencies:** None.
 
 ### terminal.starship
@@ -427,9 +438,9 @@ Editor configurations. Enabled by default (`singleEnableOption true`).
 
 - **Path:** `modules/editors/default.nix`
 - **Name:** `editors`
-- **Enable option:** `myconfig.editors.enable` (default: `true`)
+- **Enable option:** `myconfig.editors.enable` (default: follows `core.workstation`)
 - **Description:** Parent toggle for the editor sub-modules (`editors.vscode`, `editors.opencode`). Has no configuration of its own. Neovim (nixcat-nvim) is installed by `core`, not here.
-- **Default behavior:** Enabled by default for all hosts.
+- **Default behavior:** Enabled on workstations; off on servers and the installer ISO.
 - **Dependencies:** None.
 
 ### editors.vscode

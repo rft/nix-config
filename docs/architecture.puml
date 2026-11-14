@@ -106,14 +106,15 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
     **Module enablement by host**
     |= Module |= bristlecone |= juniper |= cottonwood |= redwood |= sequoia |= myrtle |= mistletoe |= lemon |= pineapple |
     | config, core | all | all | all | all | all | all | all | all | all |
-    | terminal, editors | all | all | all | all | all | all | all | all | all |
+    | terminal | all | all | all | all | all | all | all | all | all |
+    | workstation, editors |  -  |  -  | Y | Y | Y | Y | Y | Y | Y |
     | desktop |  -  |  -  | Y | Y | Y | Y |  -  |  -  |  -  |
     | desktop.nehir |  -  |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
     | applications |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
     | programming |  -  |  -  | Y | Y | Y |  -  | Y | Y | Y |
     | fonts |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
     | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
-    | security | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    | security | Y | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
   end note
 
   package "config //(always on)//" as cfgMod {
@@ -121,7 +122,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "core //(always on)//" as coreMod {
-    component "~60 CLI packages\nneovim (nixcat-nvim)\npodman, GC, ssh\nxonsh (system)" as coreAll
+    component "~35 CLI packages\nneovim (nixcat-nvim)\npodman, GC, ssh\nxonsh (system)" as coreAll
   }
 
   package "terminal" as termMod {
@@ -145,7 +146,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "services" as svcMod {
-    component "jellyfin, karakeep\nhome-assistant, mosquitto\nzigbee2mqtt, n8n\npaperless + samba/sftp\nscanner ingest\nchangedetection\n9router, borgmatic" as svcAll
+    component "jellyfin, karakeep\nhome-assistant, mosquitto\nzigbee2mqtt\npaperless + samba/sftp\nscanner ingest\nchangedetection\n9router, borgmatic" as svcAll
   }
 
   package "security" as secMod {

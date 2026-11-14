@@ -41,7 +41,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
-| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, n8n, Paperless, changedetection.io, Karakeep, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
+| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, Paperless, changedetection.io, Karakeep, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
 | **juniper** | server | America/Phoenix | Barebones VPS: core only, SSH (key-only, root prohibit-password), Netbird, disko disk layout, hybrid BIOS/UEFI GRUB, zram swap. Deployed remotely — see [VPS.md](VPS.md) |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
@@ -74,9 +74,10 @@ and Hover for Safari.
 | programs.programming.analysis | -- | -- | auto | auto | auto | -- | yes | auto | auto | -- |
 | programs.programming.cloud | -- | -- | -- | -- | -- | -- | yes | yes | yes | -- |
 | services | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| security | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| security | yes | yes | -- | -- | -- | -- | -- | -- | -- | -- |
 | terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
-| editors | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| core.workstation | -- | -- | auto | auto | auto | auto | auto | auto | auto | -- |
+| editors | -- | -- | auto | auto | auto | auto | auto | auto | auto | -- |
 | fonts | -- | -- | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
@@ -535,7 +536,6 @@ delib.host {
     # Boot loader, networking, timezone, locale, etc.
     networking.hostName = "HOSTNAME";
     networking.networkmanager.enable = true;
-    time.timeZone = "America/Los_Angeles";
   };
 
   myconfig = {
