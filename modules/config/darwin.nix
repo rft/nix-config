@@ -9,8 +9,9 @@ delib.module {
   darwin.always =
     { myconfig, ... }:
     {
+      # Determinate Nix manages the Nix installation, so nix-darwin's own
+      # nix.* machinery (settings, gc, nixPath) is switched off here.
       nix.enable = lib.mkDefault false;
-      nix.gc.automatic = lib.mkForce false;
       system.primaryUser = myconfig.constants.username;
       system.stateVersion = lib.mkDefault 6;
 
@@ -35,25 +36,19 @@ delib.module {
           }
         ];
         brews = [ "mas" ];
+        # Baseline for every Mac. Casks that mirror a feature module live in
+        # that module's darwin.ifEnabled block (applications,
+        # applications.creative, applications.gaming, terminal.kitty,
+        # desktop.nehir) so they follow its toggle.
         casks = [
-          "discord"
-          "spotify"
-          "obs"
-          "calibre"
-          "anki"
-          "audacity"
-          "blender"
-          "krita"
-          "reaper"
-          "rustdesk"
           "abue-ammar/tinycast/tinycast"
           "shortcat"
           "linearmouse"
           "orion"
           "karabiner-elements"
           "iina"
-          "plover"
           "utm"
+          # Not in applications.gaming: that module also installs Steam.
           "prismlauncher"
           "espanso"
           "obsidian"

@@ -17,11 +17,6 @@
       inputs.nix-darwin.follows = "nix-darwin";
     };
 
-    quickshell = {
-      url = "github:outfoxxed/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -199,15 +194,7 @@
         };
       };
 
-      packages.x86_64-linux =
-        let
-          pkgs = import inputs.nixpkgs {
-            system = "x86_64-linux";
-            config.allowUnfree = true;
-          };
-        in
-        {
-          installer-iso = inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
-        };
+      packages.x86_64-linux.installer-iso =
+        inputs.self.nixosConfigurations.installer.config.system.build.isoImage;
     };
 }

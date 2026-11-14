@@ -1,17 +1,18 @@
 # VPS Deployment (juniper)
 
 `juniper` is a barebones server host for a generic KVM VPS. It carries only the
-always-on baseline (core packages, xonsh, SSH, Netbird) — no desktop, no
-self-hosted services. It is installed remotely with
+always-on baseline (core packages, xonsh, SSH, Netbird) plus the `security`
+module (nix-mineral hardening) — no desktop, no self-hosted services. It is installed remotely with
 [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) and updated
 with [deploy-rs](https://github.com/serokell/deploy-rs).
 
 Key properties:
 
 - **SSH is key-only** — password and keyboard-interactive auth are disabled by
-  `modules/core/ssh.nix`; the keys in `myconfig.constants.sshKeys` are
-  authorized for both `nano` and `root` (root is `prohibit-password`, needed by
-  nixos-anywhere and deploy-rs).
+  `modules/core/ssh.nix`. Every key in `myconfig.constants.sshKeys` is
+  authorized for `nano`; `root` (`prohibit-password`, needed by nixos-anywhere
+  and deploy-rs) only takes the machines that deploy — `lemon`, `mistletoe`
+  and `sequoia` — listed in `hosts/juniper/default.nix`.
 - **Netbird is the access path** — the client comes from core; the tunnel
   interface `wt0` is a trusted firewall interface, so once the peer is enrolled
   you can reach the machine (and later close public SSH) via the Netbird mesh.
@@ -28,7 +29,8 @@ according to the disko layout, and installs the flake's configuration.
    - A VPS (x86_64, ideally ≥1.5 GB RAM for the kexec image) running any Linux
      with root SSH access — most providers' stock Debian/Ubuntu image is fine.
    - Your SSH key must be in `myconfig.constants.sshKeys`
-     (`modules/config/constants.nix`) *and* accepted by the provider's stock
+     (`modules/config/constants.nix`), in juniper's root key list
+     (`hosts/juniper/default.nix`), *and* accepted by the provider's stock
      image (add it via the provider panel or `ssh-copy-id`).
    - An x86_64-linux machine to deploy from (e.g. mistletoe); the system is
      built locally and pushed.

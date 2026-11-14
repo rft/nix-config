@@ -39,6 +39,18 @@ delib.module {
 
   darwin.ifEnabled = {
     environment.systemPackages = sharedPackages;
+
+    # Homebrew counterparts of linuxOnlyPackages.
+    homebrew.casks = [
+      "anki"
+      "audacity"
+      "calibre"
+      "discord"
+      "obs"
+      "plover"
+      "rustdesk"
+      "spotify"
+    ];
   };
 
   home.ifEnabled = lib.mkIf pkgs.stdenv.isLinux {

@@ -6,8 +6,9 @@
   ...
 }:
 let
+  # On every host, servers and the installer ISO included. Tools that only
+  # make sense on a machine someone sits at go in core.workstation instead.
   sharedPackages = with pkgs; [
-    aria2
     atuin
     bandwhich
     bat
@@ -17,7 +18,6 @@ let
     difftastic
     dua
     fd
-    ffmpeg-headless
     fzf
     gh
     herdr
@@ -29,34 +29,24 @@ let
     netbird
     nmap
     oh-my-pi
-    pandoc
-    pass
     procs
     rclone
-    rink
     ripgrep
     rsync
-    syncthing
     tcpdump
     tealdeer
-    tio
     trippy
-    visidata
     watchexec
     wget
     yazi
     yq
-    yt-dlp
     zellij
     zoxide
   ];
 
   linuxOnlyPackages = with pkgs; [
-    distrobox
     podman
     podman-tui
-    wl-clipboard
-    picat
   ];
 in
 delib.module {
@@ -124,16 +114,6 @@ delib.module {
         StandardOutPath = "/var/log/netbird.out.log";
         StandardErrorPath = "/var/log/netbird.err.log";
       };
-    };
-
-    nix.gc = {
-      automatic = true;
-      interval = {
-        Weekday = 0;
-        Hour = 2;
-        Minute = 0;
-      };
-      options = "--delete-older-than 30d";
     };
   };
 }

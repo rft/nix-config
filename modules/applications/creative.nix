@@ -1,4 +1,9 @@
-{ delib, lib, pkgs, ... }:
+{
+  delib,
+  lib,
+  pkgs,
+  ...
+}:
 delib.module {
   name = "applications.creative";
 
@@ -19,7 +24,11 @@ delib.module {
     ];
   };
 
-  darwin.ifEnabled = { };
+  darwin.ifEnabled.homebrew.casks = [
+    "blender"
+    "krita"
+    "reaper"
+  ];
 
   # Blender only loads the MCP add-on from its per-version extensions dir; link
   # the copy shipped with blender-mcp so add-on and server stay in sync. It still

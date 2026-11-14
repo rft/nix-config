@@ -4,8 +4,19 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual runs, e.g. on the update-flake-lock PR branch: PRs opened with the
+  # default GITHUB_TOKEN do not trigger pull_request workflows.
+  workflow_dispatch:
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Check formatting (fix locally with the same command minus --check)
+        run: git ls-files -z '*.nix' | xargs -0 nix fmt -- --check
+
   eval-nixos:
     runs-on: ubuntu-latest
     steps:
@@ -20,6 +31,11 @@ jobs:
             nix eval ".#nixosConfigurations.$host.config.system.build.toplevel.drvPath"
             echo "::endgroup::"
           done
+      # Covers what the loop above does not: the deploy-rs checks, the
+      # templates and the installer ISO. Evaluation only — building the
+      # deploy checks would build juniper's whole system.
+      - name: Check the remaining flake outputs
+        run: nix flake check --no-build
 
   eval-darwin:
     runs-on: macos-14

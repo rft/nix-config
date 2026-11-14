@@ -1,4 +1,9 @@
-{ delib, inputs, lib, ... }:
+{
+  delib,
+  inputs,
+  lib,
+  ...
+}:
 delib.host {
   name = "juniper";
   type = "server";
@@ -34,8 +39,12 @@ delib.host {
 
     # Small VPSes rarely have swap partitions — compress RAM instead
     zramSwap.enable = true;
+    # The security module's minimize-swapping pins vm.swappiness to 1, which
+    # all but stops the kernel from using zram; with no disk swap there is
+    # nothing sensitive to keep off disk either.
+    nix-mineral.extras.system.minimize-swapping = lib.mkForce false;
 
-    time.timeZone = "America/Phoenix";
+    time.timeZone = myconfig.constants.timezone;
 
     networking.firewall.enable = true;
     # Keep SSH reachable over the netbird tunnel (wt0) even if port 22
@@ -45,6 +54,18 @@ delib.host {
     # nixos-anywhere installs and deploy-rs pushes as root over SSH.
     # Password auth stays disabled globally via core.ssh — keys only.
     services.openssh.settings.PermitRootLogin = lib.mkForce "prohibit-password";
-    users.users.root.openssh.authorizedKeys.keys = builtins.attrValues myconfig.constants.sshKeys;
+    # Root is only for those two tools, so it takes just the machines that
+    # deploy — not the phone/tablet Termius keys, which still log in as the
+    # regular user.
+    users.users.root.openssh.authorizedKeys.keys = with myconfig.constants.sshKeys; [
+      lemon
+      mistletoe
+      sequoia
+    ];
+  };
+
+  myconfig = {
+    # The only host with a public address.
+    security.enable = true;
   };
 }

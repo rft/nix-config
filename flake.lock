@@ -670,26 +670,6 @@
         "type": "github"
       }
     },
-    "quickshell": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1791260458,
-        "narHash": "sha256-ar6lvXon8TcQ7S0xZPS3zPmfB43vhZnDl1rK86r7koI=",
-        "owner": "outfoxxed",
-        "repo": "quickshell",
-        "rev": "11ca60be22b063478ed9586ca1d7f92f0f261caf",
-        "type": "github"
-      },
-      "original": {
-        "owner": "outfoxxed",
-        "repo": "quickshell",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "denix": "denix",
@@ -706,8 +686,7 @@
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "noctalia": "noctalia",
-        "paneru": "paneru",
-        "quickshell": "quickshell"
+        "paneru": "paneru"
       }
     },
     "systems": {

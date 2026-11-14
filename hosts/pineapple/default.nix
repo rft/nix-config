@@ -24,9 +24,12 @@ delib.host {
         Label = "com.llama-cpp.server";
         ProgramArguments = [
           "${pkgs.llama-cpp}/bin/llama-server"
-          "--host" "0.0.0.0"
-          "--port" "8080"
-          "--model" "${homeDir}/Models/default.gguf"
+          "--host"
+          "0.0.0.0"
+          "--port"
+          "8080"
+          "--model"
+          "${homeDir}/Models/default.gguf"
         ];
         RunAtLoad = true;
         KeepAlive = true;
@@ -39,7 +42,10 @@ delib.host {
     launchd.user.agents.caffeinate = {
       serviceConfig = {
         Label = "com.user.caffeinate";
-        ProgramArguments = [ "/usr/bin/caffeinate" "-s" ];
+        ProgramArguments = [
+          "/usr/bin/caffeinate"
+          "-s"
+        ];
         RunAtLoad = true;
         KeepAlive = true;
       };

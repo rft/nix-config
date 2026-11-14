@@ -4,11 +4,11 @@ Guidelines for AI agents working in this nix-config repository.
 
 ## Repository structure
 
-- **`flake.nix`** — Flake definition with 16 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
+- **`flake.nix`** — Flake definition with 15 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
 - **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, applications-home, programming, terminal, editors, fonts, services, security)
 - **`config/`** — Static app config files (niri, kando, espanso)
-- **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix)
+- **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix, hardened-service-config.nix)
 - **`packages/`** — Custom packages (ai-usagebar)
 - **`hardware/`** — Hardware-specific configs for desktop hosts and disko disk layouts for remote servers
 - **`templates/`** — 11 devenv project templates (registered in `flake.nix` and listed in docs/TEMPLATES.md and readme.md)
@@ -44,7 +44,8 @@ Guidelines for AI agents working in this nix-config repository.
   - Home Manager: `nix eval .#homeConfigurations.<config>.activationPackage.drvPath`
 - When practical, follow eval with the matching dry-run/build/test command. Eval is the minimum bar, not the whole test plan.
 - If editing a module used by multiple hosts/platforms, eval at least one NixOS and one Darwin target (if applicable).
-- CI (`.github/workflows/check.yml`) evals every NixOS host on Linux and every Darwin host on macOS for each push/PR.
+- CI (`.github/workflows/check.yml`) evals every NixOS host on Linux and every Darwin host on macOS for each push/PR, runs `nix flake check --no-build`, and fails on unformatted Nix — run `git ls-files -z '*.nix' | xargs -0 nix fmt --` before committing.
+- `.github/workflows/update-flake-lock.yml` opens a weekly PR with the updated `flake.lock`.
 
 ## Prefer upstream fixes
 
@@ -95,6 +96,8 @@ delib.module {
 - Use `lib.mkDefault` for values that hosts should be able to override.
 - Split packages into `sharedPackages`, `linuxOnlyPackages`, `darwinOnlyPackages` when a module targets multiple platforms.
 - Shared NixOS desktop defaults (locale, pipewire, xserver, printing, timezone, firefox) live in `modules/desktop/default.nix` under `nixos.ifEnabled` with `lib.mkDefault` — override per host instead of re-declaring them.
+- The timezone comes from `myconfig.constants.timezone` (default `America/Phoenix`); the desktop module, the server hosts and Home Assistant read it. Set the constant in a host's `myconfig` instead of `time.timeZone`.
+- Self-hosted services are one module per service under `modules/services/` (`services.<name>`, auto-enabled by `services.enable`). A service declares its own firewall ports, systemd hardening (`lib/hardened-service-config.nix`) and borgmatic paths (`services.borgmatic.settings.*`) in its own file. Web UIs are opened on the NetBird interface only (`networking.firewall.interfaces.wt0.allowedTCPPorts`); only ports LAN devices need are opened globally.
 - `networking.hostName` defaults to the denix host name (set in `modules/core/default.nix`); only set it in a host when the hostname differs from the host name (e.g. myrtle → "sequoia-archive").
 - `nixosConfigurations`/`darwinConfigurations` are filtered by each host's declared `type` in `flake.nix` — adding a host requires no flake change.
 
@@ -133,7 +136,7 @@ delib.host {
 
 - This repo targets NixOS (x86_64-linux), Darwin (aarch64-darwin), and WSL.
 - When editing a module, check whether it uses `nixos.*`, `darwin.*`, or both — ensure changes work on all applicable platforms.
-- Darwin uses Homebrew casks for GUI apps (configured in `modules/config/darwin.nix`). NixOS installs GUI apps via `environment.systemPackages`.
+- Darwin uses Homebrew casks for GUI apps. The baseline list is in `modules/config/darwin.nix`; a cask that mirrors a feature module goes in that module's `darwin.ifEnabled` so it follows the toggle. Removing a cask from a host uninstalls and zaps it (`onActivation.cleanup = "zap"`). NixOS installs GUI apps via `environment.systemPackages`.
 - lemon uses Nehir (Homebrew cask, `desktop.nehir`) for tiling; the `desktop.paneru` module remains but is unused. NixOS desktops use `niri` (Wayland).
 
 ## Naming conventions
@@ -146,6 +149,6 @@ delib.host {
 
 - Do not create NixOS options when a simple `environment.systemPackages` addition suffices.
 - Do not hardcode usernames — use `myconfig.constants.username`.
-- Do not add packages to `modules/core/default.nix` unless they should be on every single host. Use feature modules instead.
+- Do not add packages to `modules/core/default.nix` unless they should be on every single host, servers and the installer ISO included. Tools for machines someone sits at go in `modules/core/workstation.nix` (`core.workstation`, off on `server`/`installer` hosts); everything else in feature modules.
 - Do not manage secrets (API keys, tokens, SSH keys) through Nix — they are handled outside this repo.
 - Do not add Claude Code settings to home-manager — `~/.claude/settings.json` must remain writable at runtime.

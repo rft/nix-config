@@ -1,4 +1,10 @@
-{ delib, lib, inputs, pkgs, ... }:
+{
+  delib,
+  lib,
+  inputs,
+  pkgs,
+  ...
+}:
 let
   t = import ../../lib/titanium-palette.nix;
 in
@@ -10,8 +16,9 @@ delib.module {
   home.always.imports = [ inputs.noctalia.homeModules.default ];
 
   # Baseline for all NixOS desktop hosts; everything uses mkDefault so hosts
-  # can override individual values (e.g. sequoia/myrtle set a different timezone).
-  nixos.ifEnabled = {
+  # can override individual values. The timezone follows constants.timezone
+  # (cottonwood/redwood set a different one there).
+  nixos.ifEnabled = { myconfig, ... }: {
     environment.systemPackages = [
       inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
       pkgs.netbird-ui
@@ -26,25 +33,29 @@ delib.module {
 
     # Tray apps launched with the session (the netbird daemon itself runs
     # system-wide from modules/core).
-    systemd.user.services = lib.mapAttrs (name: cmd: {
-      description = "${name} tray app";
-      wantedBy = [ "graphical-session.target" ];
-      partOf = [ "graphical-session.target" ];
-      after = [ "graphical-session.target" ];
-      serviceConfig = {
-        ExecStart = cmd;
-        Restart = "on-failure";
+    systemd.user.services =
+      lib.mapAttrs
+        (name: cmd: {
+          description = "${name} tray app";
+          wantedBy = [ "graphical-session.target" ];
+          partOf = [ "graphical-session.target" ];
+          after = [ "graphical-session.target" ];
+          serviceConfig = {
+            ExecStart = cmd;
+            Restart = "on-failure";
+          };
+        })
+        {
+          handy = "${lib.getExe pkgs.handy} --start-hidden";
+          netbird-ui = lib.getExe pkgs.netbird-ui;
+        }
+      // {
+        # match/base.yml shells out to config/espanso/scripts/helper.py.
+        espanso.path = [ pkgs.python3 ];
       };
-    }) {
-      handy = "${lib.getExe pkgs.handy} --start-hidden";
-      netbird-ui = lib.getExe pkgs.netbird-ui;
-    } // {
-      # match/base.yml shells out to config/espanso/scripts/helper.py.
-      espanso.path = [ pkgs.python3 ];
-    };
 
     networking.networkmanager.enable = lib.mkDefault true;
-    time.timeZone = lib.mkDefault "America/Los_Angeles";
+    time.timeZone = lib.mkDefault myconfig.constants.timezone;
 
     i18n.defaultLocale = lib.mkDefault "en_US.UTF-8";
     i18n.extraLocaleSettings = lib.genAttrs [
@@ -83,14 +94,16 @@ delib.module {
   home.ifEnabled = { myconfig, ... }: {
     # Symlinked into the repo (like niri) so matches stay editable without a
     # rebuild; match/packages stays in ~/.config for `espanso install`.
-    home.file = let
-      repo = "/home/${myconfig.constants.username}/nix-config/config/espanso";
-      link = name: path: pkgs.runCommandLocal "espanso-${name}-symlink" {} "ln -s ${repo}/${path} $out";
-    in {
-      ".config/espanso/config".source = link "config" "config";
-      ".config/espanso/match/base.yml".source = link "base" "match/base.yml";
-      ".config/espanso/scripts".source = link "scripts" "scripts";
-    };
+    home.file =
+      let
+        repo = "/home/${myconfig.constants.username}/nix-config/config/espanso";
+        link = name: path: pkgs.runCommandLocal "espanso-${name}-symlink" { } "ln -s ${repo}/${path} $out";
+      in
+      {
+        ".config/espanso/config".source = link "config" "config";
+        ".config/espanso/match/base.yml".source = link "base" "match/base.yml";
+        ".config/espanso/scripts".source = link "scripts" "scripts";
+      };
 
     # The noctalia ai-usagebar plugin shells out to this CLI by name.
     home.packages = [ pkgs.ai-usagebar ];
@@ -126,8 +139,16 @@ delib.module {
       settings.wallpaper.enabled = false;
       # Entries don't inherit example.toml's values; timeout/action default to 0/empty.
       settings.idle.behavior = {
-        lock = { enabled = true; timeout = 600; action = "lock"; };
-        screen-off = { enabled = true; timeout = 660; action = "screen_off"; };
+        lock = {
+          enabled = true;
+          timeout = 600;
+          action = "lock";
+        };
+        screen-off = {
+          enabled = true;
+          timeout = 660;
+          action = "screen_off";
+        };
       };
       # Feeds night light and weather.
       settings.location.auto_locate = true;
@@ -137,12 +158,28 @@ delib.module {
         unit = "fahrenheit";
       };
       # Tighter to the edge now that the bar is flush.
-      settings.notification = { offset_x = 8; offset_y = 8; };
-      settings.osd = { offset_x = 8; offset_y = 8; };
+      settings.notification = {
+        offset_x = 8;
+        offset_y = 8;
+      };
+      settings.osd = {
+        offset_x = 8;
+        offset_y = 8;
+      };
       settings.bar.main.start = [ "workspaces" ];
       settings.bar.main.end = [
-        "ai_usage" "media" "tray" "notifications" "clipboard" "network"
-        "bluetooth" "volume" "brightness" "battery" "control-center" "session"
+        "ai_usage"
+        "media"
+        "tray"
+        "notifications"
+        "clipboard"
+        "network"
+        "bluetooth"
+        "volume"
+        "brightness"
+        "battery"
+        "control-center"
+        "session"
       ];
       # From the built-in community source.
       settings.plugins.enabled = [ "felipeartur/ai-usagebar" ];

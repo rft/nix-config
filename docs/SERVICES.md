@@ -1,30 +1,36 @@
 # Services Reference
 
 All self-hosted services running on **bristlecone** (the server host).
-Enabled via `myconfig.services.enable = true` in the host config.
+Enabled via `myconfig.services.enable = true` in the host config. Each service is
+its own module under `modules/services/` (`services.<name>`), so a single one can
+also be switched on or off with `myconfig.services.<name>.enable`.
 
 ---
 
 ## Port Map
 
-| Service              | Port  | Protocol | Bind Address |
-|----------------------|-------|----------|--------------|
-| Jellyfin             | 8096  | HTTP     | 0.0.0.0      |
-| Home Assistant       | 8123  | HTTP     | 0.0.0.0      |
-| n8n                  | 5678  | HTTP     | 0.0.0.0      |
-| Paperless-ngx        | 28981 | HTTP     | 0.0.0.0      |
-| changedetection.io   | 5000  | HTTP     | 0.0.0.0      |
-| Karakeep             | 3000  | HTTP     | 0.0.0.0      |
-| Mosquitto (MQTT)     | 1883  | MQTT     | 0.0.0.0      |
-| Zigbee2MQTT frontend | 8080  | HTTP     | 0.0.0.0      |
-| 9router (AI gateway) | 20128 | HTTP     | 0.0.0.0 (firewall: `wt0` only) |
-| Meilisearch          | 7700  | HTTP     | 127.0.0.1    |
-| Karakeep browser CDP | 9222  | HTTP     | 127.0.0.1    |
-| Samba (scanner)      | 445   | SMB      | 0.0.0.0      |
-| Samba NetBIOS        | 139   | SMB      | 0.0.0.0      |
-| mDNS (zeroconf)      | 5353  | UDP      | 0.0.0.0      |
+| Service              | Port  | Protocol | Reachable from |
+|----------------------|-------|----------|----------------|
+| Jellyfin             | 8096  | HTTP     | LAN            |
+| Home Assistant       | 8123  | HTTP     | LAN            |
+| Paperless-ngx        | 28981 | HTTP     | NetBird (`wt0`) only |
+| changedetection.io   | 5000  | HTTP     | NetBird (`wt0`) only |
+| Karakeep             | 3000  | HTTP     | NetBird (`wt0`) only |
+| Mosquitto (MQTT)     | 1883  | MQTT     | LAN            |
+| Zigbee2MQTT frontend | 8080  | HTTP     | NetBird (`wt0`) only |
+| 9router (AI gateway) | 20128 | HTTP     | NetBird (`wt0`) only |
+| Meilisearch          | 7700  | HTTP     | localhost      |
+| Karakeep browser CDP | 9222  | HTTP     | localhost      |
+| Samba (scanner)      | 445   | SMB      | LAN            |
+| Samba NetBIOS        | 139   | SMB      | LAN            |
+| mDNS (zeroconf)      | 5353  | UDP      | LAN            |
 
 Scanner uploads also use SFTP on port 22 (already open via `core.ssh`).
+
+The web UIs marked NetBird-only listen on every interface but are opened in the
+firewall on `wt0` alone, so reach them as `http://bristlecone.netbird.cloud:<port>`
+from a machine on the mesh. Things LAN devices talk to directly (MQTT, SMB, Home
+Assistant, Jellyfin) stay LAN-open.
 
 ---
 
@@ -286,7 +292,7 @@ sudo awk '{print FILENAME": "(($0 ~ /^\$7\$/) ? "OK (hash only)" : "BAD (usernam
 #### Pairing devices
 
 `permit_join` is `false` in the config; join is opened from the frontend at
-`http://bristlecone:8080` (**Permit join**, 3-minute window), never by editing
+`http://bristlecone.netbird.cloud:8080` (**Permit join**, 3-minute window), never by editing
 the Nix. Paired devices are written to `devices.yaml` / `groups.yaml` in the
 data dir, which are separate from the `configuration.yaml` that the unit's
 `ExecStartPre` recopies from the store on every start — so pairings survive
@@ -338,18 +344,10 @@ merge, so this adds to upstream's entry rather than replacing it:
 systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
 ```
 
-### n8n
-
-- **What:** Workflow automation tool (open-source Zapier alternative).
-- **Port:** 5678 (firewall opened via `openFirewall`)
-- **Data:** `/var/lib/n8n`
-- **Note:** Secure cookies disabled (`N8N_SECURE_COOKIE=false`) for non-HTTPS access.
-- **Hardening:** Strict systemd sandbox with write access to data path.
-
 ### Paperless-ngx
 
 - **What:** Document management system with OCR.
-- **Port:** 28981 (firewall opened manually)
+- **Port:** 28981 (firewall: `wt0` only)
 - **Data:** `/var/lib/paperless` (documents in `media/`)
 - **Consume dir:** `/var/lib/scan/consume` — *not* the default `/var/lib/paperless/consume`. See [Document scanning](#document-scanning) for why.
 - **Settings:** `PAPERLESS_OCR_LANGUAGE=eng`, recursive consume, subdirectories as tags.
@@ -358,7 +356,7 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
 ### changedetection.io
 
 - **What:** Website change detection, monitoring, and notification service.
-- **Port:** 5000 (firewall opened manually)
+- **Port:** 5000 (firewall: `wt0` only)
 - **Data:** `/var/lib/changedetection-io`
 - **Note:** `behindProxy` enabled for reverse proxy setups.
 - **Hardening:** Strict systemd sandbox with write access to data path.
@@ -366,7 +364,7 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
 ### Karakeep
 
 - **What:** Self-hosted bookmark / read-it-later app (formerly Hoarder).
-- **Port:** 3000 (firewall opened manually)
+- **Port:** 3000 (firewall: `wt0` only)
 - **Data:** `/var/lib/karakeep` (SQLite)
 - **Units:** `karakeep-init` (oneshot: secret generation + DB migration), `karakeep-web`,
   `karakeep-workers`, `karakeep-browser`. There is **no** umbrella `karakeep.service` —
@@ -380,7 +378,7 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
   that file invalidates all sessions.
 - **Note:** Meilisearch runs unauthenticated on loopback; the module hands Karakeep a
   master key the server ignores. Fine while it stays on 127.0.0.1.
-- **Note:** `NEXTAUTH_URL` is pinned to `http://bristlecone:3000` — update it if the host
+- **Note:** `NEXTAUTH_URL` is pinned to `http://bristlecone.netbird.cloud:3000` — update it if the host
   is reached under a different name, or sign-in redirects break.
 - **Hardening:** Strict systemd sandbox on web and workers with write access to the data
   path. `karakeep-init` and `karakeep-browser` are left as upstream ships them (the
@@ -443,7 +441,7 @@ apply multiple tags (`foo/bar/x.pdf` → `foo` *and* `bar`).
 for miscellaneous documents, leaving classification to paperless's own workflow
 rules in the web UI.
 
-Add a directory to `scanTags` in `modules/services/default.nix` to add a new tagged
+Add a directory to `scanTags` in `modules/services/scanner.nix` to add a new tagged
 drop point. Paperless does not delete these directories after consuming from them.
 
 ### Transports
@@ -574,7 +572,7 @@ the scanner's firmware first. `server min protocol = NT1` plus
 
 `services.borgmatic` runs daily via upstream's `borgmatic.timer` and backs up
 `/srv/share` plus the state of every service above (Home Assistant,
-Zigbee2MQTT, Mosquitto, Paperless, n8n, Karakeep, changedetection.io,
+Zigbee2MQTT, Mosquitto, Paperless, Karakeep, changedetection.io,
 Jellyfin, 9router, Samba's passdb). `/srv/projects` is excluded — it lives in
 remote git repos. Meilisearch and redis are skipped as rebuildable.
 
@@ -585,7 +583,7 @@ remote git repos. Meilisearch and redis are skipped as rebuildable.
 | Retention | 7 daily, 4 weekly, 6 monthly |
 | Checks | repository every 2 weeks, archives monthly |
 
-SQLite databases (HA recorder, Paperless, n8n, Karakeep, Jellyfin) are dumped
+SQLite databases (HA recorder, Paperless, Karakeep, Jellyfin) are dumped
 by borgmatic's `sqlite_databases` hook rather than copied raw, so restores are
 consistent even though the services keep running. The hook creates an empty DB
 at any configured path that doesn't exist, so update the list if a service
@@ -621,7 +619,7 @@ journalctl -u borgmatic
 
 ## Systemd Hardening
 
-All services share a hardened baseline:
+All services share a hardened baseline (`lib/hardened-service-config.nix`):
 
 - `ProtectHome`, `ProtectKernelTunables/Modules/Logs`, `ProtectControlGroups`, `ProtectClock`
 - `NoNewPrivileges`, `PrivateTmp`, `PrivateDevices`

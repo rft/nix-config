@@ -5,7 +5,12 @@ let
   # focus. Bridge the two clipboards directly so copy/paste with the host works.
   clipboardBridge = pkgs.writeShellApplication {
     name = "x11-wayland-clipboard-bridge";
-    runtimeInputs = with pkgs; [ wl-clipboard xclip clipnotify coreutils ];
+    runtimeInputs = with pkgs; [
+      wl-clipboard
+      xclip
+      clipnotify
+      coreutils
+    ];
     text = ''
       # Wayland -> X11 (wl-paste --watch re-invokes this script per change)
       if [ "''${1:-}" = to-x11 ]; then
@@ -58,8 +63,6 @@ delib.host {
     };
 
     virtualisation.vmware.guest.enable = true;
-
-    time.timeZone = "America/Phoenix";
 
     # Running under VMware: the emulated HD-Audio driver returns bad timing info
     # (snd_pcm_avail "Broken pipe"), so PipeWire's default timer-based scheduling

@@ -40,7 +40,7 @@ delib.host {
       ntfs3g
     ];
 
-    # Use zstd compression (level 6 for fast builds, bump to 19 for release)
+    # zstd level 19 for the smallest image; drop to 6 for fast test builds
     isoImage.squashfsCompression = "zstd -Xcompression-level 19";
 
     networking.hostName = lib.mkForce "installer";

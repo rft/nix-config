@@ -5,82 +5,87 @@ delib.module {
   options = delib.singleEnableOption true;
 
   home.ifEnabled =
-  let
-    xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix;
-  in
-  {
-    home.packages = [
-      pkgs.starship
-      (pkgs.python3.withPackages (ps: [ ps.xonsh ] ++ xonshExtraPackages ps))
-    ];
+    { myconfig, ... }:
+    let
+      xonshExtraPackages = import ../../lib/xonsh-extra-packages.nix {
+        full = myconfig.core.workstation.enable;
+      };
+    in
+    {
+      home.packages = [
+        pkgs.starship
+        (pkgs.python3.withPackages (ps: [ ps.xonsh ] ++ xonshExtraPackages ps))
+      ];
 
-    programs.fzf.enable = true;
+      programs.fzf.enable = true;
 
-    home.file.".config/xonsh/rc.xsh".text = ''
-      import os
-      # home.sessionPath entries aren't picked up by xonsh, so add them here
-      local_bin = os.path.expanduser("~/.local/bin")
-      if local_bin not in $PATH:
-          $PATH.insert(0, local_bin)
+      home.file.".config/xonsh/rc.xsh".text = ''
+        import os
+        # home.sessionPath entries aren't picked up by xonsh, so add them here
+        local_bin = os.path.expanduser("~/.local/bin")
+        if local_bin not in $PATH:
+            $PATH.insert(0, local_bin)
 
-      # home.sessionVariables aren't picked up by xonsh either
-      $EDITOR = "nvim"
+        # home.sessionVariables aren't picked up by xonsh either
+        $EDITOR = "nvim"
 
-      $XONSH_SHOW_TRACEBACK = True
-      if $TERM and $TERM.startswith("xterm-kitty"):
-          aliases['rg'] = 'rg --hyperlink-format=kitty'
+        $XONSH_SHOW_TRACEBACK = True
+        if $TERM and $TERM.startswith("xterm-kitty"):
+            aliases['rg'] = 'rg --hyperlink-format=kitty'
 
-      # mkcd: create a directory (and parents) then cd into it
-      def _mkcd(args):
-          if not args:
-              import sys
-              print("usage: mkcd DIR", file=sys.stderr)
-              return 1
-          os.makedirs(args[0], exist_ok=True)
-          aliases['cd']([args[0]])
-      aliases['mkcd'] = _mkcd
+        # mkcd: create a directory (and parents) then cd into it
+        def _mkcd(args):
+            if not args:
+                import sys
+                print("usage: mkcd DIR", file=sys.stderr)
+                return 1
+            os.makedirs(args[0], exist_ok=True)
+            aliases['cd']([args[0]])
+        aliases['mkcd'] = _mkcd
 
-      import shutil as _shutil
-      if _shutil.which("direnv"):
-          xontrib load direnv
+        import shutil as _shutil
+        if _shutil.which("direnv"):
+            xontrib load direnv
 
-      try:
-          execx($(atuin init xonsh))
-      except Exception:
-          pass
+        try:
+            execx($(atuin init xonsh))
+        except Exception:
+            pass
 
-      try:
-          execx($(starship init xonsh))
-      except Exception:
-          pass
+        try:
+            execx($(starship init xonsh))
+        except Exception:
+            pass
 
-      try:
-          execx($(zoxide init xonsh))
-      except Exception:
-          pass
-      # Remove WSL paths from xonsh otherwise it's really slow, doesn't fix startup problems but it helps see https://github.com/xonsh/xonsh/issues/3895
-      # This screws up copy and pasting for WSL though so I'm not sure what the ideal fix is
-      [$PATH.remove(path) for path in $PATH.paths if path.startswith("/mnt/c/")]
-      # Allow a minimal set of Windows executables.
-      # Use WIN_USER override when Windows username differs from WSL username.
-      win_user = __xonsh__.env.get("WIN_USER")
-      if not win_user:
-          wsl_user = __xonsh__.env.get("USER")
-          if wsl_user and os.path.isdir(f"/mnt/c/Users/{wsl_user}"):
-              win_user = wsl_user
-          else:
-              users_root = "/mnt/c/Users"
-              if os.path.isdir(users_root):
-                  candidates = [
-                      d for d in os.listdir(users_root)
-                      if d not in ("All Users", "Default", "Default User", "Public", "desktop.ini")
-                  ]
-                  win_user = candidates[0] if candidates else None
-              else:
-                  win_user = None
-      if win_user:
-          $PATH.append(f"/mnt/c/Users/{win_user}/AppData/Local/Programs/Microsoft VS Code/bin")
-      $PATH.append("/mnt/c/Windows")
-    '';
-  };
+        try:
+            execx($(zoxide init xonsh))
+        except Exception:
+            pass
+        # WSL only (this rc is shared with the other Linux hosts and macOS).
+        if os.path.isdir("/mnt/c"):
+            # Remove WSL paths from xonsh otherwise it's really slow, doesn't fix startup problems but it helps see https://github.com/xonsh/xonsh/issues/3895
+            # This screws up copy and pasting for WSL though so I'm not sure what the ideal fix is
+            [$PATH.remove(path) for path in $PATH.paths if path.startswith("/mnt/c/")]
+            # Allow a minimal set of Windows executables.
+            # Use WIN_USER override when Windows username differs from WSL username.
+            win_user = __xonsh__.env.get("WIN_USER")
+            if not win_user:
+                wsl_user = __xonsh__.env.get("USER")
+                if wsl_user and os.path.isdir(f"/mnt/c/Users/{wsl_user}"):
+                    win_user = wsl_user
+                else:
+                    users_root = "/mnt/c/Users"
+                    if os.path.isdir(users_root):
+                        candidates = [
+                            d for d in os.listdir(users_root)
+                            if d not in ("All Users", "Default", "Default User", "Public", "desktop.ini")
+                        ]
+                        win_user = candidates[0] if candidates else None
+                    else:
+                        win_user = None
+            if win_user:
+                $PATH.append(f"/mnt/c/Users/{win_user}/AppData/Local/Programs/Microsoft VS Code/bin")
+            $PATH.append("/mnt/c/Windows")
+      '';
+    };
 }

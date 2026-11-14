@@ -26,6 +26,8 @@ delib.host {
   };
 
   myconfig = {
+    constants.timezone = "America/Los_Angeles";
+
     applications.enable = true;
     desktop.enable = true;
     programs.programming.enable = true;

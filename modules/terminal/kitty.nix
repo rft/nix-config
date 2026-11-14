@@ -7,7 +7,13 @@
 delib.module {
   name = "terminal.kitty";
 
-  options = delib.singleEnableOption true;
+  options = delib.singleEnableOption false;
+
+  myconfig.always =
+    { myconfig, ... }:
+    {
+      terminal.kitty.enable = lib.mkDefault myconfig.core.workstation.enable;
+    };
 
   # On Darwin the app comes from Homebrew, not nixpkgs. The nixpkgs bundle's
   # Contents/MacOS/kitty is a binary wrapper that execs .kitty-wrapped in the
