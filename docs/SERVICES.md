@@ -16,6 +16,7 @@ also be switched on or off with `myconfig.services.<name>.enable`.
 | Paperless-ngx        | 28981 | HTTP     | NetBird (`wt0`) only |
 | changedetection.io   | 5000  | HTTP     | NetBird (`wt0`) only |
 | Karakeep             | 3000  | HTTP     | NetBird (`wt0`) only |
+| Actual Budget        | 5006  | HTTPS    | NetBird (`wt0`) only |
 | Mosquitto (MQTT)     | 1883  | MQTT     | LAN            |
 | Zigbee2MQTT frontend | 8080  | HTTP     | NetBird (`wt0`) only |
 | 9router (AI gateway) | 20128 | HTTP     | NetBird (`wt0`) only |
@@ -392,6 +393,50 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
   (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`). It only switches on once
   `OPENAI_API_KEY` (a 9router API key) is appended to `/var/lib/karakeep/settings.env`.
 
+### Actual Budget
+
+- **What:** Local-first personal finance / envelope budgeting. The server syncs budget
+  files between the web UI, the desktop app and phones; every client keeps a full copy.
+- **Port:** 5006, HTTPS (firewall: `wt0` only). Upstream's default is 3000, which
+  Karakeep holds.
+- **URL:** `https://bristlecone.netbird.cloud:5006`
+- **Data:** `/var/lib/private/actual` (`DynamicUser`; `/var/lib/actual` is a symlink).
+  `server-files/account.sqlite` holds the server password hash and file registry,
+  `user-files/` the budgets.
+- **TLS:** The web client needs `SharedArrayBuffer`, which browsers only expose in a
+  secure context, so plain `http://` works on localhost and nowhere else. There is no
+  reverse proxy, so Actual serves HTTPS itself from a self-signed cert that the unit's
+  `preStart` generates into `/var/lib/actual/tls/` (P-256, CN/SAN
+  `bristlecone.netbird.cloud`, 825 days — Apple's ceiling for TLS certs, even from
+  user-trusted roots). It is regenerated when within 30 days of expiry, after which
+  each device has to trust the new one.
+- **Hardening:** Upstream's unit as shipped — it is already stricter than the shared
+  baseline (`DynamicUser`, `PrivateUsers`, empty `CapabilityBoundingSet`,
+  `ProtectProc=invisible`), and forcing the baseline's `SystemCallFilter` would drop
+  the `@pkey` group V8 needs.
+
+#### Bootstrap after deploy
+
+1. Fetch the cert on each device that will open the web UI. NetBird already
+   authenticates the peer, so pulling it off the live port is safe:
+
+   ```bash
+   openssl s_client -connect bristlecone.netbird.cloud:5006 </dev/null 2>/dev/null \
+     | openssl x509 > bristlecone-actual.pem
+   ```
+
+2. Trust it:
+   - **macOS:** `sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain bristlecone-actual.pem`
+   - **iOS:** AirDrop the file, install the profile in Settings, then enable it under
+     **General → About → Certificate Trust Settings**.
+   - **NixOS:** add it to `security.pki.certificateFiles`. Firefox keeps its own store —
+     import it under **Settings → Privacy & Security → Certificates**.
+3. Open `https://bristlecone.netbird.cloud:5006` and set the server password. The first
+   visitor sets it, so do this straight after the first deploy.
+
+Check the cert from the server with
+`sudo openssl x509 -in /var/lib/actual/tls/cert.pem -noout -subject -enddate`.
+
 ### 9router
 
 - **What:** Shared AI gateway, so provider logins, OAuth refresh, and quota tracking
@@ -572,7 +617,7 @@ the scanner's firmware first. `server min protocol = NT1` plus
 
 `services.borgmatic` runs daily via upstream's `borgmatic.timer` and backs up
 `/srv/share` plus the state of every service above (Home Assistant,
-Zigbee2MQTT, Mosquitto, Paperless, Karakeep, changedetection.io,
+Zigbee2MQTT, Mosquitto, Paperless, Karakeep, Actual Budget, changedetection.io,
 Jellyfin, 9router, Samba's passdb). `/srv/projects` is excluded — it lives in
 remote git repos. Meilisearch and redis are skipped as rebuildable.
 
@@ -583,7 +628,7 @@ remote git repos. Meilisearch and redis are skipped as rebuildable.
 | Retention | 7 daily, 4 weekly, 6 monthly |
 | Checks | repository every 2 weeks, archives monthly |
 
-SQLite databases (HA recorder, Paperless, Karakeep, Jellyfin) are dumped
+SQLite databases (HA recorder, Paperless, Karakeep, Actual's `account.sqlite`, Jellyfin) are dumped
 by borgmatic's `sqlite_databases` hook rather than copied raw, so restores are
 consistent even though the services keep running. The hook creates an empty DB
 at any configured path that doesn't exist, so update the list if a service
@@ -629,8 +674,8 @@ All services share a hardened baseline (`lib/hardened-service-config.nix`):
 
 Per-service overrides add `ReadWritePaths` or relax restrictions as needed.
 
-Zigbee2MQTT is the other exception. Upstream's unit is already stricter than
+Zigbee2MQTT and Actual Budget are the other exceptions. Upstream's unit is already stricter than
 this baseline (`DevicePolicy=closed` with a `DeviceAllow` derived from
 `serial.port`, `PrivateUsers`, `ProtectSystem=strict`, `ProtectProc=invisible`),
 so it is deliberately *not* passed through `hardenedServiceConfig` — doing so
-would loosen it.
+would loosen it. The same goes for Actual Budget (see its section above).

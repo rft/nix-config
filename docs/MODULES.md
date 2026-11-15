@@ -339,6 +339,7 @@ Self-hosted services. Gated by `services.enable`.
   - `services.scanner` — document scanner ingest into Paperless: SFTP jail plus the `//<host>/scan` SMB share, consume dir at `/var/lib/scan/consume`, subdirs become tags. Enables `services.paperless` and `services.samba`. Note that it relaxes sshd's host-key and MAC algorithms host-wide for the scanner's firmware.
   - `services.samba` — Samba base setup (ports 139/445, firewall auto-opened); shares are declared by `services.scanner` and by hosts
   - `services.changedetection` — changedetection.io website monitoring (port 5000, NetBird-only)
+  - `services.actual` — Actual Budget sync server (port 5006, HTTPS with a self-signed cert generated on first start, NetBird-only)
   - `services.karakeep` — bookmarks / read-it-later (port 3000, NetBird-only; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222; AI tagging points at `services.ai-gateway`)
   - `services.ai-gateway` — 9router AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
   - `services.backup` — daily borgmatic backups of whatever the enabled services and the host declare (bristlecone adds `/srv/share`)

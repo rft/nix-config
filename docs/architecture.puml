@@ -146,7 +146,7 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
   }
 
   package "services" as svcMod {
-    component "jellyfin, karakeep\nhome-assistant, mosquitto\nzigbee2mqtt\npaperless + samba/sftp\nscanner ingest\nchangedetection\n9router, borgmatic" as svcAll
+    component "jellyfin, karakeep\nhome-assistant, mosquitto\nzigbee2mqtt\npaperless + samba/sftp\nscanner ingest\nchangedetection, actual\n9router, borgmatic" as svcAll
   }
 
   package "security" as secMod {
