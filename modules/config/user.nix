@@ -1,7 +1,7 @@
 { delib, ... }:
 let
-  # numtide/llm-agents.nix (source of pkgs.oh-my-pi) builds from source; its
-  # cache saves compiling omp's Rust natives on every host.
+  # numtide/llm-agents.nix (source of pkgs.oh-my-pi and pkgs.hermes-agent)
+  # builds from source; its cache saves compiling omp's Rust natives on every host.
   substituters = [ "https://cache.numtide.com" ];
   trustedPublicKeys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
 in

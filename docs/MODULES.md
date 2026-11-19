@@ -48,7 +48,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, `oh-my-pi` from `numtide/llm-agents.nix` (wrapped with bun/node/git/python3 for plugins), and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, `oh-my-pi` from `numtide/llm-agents.nix` (wrapped with bun/node/git/python3 for plugins), `hermes-agent` from the same flake, and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
@@ -63,7 +63,7 @@ System-level packages and shell configuration. Always enabled, except `core.work
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs ~30 system packages on every host (bat, ripgrep, fd, fzf, git, claude-code, codex, yazi, zellij, etc.) plus podman and podman-tui on Linux. Tools that only make sense on a machine someone sits at live in `core.workstation`. Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection on NixOS (delete older than 30 days); on Darwin, Determinate Nix manages the store.
+- **Description:** Installs ~30 system packages on every host (bat, ripgrep, fd, fzf, git, claude-code, codex, oh-my-pi, hermes-agent, yazi, zellij, etc.) plus podman and podman-tui on Linux. Tools that only make sense on a machine someone sits at live in `core.workstation`. Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection on NixOS (delete older than 30 days); on Darwin, Determinate Nix manages the store.
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
@@ -342,6 +342,7 @@ Self-hosted services. Gated by `services.enable`.
   - `services.actual` — Actual Budget sync server (port 5006, HTTPS with a self-signed cert generated on first start, NetBird-only)
   - `services.karakeep` — bookmarks / read-it-later (port 3000, NetBird-only; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222; AI tagging points at `services.ai-gateway`)
   - `services.ai-gateway` — 9router AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
+  - `services.hermes-agent` — Hermes Agent messaging gateway and cron, using upstream's NixOS module (`inputs.hermes-agent`); state in `/var/lib/hermes`, model via `services.ai-gateway`, secrets in `/var/lib/hermes/env`. No ports.
   - `services.backup` — daily borgmatic backups of whatever the enabled services and the host declare (bristlecone adds `/srv/share`)
 - **Dependencies:** None.
 

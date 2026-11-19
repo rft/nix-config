@@ -29,9 +29,18 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    # Source of pkgs.oh-my-pi (modules/config/overlays/oh-my-pi.nix). Keeps its
+    # Source of pkgs.oh-my-pi and pkgs.hermes-agent (modules/config/overlays/). Keeps its
     # own nixpkgs pin so cache.numtide.com hits — do not add a follows.
     llm-agents.url = "github:numtide/llm-agents.nix";
+
+    # NixOS module for the always-on Hermes gateway (modules/services/hermes-agent.nix).
+    # The module needs upstream's own package (it reads its hermesVenv), whose
+    # uv2nix Python set is locked against upstream's nixpkgs — do not follow ours.
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      # Only upstream's checks use it.
+      inputs.home-manager.follows = "home-manager";
+    };
 
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";

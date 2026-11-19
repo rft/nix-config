@@ -451,6 +451,60 @@ Check the cert from the server with
   into `$HOME` at startup.
 - **Hardening:** Shared baseline plus `ProtectSystem = strict`.
 
+### Hermes Agent
+
+- **What:** [Hermes Agent](https://hermes-agent.nousresearch.com/) (Nous Research) as an
+  always-on messaging gateway: talk to it from Telegram, Discord, Slack, etc., and its
+  cron jobs run here. Upstream's NixOS module (`inputs.hermes-agent`) does the work.
+  This repo's module sets the paths, model, hardening and backups.
+- **Port:** none. The gateway only dials out (bot APIs and the model endpoint).
+- **Data:** `/var/lib/hermes` (user/group `hermes`, `2770`). `HERMES_HOME` is
+  `/var/lib/hermes/.hermes` (`config.yaml`, `.env`, `state.db` sessions, memories,
+  skills), and the agent's working directory is `/var/lib/hermes/workspace`.
+- **Model:** The 9router gateway on this host (`http://127.0.0.1:20128/v1`) is
+  declared as provider `9router` and set as the default provider. Its key, if the
+  9router dashboard requires one, is `NINEROUTER_API_KEY` in the env file. The model
+  *name* is not set yet. Add `model.default` to `settings` in
+  `modules/services/hermes-agent.nix` once you know which 9router model to use.
+- **CLI:** `addToSystemPackages` puts the service's own `hermes` on the PATH (it wins
+  over core's `llm-agents` build with `hiPrio`) and exports `HERMES_HOME`, so
+  `hermes` in a shell shares the gateway's sessions, skills and cron. `nano` is in the
+  `hermes` group for this. Nix manages `config.yaml`, so the CLI refuses to change
+  settings that Nix owns and tells you to rebuild instead.
+- **Hardening:** Shared baseline minus `SystemCallFilter` and `RestrictNamespaces`. The
+  agent runs whatever tools it installs, and Chromium's sandbox (browser tools) needs
+  user namespaces. `ProtectHome` is forced on over upstream's `false`, because the
+  agent's `HOME` is `/var/lib/hermes`. nix-mineral mounts `/var` noexec, so
+  `/var/lib/hermes` gets an exec bind mount (like `/srv/projects`). Without it, the
+  `pip --user` / `uv tool` / `npm -g` installs in its `HOME` and the scripts in its
+  workspace could not run.
+- **Updating:** `inputs.hermes-agent` tracks upstream `main` (upstream's own Nix
+  instructions do the same; its release tags are not kept current). The weekly lock PR
+  bumps it, and bristlecone builds the package itself (about 2 min), because no binary
+  cache serves it.
+
+#### Bootstrap after deploy
+
+1. Write the secrets file. It is read on activation and merged into `.env`:
+
+   ```bash
+   sudo install -m 0640 -o hermes -g hermes /dev/null /var/lib/hermes/env
+   sudoedit /var/lib/hermes/env
+   ```
+
+   Put one `KEY=value` per line: `NINEROUTER_API_KEY=…` if 9router requires a key,
+   plus each messaging platform's token (e.g. `TELEGRAM_BOT_TOKEN=…`, and
+   `TELEGRAM_ALLOWED_USERS=<your id>` so only you can talk to it). See upstream's
+   messaging docs for each platform's variables.
+2. Re-run activation to merge the file, then restart the gateway:
+   `sudo /run/current-system/activate && sudo systemctl restart hermes-agent`.
+   Do the same after every later edit of the env file.
+3. Check it with `journalctl -u hermes-agent -f` and `hermes status`.
+
+The first OAuth login for an MCP server prints its URL to the journal instead of
+opening a browser. Run that flow once from a shell (`hermes mcp add … --auth oauth`),
+and the token persists in `HERMES_HOME`.
+
 ---
 
 ## Document scanning
@@ -618,7 +672,7 @@ the scanner's firmware first. `server min protocol = NT1` plus
 `services.borgmatic` runs daily via upstream's `borgmatic.timer` and backs up
 `/srv/share` plus the state of every service above (Home Assistant,
 Zigbee2MQTT, Mosquitto, Paperless, Karakeep, Actual Budget, changedetection.io,
-Jellyfin, 9router, Samba's passdb). `/srv/projects` is excluded — it lives in
+Jellyfin, 9router, Hermes Agent, Samba's passdb). `/srv/projects` is excluded — it lives in
 remote git repos. Meilisearch and redis are skipped as rebuildable.
 
 | | |
@@ -679,3 +733,6 @@ this baseline (`DevicePolicy=closed` with a `DeviceAllow` derived from
 `serial.port`, `PrivateUsers`, `ProtectSystem=strict`, `ProtectProc=invisible`),
 so it is deliberately *not* passed through `hardenedServiceConfig` — doing so
 would loosen it. The same goes for Actual Budget (see its section above).
+
+Hermes Agent takes the baseline without its syscall filter and namespace
+restriction, because it runs arbitrary agent-installed tools (see its section above).

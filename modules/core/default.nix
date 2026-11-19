@@ -21,6 +21,7 @@ let
     fzf
     gh
     herdr
+    hermes-agent
     git
     inputs.nixcats-nvim.packages.${pkgs.stdenv.hostPlatform.system}.default
     jq

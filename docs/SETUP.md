@@ -41,7 +41,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 
 | Host | Type | Timezone | Notable Config |
 |------|------|----------|----------------|
-| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, Paperless, changedetection.io, Karakeep, Actual Budget, 9router — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
+| **bristlecone** | server | America/Phoenix | Headless server, SSH (key-only), Netbird VPN, self-hosted services (Jellyfin, Home Assistant + Zigbee2MQTT, Paperless, changedetection.io, Karakeep, Actual Budget, 9router, Hermes Agent — see [SERVICES.md](SERVICES.md)), nix-mineral hardening, GRUB+EFI |
 | **juniper** | server | America/Phoenix | Barebones VPS: core only, SSH (key-only, root prohibit-password), Netbird, disko disk layout, hybrid BIOS/UEFI GRUB, zram swap. Deployed remotely — see [VPS.md](VPS.md) |
 | **cottonwood** | desktop | America/Los_Angeles | Vertical screen rotation (`fbcon=rotate:1`), GRUB+EFI |
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
@@ -794,7 +794,8 @@ to a new NixOS release means changing those three. Most other inputs follow
 | denix | Module/host framework |
 | noctalia | Noctalia shell (desktop shell) |
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
-| llm-agents | oh-my-pi (`omp`) package source (upstream nixpkgs pin, cache.numtide.com) |
+| llm-agents | oh-my-pi (`omp`) and hermes-agent package source (upstream nixpkgs pin, cache.numtide.com) |
+| hermes-agent | Upstream Hermes Agent flake: NixOS module and package for the bristlecone gateway (tracks `main`, own nixpkgs pin) |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nixos-wsl | NixOS on WSL support |
 | paneru | macOS tiling window manager (module kept; lemon now uses Nehir via Homebrew) |
