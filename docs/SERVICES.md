@@ -461,11 +461,13 @@ Check the cert from the server with
 - **Data:** `/var/lib/hermes` (user/group `hermes`, `2770`). `HERMES_HOME` is
   `/var/lib/hermes/.hermes` (`config.yaml`, `.env`, `state.db` sessions, memories,
   skills), and the agent's working directory is `/var/lib/hermes/workspace`.
-- **Model:** The 9router gateway on this host (`http://127.0.0.1:20128/v1`) is
-  declared as provider `9router` and set as the default provider. Its key, if the
-  9router dashboard requires one, is `NINEROUTER_API_KEY` in the env file. The model
-  *name* is not set yet. Add `model.default` to `settings` in
-  `modules/services/hermes-agent.nix` once you know which 9router model to use.
+- **Model:** `cx/gpt-6.1-sol` through the 9router gateway on this host
+  (`http://127.0.0.1:20128/v1`, provider `9router`). 9router lets loopback requests
+  through without an API key, so `NINEROUTER_API_KEY` in the env file is only needed
+  if its dashboard is set to require one for local access too. Change the model in
+  `settings.model.default` in `modules/services/hermes-agent.nix`. List what 9router
+  offers with `curl -s http://127.0.0.1:20128/v1/models | jq -r '.data[].id'` on
+  bristlecone.
 - **CLI:** `addToSystemPackages` puts the service's own `hermes` on the PATH (it wins
   over core's `llm-agents` build with `hiPrio`) and exports `HERMES_HOME`, so
   `hermes` in a shell shares the gateway's sessions, skills and cron. `nano` is in the
@@ -492,8 +494,7 @@ Check the cert from the server with
    sudoedit /var/lib/hermes/env
    ```
 
-   Put one `KEY=value` per line: `NINEROUTER_API_KEY=…` if 9router requires a key,
-   plus each messaging platform's token (e.g. `TELEGRAM_BOT_TOKEN=…`, and
+   Put one `KEY=value` per line: each messaging platform's token (e.g. `TELEGRAM_BOT_TOKEN=…`, and
    `TELEGRAM_ALLOWED_USERS=<your id>` so only you can talk to it). See upstream's
    messaging docs for each platform's variables.
 2. Re-run activation to merge the file, then restart the gateway:

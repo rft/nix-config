@@ -43,13 +43,17 @@ delib.module {
         # on the next switch.
         environmentFiles = [ "${stateDir}/env" ];
         settings = lib.mkIf myconfig.services.ai-gateway.enable {
-          # The 9router gateway on this host, over loopback. Its key, if the
-          # dashboard requires one, is NINEROUTER_API_KEY in the env file.
+          # The 9router gateway on this host. Loopback requests need no API key
+          # unless the dashboard is set to require one for local access too;
+          # then it is NINEROUTER_API_KEY in the env file.
           providers."9router" = {
             api = "http://127.0.0.1:20128/v1";
             key_env = "NINEROUTER_API_KEY";
           };
-          model.provider = "9router";
+          model = {
+            provider = "9router";
+            default = "cx/gpt-6.1-sol";
+          };
         };
       };
 
