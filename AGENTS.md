@@ -5,7 +5,7 @@ Guidelines for AI agents working in this nix-config repository.
 ## Repository structure
 
 - **`flake.nix`** — Flake definition with 16 inputs (nixpkgs 26.05, home-manager, denix, nix-darwin, nixos-wsl, disko, deploy-rs, etc.)
-- **`hosts/`** — 10 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
+- **`hosts/`** — 11 host configs using `delib.host` (NixOS desktops: cottonwood, redwood, sequoia, myrtle, maple; NixOS servers: bristlecone, juniper (VPS); WSL: mistletoe; Darwin: lemon, pineapple; installer)
 - **`modules/`** — Shared modules using `delib.module` with `singleEnableOption` pattern, organized by category (config, core, desktop, applications, applications-home, programming, terminal, editors, fonts, services, security)
 - **`config/`** — Static app config files (niri, kando, espanso)
 - **`lib/`** — Shared Nix utilities (python-core-packages.nix, xonsh-extra-packages.nix, titanium-palette.nix, hardened-service-config.nix)
@@ -30,6 +30,7 @@ Guidelines for AI agents working in this nix-config repository.
 | redwood | x86_64-linux | desktop | `nixosConfigurations.redwood` |
 | sequoia | x86_64-linux | desktop | `nixosConfigurations.sequoia` |
 | myrtle | x86_64-linux | desktop | `nixosConfigurations.myrtle` |
+| maple | x86_64-linux | desktop | `nixosConfigurations.maple` (`hardware/maple.nix` is a placeholder until installed) |
 | mistletoe | x86_64-linux | wsl | `nixosConfigurations.mistletoe` |
 | lemon | aarch64-darwin | darwin | `darwinConfigurations.lemon` |
 | pineapple | aarch64-darwin | darwin | `darwinConfigurations.pineapple` |

@@ -45,6 +45,7 @@ package "hosts/ — delib.host" as hosts #C8E6C9 {
     | redwood | desktop | x86_64-linux |
     | sequoia | desktop | x86_64-linux |
     | myrtle | desktop | x86_64-linux |
+    | maple | desktop | x86_64-linux |
     | mistletoe | wsl | x86_64-linux |
     | lemon | darwin | aarch64-darwin |
     | pineapple | darwin | aarch64-darwin |
@@ -104,17 +105,17 @@ rectangle "modules/ — delib.module" as mods #FFE0B2 {
 
   note as enableTable
     **Module enablement by host**
-    |= Module |= bristlecone |= juniper |= cottonwood |= redwood |= sequoia |= myrtle |= mistletoe |= lemon |= pineapple |
-    | config, core | all | all | all | all | all | all | all | all | all |
-    | terminal | all | all | all | all | all | all | all | all | all |
-    | workstation, editors |  -  |  -  | Y | Y | Y | Y | Y | Y | Y |
-    | desktop |  -  |  -  | Y | Y | Y | Y |  -  |  -  |  -  |
-    | desktop.nehir |  -  |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
-    | applications |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
-    | programming |  -  |  -  | Y | Y | Y |  -  | Y | Y | Y |
-    | fonts |  -  |  -  | Y | Y | Y | Y |  -  | Y | Y |
-    | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
-    | security | Y | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    |= Module |= bristlecone |= juniper |= cottonwood |= redwood |= sequoia |= myrtle |= maple |= mistletoe |= lemon |= pineapple |
+    | config, core | all | all | all | all | all | all | all | all | all | all |
+    | terminal | all | all | all | all | all | all | all | all | all | all |
+    | workstation, editors |  -  |  -  | Y | Y | Y | Y | Y | Y | Y | Y |
+    | desktop |  -  |  -  | Y | Y | Y | Y | Y |  -  |  -  |  -  |
+    | desktop.nehir |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  | Y |  -  |
+    | applications |  -  |  -  | Y | Y | Y | Y | Y |  -  | Y | Y |
+    | programming |  -  |  -  | Y | Y | Y |  -  | Y | Y | Y | Y |
+    | fonts |  -  |  -  | Y | Y | Y | Y | Y |  -  | Y | Y |
+    | services | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
+    | security | Y | Y |  -  |  -  |  -  |  -  |  -  |  -  |  -  |  -  |
   end note
 
   package "config //(always on)//" as cfgMod {
