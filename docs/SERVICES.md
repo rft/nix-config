@@ -20,6 +20,7 @@ also be switched on or off with `myconfig.services.<name>.enable`.
 | Mosquitto (MQTT)     | 1883  | MQTT     | LAN            |
 | Zigbee2MQTT frontend | 8080  | HTTP     | NetBird (`wt0`) only |
 | 9router (AI gateway) | 20128 | HTTP     | NetBird (`wt0`) only |
+| Hermes API server    | 8642  | HTTP     | NetBird (`wt0`) only |
 | Meilisearch          | 7700  | HTTP     | localhost      |
 | Karakeep browser CDP | 9222  | HTTP     | localhost      |
 | Samba (scanner)      | 445   | SMB      | LAN            |
@@ -457,22 +458,54 @@ Check the cert from the server with
   always-on messaging gateway: talk to it from Telegram, Discord, Slack, etc., and its
   cron jobs run here. Upstream's NixOS module (`inputs.hermes-agent`) does the work.
   This repo's module sets the paths, model, hardening and backups.
-- **Port:** none. The gateway only dials out (bot APIs and the model endpoint).
+- **Port:** 8642 (`wt0` only) when the API server platform is switched on, and nothing
+  otherwise — the messaging side only dials out to bot APIs and the model endpoint.
 - **Data:** `/var/lib/hermes` (user/group `hermes`, `2770`). `HERMES_HOME` is
   `/var/lib/hermes/.hermes` (`config.yaml`, `.env`, `state.db` sessions, memories,
   skills), and the agent's working directory is `/var/lib/hermes/workspace`.
+- **Projects:** the agent can read *and* write `/srv/projects`, and run things there.
+  That takes three grants, because any one of them alone leaves it blocked:
+  `ReadWritePaths` (`ProtectSystem=strict` makes everything else read-only), a
+  recursive `A+` ACL giving the `hermes` group `rwx` plus a default entry so new repos
+  inherit it (the tree is `0755` `nano`:`users` and the agent is neither), and the exec
+  bind mount the host already sets up. `/srv/projects` is `2770` rather than `0750`
+  because the group bits of an ACL-bearing directory are its mask, and an `r-x` mask
+  would clamp the ACL back to read-only. `GIT_CONFIG_SYSTEM` adds
+  `safe.directory=/srv/projects/*` for this service only — without it every `git`
+  command in the login user's repos fails with *detected dubious ownership*. The file
+  `include`s nix-mineral's `/etc/gitconfig` so its hardening still applies. Commit
+  identity is not set: `sudo -u hermes -H git config --global user.name …` if you want
+  the agent to commit. **This is a broad grant** — an agent that runs arbitrary tools
+  now has write access to every repo on the host. Narrow `projectsDir` in the module to
+  a single directory if that's too much.
 - **Model:** `cx/gpt-6.1-sol` through the 9router gateway on this host
-  (`http://127.0.0.1:20128/v1`, provider `9router`). 9router lets loopback requests
-  through without an API key, so `NINEROUTER_API_KEY` in the env file is only needed
-  if its dashboard is set to require one for local access too. Change the model in
-  `settings.model.default` in `modules/services/hermes-agent.nix`. List what 9router
-  offers with `curl -s http://127.0.0.1:20128/v1/models | jq -r '.data[].id'` on
-  bristlecone.
+  (`http://127.0.0.1:20128/v1`, provider `9router`). Its dashboard has API-key auth
+  turned on, so `NINEROUTER_API_KEY` in the env file is **required** — loopback is not
+  exempt. Without it the gateway logs `key_env NINEROUTER_API_KEY is set but the
+  variable is empty/unset` and every inference call returns `Missing API key`; mint a
+  key in the dashboard at `http://bristlecone.netbird.cloud:20128`. Change the model in
+  `settings.model.default` in `modules/services/hermes-agent.nix`. `/v1/models` needs
+  no key, so `curl -s http://127.0.0.1:20128/v1/models | jq -r '.data[].id'` still
+  lists what 9router offers from bristlecone.
 - **CLI:** `addToSystemPackages` puts the service's own `hermes` on the PATH (it wins
   over core's `llm-agents` build with `hiPrio`) and exports `HERMES_HOME`, so
-  `hermes` in a shell shares the gateway's sessions, skills and cron. `nano` is in the
-  `hermes` group for this. Nix manages `config.yaml`, so the CLI refuses to change
-  settings that Nix owns and tells you to rebuild instead.
+  `hermes` in a shell reads the gateway's own config and state. Nix manages
+  `config.yaml`, so the CLI refuses to change settings that Nix owns and tells you to
+  rebuild instead.
+- **Interactive chat:** run it as the service user — `sudo -u hermes -H hermes chat`
+  (`-H` sets `HOME=/var/lib/hermes`, so `HERMES_HOME` resolves on its own). Anything
+  that goes through the gateway control path (`chat`, `gateway attach`, native/TUI
+  clients) is refused for any other user: `gateway_runtime_discovery` requires that the
+  caller's uid own `HERMES_HOME`, and that the home not be group-writable by anyone but
+  the owner, while upstream's tmpfiles rules force `2770`. Nor do the read-only
+  commands: `2770 hermes:hermes` shuts the login user out of the directory entirely, so
+  even `hermes status` dies with `PermissionError` on `.hermes/.container-mode` before
+  it parses arguments. Every `hermes` command on this host goes through
+  `sudo -u hermes -H`. This is why the login user is *not* in the `hermes` group — see
+  the comment in the module.
+- **Telemetry:** `settings` answers upstream's shared-metrics consent prompt
+  (opted out). Without an answer in `config.yaml`, an interactive `hermes chat` stops
+  on a full-screen question and looks like it has hung. The gateway never asks.
 - **Hardening:** Shared baseline minus `SystemCallFilter` and `RestrictNamespaces`. The
   agent runs whatever tools it installs, and Chromium's sandbox (browser tools) needs
   user namespaces. `ProtectHome` is forced on over upstream's `false`, because the
@@ -494,9 +527,14 @@ Check the cert from the server with
    sudoedit /var/lib/hermes/env
    ```
 
-   Put one `KEY=value` per line: each messaging platform's token (e.g. `TELEGRAM_BOT_TOKEN=…`, and
-   `TELEGRAM_ALLOWED_USERS=<your id>` so only you can talk to it). See upstream's
-   messaging docs for each platform's variables.
+   Put one `KEY=value` per line:
+
+   - `NINEROUTER_API_KEY=…` — required, or no model call succeeds (see **Model** above).
+   - Each messaging platform's token, e.g. `TELEGRAM_BOT_TOKEN=…` plus
+     `TELEGRAM_ALLOWED_USERS=<your id>` so only you can talk to it. See upstream's
+     messaging docs for each platform's variables. With none of these set the gateway
+     starts and logs `No messaging platforms enabled` — it runs cron jobs but nothing
+     can reach it except the local CLI.
 2. Re-run activation to merge the file, then restart the gateway:
    `sudo /run/current-system/activate && sudo systemctl restart hermes-agent`.
    Do the same after every later edit of the env file.
@@ -505,6 +543,98 @@ Check the cert from the server with
 The first OAuth login for an MCP server prints its URL to the journal instead of
 opening a browser. Run that flow once from a shell (`hermes mcp add … --auth oauth`),
 and the token persists in `HERMES_HOME`.
+
+#### The API server
+
+Switched on from the env file; the module supplies the firewall port and
+`approvals.unattended_mode`.
+
+```
+API_SERVER_ENABLED=true
+API_SERVER_KEY=<32+ hex chars>
+API_SERVER_HOST=0.0.0.0
+API_SERVER_MODEL_NAME=openclaw
+```
+
+- `API_SERVER_KEY` is mandatory and must be at least 16 characters — the platform
+  refuses to start without a usable one, loopback included. `openssl rand -hex 32`.
+- `API_SERVER_HOST` defaults to `127.0.0.1`. `0.0.0.0` plus the `wt0`-only firewall
+  rule is the same pattern as the other web UIs here; the key is the actual
+  authentication either way.
+- `API_SERVER_PORT` defaults to 8642, which is what the module opens. **Do not reuse
+  8765** — that is the Codex app-server port and the `glasses-platform` plugin's
+  listener.
+- `API_SERVER_MODEL_NAME` is the name advertised on `/v1/models`, defaulting to the
+  profile name. Set it to whatever the client insists on sending: an Even Realities G2
+  hard-codes `openclaw`, so matching it here avoids needing a model mapping in front.
+- Approval prompts have no answer channel on this platform, so
+  `approvals.unattended_mode` in the module decides. It is `deny`: `mode = "smart"`
+  still auto-approves low-risk commands, so the assistant works, but a dangerous one is
+  refused rather than run unsupervised. Relevant now that the agent can write to
+  `/srv/projects` — see the **Projects** bullet.
+
+Check it from a mesh machine:
+
+```bash
+curl -s http://bristlecone.netbird.cloud:8642/v1/models \
+  -H "Authorization: Bearer $API_SERVER_KEY" | jq -r '.data[].id'
+```
+
+For an **Even Realities G2**: the setting is Settings → Even AI → Agent Configuration,
+and it is **only visible to EvenHub developers** — Even's own bring-your-own-agent
+tutorial states the prerequisite outright. Accounts are made in the Even Realities phone
+app (the web hub has no sign-up flow); logging in at `hub.evenrealities.com/login` with
+those same credentials is what turns the account into a developer account and unlocks
+Developer Mode in the phone app. Older Even wording mentions waiting for approval, newer
+quickstart docs describe a plain login, so expect one or the other.
+
+Once the menu is there, give it the *full* endpoint path — the app appends nothing, so a
+bare `/v1` yields `POST /v1` and a 404 — then **Save & Activate** (saving alone does not
+select the agent):
+
+```
+Endpoint: http://bristlecone.netbird.cloud:8642/v1/chat/completions
+API Key:  <API_SERVER_KEY>
+```
+
+The phone makes the HTTP calls (the glasses only speak BLE to it), so the phone has to be
+on the NetBird mesh — the equivalent of the LAN or Tailscale setup Even's tutorial
+describes. Even warns against exposing a bring-your-own-agent endpoint to the public
+internet, which the `wt0`-only firewall rule already satisfies.
+
+Even's first-party example backend is OpenClaw, which is why the app hard-codes
+`model: "openclaw"` and why `API_SERVER_MODEL_NAME=openclaw` above makes a translating
+proxy unnecessary. The display truncates at roughly 400–500 characters and renders no
+markdown, so either tell the agent to answer in short plain text (a rule or the system
+prompt) or put the `even-g2-agent-adapter` in front, which strips markdown and truncates
+on a sentence boundary with a configurable `CHAR_BUDGET`. The app never requests
+streaming, and its client timeout is 300 s.
+
+#### Reaching it from another machine
+
+In rough order of effort:
+
+1. **A messaging platform** — what the gateway is for. Add the platform's token to the
+   env file and any device running that client (phone, laptop, another host) talks to
+   the agent with nothing opened in the firewall, because the gateway dials out to the
+   bot API. This is the intended path.
+2. **SSH, then the local CLI** — `ssh bristlecone` and `sudo -u hermes -H hermes chat`.
+   Works from any mesh machine today with no config at all; the session lands in the
+   same `state.db` as everything else.
+3. **The OpenAI-compatible API server** — the `api_server` platform turns the gateway
+   into an OpenAI-shaped endpoint (`/v1/chat/completions`, `/v1/responses`, `/v1/runs`)
+   that frontends like Open WebUI, smart glasses, and other Hermes gateways via
+   `hermes peer`, can talk to. Port 8642 is already open on `wt0`; the rest is the env
+   file — see **The API server** below. From another Hermes host:
+   `hermes peer add bristlecone --url http://bristlecone.netbird.cloud:8642 --key <token>`,
+   then `hermes peer dm bristlecone "…"`.
+4. **The web dashboard** — `hermes dashboard` (UI) and `hermes serve` (headless
+   backend for the desktop app) listen on `127.0.0.1:9119`. Neither is wired into Nix:
+   upstream's NixOS module only covers the gateway, so exposing one means a systemd
+   unit of its own. A non-loopback bind always requires an auth provider
+   (`HERMES_DASHBOARD_BASIC_AUTH_USERNAME` / `_PASSWORD`, or OAuth) — `--insecure` has
+   been a no-op since upstream's June 2026 hardening. Easiest without touching the
+   config: leave it on loopback and tunnel, `ssh -L 9119:127.0.0.1:9119 bristlecone`.
 
 ---
 

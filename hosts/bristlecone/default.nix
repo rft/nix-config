@@ -34,7 +34,11 @@ delib.host {
     };
 
     systemd.tmpfiles.rules = [
-      "d /srv/projects 0750 ${myconfig.constants.username} users -"
+      # 2770 rather than 0750: the group bits of an ACL-bearing directory are
+      # its ACL mask, and services.hermes-agent grants the `hermes` group rwx
+      # here. A r-x mask would clamp that grant back to read-only. setgid keeps
+      # new content in `users` so both the login user and the agent see it.
+      "d /srv/projects 2770 ${myconfig.constants.username} users -"
       "d /srv/share 0750 ${myconfig.constants.username} users -"
     ];
 
