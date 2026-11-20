@@ -373,21 +373,6 @@ built. It can reinstall an existing host as-is; a new host, or a host whose
 hardware config must be regenerated, needs a writable checkout (see
 [How to Add a New Host](#how-to-add-a-new-host)).
 
-**Quick path:** once the host exists in the flake (pushed, or present when the
-ISO was built), partition and mount `/mnt`, then run:
-
-```bash
-install-host HOSTNAME
-```
-
-It clones the repo (falling back to the ISO's snapshot), writes
-`hardware/HOSTNAME.nix` with `nixos-generate-config --root /mnt`, evaluates,
-runs `nixos-install` (root stays locked), asks for the `nano` password and
-copies the checkout to `~/nix-config` on the new system — commit
-`hardware/HOSTNAME.nix` from there after reboot.
-
-**Manual path:**
-
 1. Partition and mount disks (GParted is available, or use `parted`/`fdisk`).
 2. Mount the target root at `/mnt` (and EFI partition at `/mnt/boot` if applicable).
 3. Run the installer:
