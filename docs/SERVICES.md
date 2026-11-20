@@ -535,6 +535,7 @@ Check the cert from the server with
      messaging docs for each platform's variables. With none of these set the gateway
      starts and logs `No messaging platforms enabled` — it runs cron jobs but nothing
      can reach it except the local CLI.
+   - `HASS_TOKEN=…` — Home Assistant access, see **Home Assistant** below.
 2. Re-run activation to merge the file, then restart the gateway:
    `sudo /run/current-system/activate && sudo systemctl restart hermes-agent`.
    Do the same after every later edit of the env file.
@@ -543,6 +544,45 @@ Check the cert from the server with
 The first OAuth login for an MCP server prints its URL to the journal instead of
 opening a browser. Run that flow once from a shell (`hermes mcp add … --auth oauth`),
 and the token persists in `HERMES_HOME`.
+
+#### Home Assistant
+
+With `services.home-assistant` on the same host, the module installs Nous Research's
+official `homeassistant` plugin (from `inputs.hermes-official-plugins`, linked as
+`plugins/nix-managed-homeassistant`), lists it in `plugins.enabled`, and sets
+`HASS_URL=http://127.0.0.1:8123`. The plugin adds:
+
+- **Tools:** `ha_list_entities`, `ha_get_state`, `ha_list_services`, `ha_call_service`,
+  so "turn off the living room lights" works from Telegram, the API server or the CLI.
+  The plugin refuses `shell_command`, `command_line`, `python_script`, `pyscript`,
+  `hassio` and `rest_command`. Anything else the HA user can do, the agent can do,
+  and `approvals` does not cover these calls (they are not shell commands).
+- **A gateway platform:** agent replies and cron `deliver: homeassistant:<notify target>`
+  show up in HA (persistent notifications, or `notify.<target>`, e.g. a phone's
+  `mobile_app_*`). Inbound state changes are **off**: without
+  `platforms.homeassistant.extra.watch_domains` / `watch_entities` the adapter logs a
+  warning at startup and drops every event. Each forwarded event is an agent turn (a
+  model call), so add a narrow filter in the module's `settings` before turning that on.
+
+Setup, once:
+
+1. In Home Assistant, create a dedicated non-admin user (e.g. `hermes`) so the token
+   cannot change HA's own configuration, log in as it, and under **Profile →
+   Security → Long-lived access tokens** create a token.
+2. Add `HASS_TOKEN=<token>` to `/var/lib/hermes/env`, then
+   `sudo /run/current-system/activate && sudo systemctl restart hermes-agent`.
+3. Check it: `journalctl -u hermes-agent | grep -i "home assistant"`, and
+   `sudo -u hermes -H hermes chat` → "list my lights".
+
+Optional env-file limits: `HASS_ENTITY_ALLOWLIST` / `HASS_ENTITY_DENYLIST`
+(comma-separated globs such as `light.*,climate.*`) restrict which entities the tools
+can see and control; `HASS_HOME_CHANNEL=mobile_app_<phone>` is the target for a bare
+`deliver: homeassistant`.
+
+The module also sets `_left_core_installed = [ "homeassistant" ]` in `config.yaml`.
+Home Assistant used to be built into Hermes, and the migration that moved it out looks
+for exactly `plugins/homeassistant`. It misses the Nix-managed link and would warn on
+every start that the plugin is missing.
 
 #### The API server
 

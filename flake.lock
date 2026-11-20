@@ -326,6 +326,22 @@
         "type": "github"
       }
     },
+    "hermes-official-plugins": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1795146411,
+        "narHash": "sha256-/P7F8OvEjnU6/Uvq00LKkjYIoFMghpEF5alkYrdMpA8=",
+        "owner": "NousResearch",
+        "repo": "hermes-official-plugins",
+        "rev": "269ddcbc8598ece2dc5bb82115ac68954bc4024f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NousResearch",
+        "repo": "hermes-official-plugins",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -840,6 +856,7 @@
         "disko": "disko",
         "helium": "helium",
         "hermes-agent": "hermes-agent",
+        "hermes-official-plugins": "hermes-official-plugins",
         "home-manager": "home-manager",
         "llm-agents": "llm-agents",
         "nix-darwin": "nix-darwin",

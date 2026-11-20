@@ -796,6 +796,7 @@ to a new NixOS release means changing those three. Most other inputs follow
 | nixcats-nvim | Custom Neovim config (follows nixpkgs-unstable) |
 | llm-agents | oh-my-pi (`omp`) and hermes-agent package source (upstream nixpkgs pin, cache.numtide.com) |
 | hermes-agent | Upstream Hermes Agent flake: NixOS module and package for the bristlecone gateway (tracks `main`, own nixpkgs pin) |
+| hermes-official-plugins | Nous Research's official Hermes plugins (`flake = false`); source of the gateway's Home Assistant plugin |
 | nix-vscode-extensions | VSCode marketplace extensions |
 | nixos-wsl | NixOS on WSL support |
 | paneru | macOS tiling window manager (module kept; lemon now uses Nehir via Homebrew) |

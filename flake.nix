@@ -42,6 +42,13 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    # Nous Research's official Hermes plugins (the catalog's `homeassistant` entry points
+    # here). Pinned through the lock so the weekly update bumps it alongside hermes-agent.
+    hermes-official-plugins = {
+      url = "github:NousResearch/hermes-official-plugins";
+      flake = false;
+    };
+
     nix-vscode-extensions = {
       url = "github:nix-community/nix-vscode-extensions";
       inputs.nixpkgs.follows = "nixpkgs";

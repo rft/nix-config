@@ -342,7 +342,7 @@ Self-hosted services. Gated by `services.enable`.
   - `services.actual` — Actual Budget sync server (port 5006, HTTPS with a self-signed cert generated on first start, NetBird-only)
   - `services.karakeep` — bookmarks / read-it-later (port 3000, NetBird-only; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222; AI tagging points at `services.ai-gateway`)
   - `services.ai-gateway` — 9router AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
-  - `services.hermes-agent` — Hermes Agent messaging gateway and cron, using upstream's NixOS module (`inputs.hermes-agent`); state in `/var/lib/hermes`, model via `services.ai-gateway`, secrets in `/var/lib/hermes/env`. No ports.
+  - `services.hermes-agent` — Hermes Agent messaging gateway and cron, using upstream's NixOS module (`inputs.hermes-agent`); state in `/var/lib/hermes`, model via `services.ai-gateway`, secrets in `/var/lib/hermes/env`. When `services.home-assistant` is on, adds the official `homeassistant` plugin (`inputs.hermes-official-plugins`) pointed at the local HA. No ports.
   - `services.backup` — daily borgmatic backups of whatever the enabled services and the host declare (bristlecone adds `/srv/share`)
 - **Dependencies:** None.
 

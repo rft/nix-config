@@ -99,7 +99,42 @@ delib.module {
               offer_version = 2;
             };
           })
+          (lib.mkIf myconfig.services.home-assistant.enable {
+            # Plugins are opt-in; the manifest name is what this list matches.
+            plugins.enabled = [ "homeassistant" ];
+            # Home Assistant left Hermes core for a catalog plugin, and a profile
+            # with HASS_TOKEN that lacks `$HERMES_HOME/plugins/homeassistant`
+            # gets a "moved out of core … this profile does not have" warning on
+            # every start (backed off hourly up to weekly). extraPlugins links
+            # the plugin as `nix-managed-homeassistant`, which that exact-path
+            # check misses, so mark the migration done
+            # (hermes_cli/left_core_migration.py, `_left_core_installed`).
+            _left_core_installed = [ "homeassistant" ];
+          })
         ];
+
+        # Home Assistant tools (ha_list_entities, ha_get_state,
+        # ha_list_services, ha_call_service) plus the gateway platform that
+        # turns HA state changes into agent messages and agent replies into HA
+        # persistent notifications. The plugin's only Python dependency,
+        # aiohttp, is already in the package's venv. HASS_TOKEN (a long-lived
+        # access token) goes in the env file; see docs/SERVICES.md.
+        #
+        # No `platforms.homeassistant.extra.watch_*` filters, so no state change
+        # wakes the agent: each forwarded event is a model call. The tools, cron
+        # `deliver: homeassistant:<notify target>` and notifications work
+        # without them.
+        extraPlugins = lib.mkIf myconfig.services.home-assistant.enable [
+          (pkgs.runCommandLocal "homeassistant" { } ''
+            cp -r ${inputs.hermes-official-plugins}/homeassistant $out
+          '')
+        ];
+        # Non-secret, so not in the env file. The tools read only HASS_URL
+        # (the platform's `extra.url` does not reach them). Same host, so
+        # loopback.
+        environment = lib.mkIf myconfig.services.home-assistant.enable {
+          HASS_URL = "http://127.0.0.1:8123";
+        };
       };
 
       # The OpenAI-compatible API server platform, for clients that are not a
