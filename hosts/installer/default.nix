@@ -12,39 +12,45 @@ delib.host {
 
   home.home.stateVersion = "24.05";
 
-  nixos = {
-    system.stateVersion = "25.11";
+  nixos =
+    { myconfig, ... }:
+    let
+      username = myconfig.constants.username;
 
-    imports = [
-      "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix"
-    ];
+    in
+    {
+      system.stateVersion = "25.11";
 
-    # Embed the flake source so nixos-install works offline
-    environment.etc."nixos-config".source = inputs.self;
+      imports = [
+        "${inputs.nixpkgs}/nixos/modules/installer/cd-dvd/installation-cd-graphical-calamares-plasma6.nix"
+      ];
 
-    # Override SDDM autologin to the nano user (ISO defaults to nixos)
-    services.displayManager.autoLogin = {
-      enable = true;
-      user = lib.mkForce "nano";
+      # Embed the flake source so nixos-install works offline
+      environment.etc."nixos-config".source = inputs.self;
+
+      # Override SDDM autologin to the nano user (ISO defaults to nixos)
+      services.displayManager.autoLogin = {
+        enable = true;
+        user = lib.mkForce username;
+      };
+
+      # Set empty password for the live environment
+      users.users.${username}.initialHashedPassword = "";
+
+      # Extra packages useful for disk setup and installation
+      environment.systemPackages = with pkgs; [
+        parted
+        dosfstools
+        e2fsprogs
+        btrfs-progs
+        ntfs3g
+      ];
+
+      # zstd level 19 for the smallest image; drop to 6 for fast test builds
+      isoImage.squashfsCompression = "zstd -Xcompression-level 19";
+
+      networking.hostName = lib.mkForce "installer";
     };
-
-    # Set empty password for the live environment
-    users.users.nano.initialHashedPassword = "";
-
-    # Extra packages useful for disk setup and installation
-    environment.systemPackages = with pkgs; [
-      parted
-      dosfstools
-      e2fsprogs
-      btrfs-progs
-      ntfs3g
-    ];
-
-    # zstd level 19 for the smallest image; drop to 6 for fast test builds
-    isoImage.squashfsCompression = "zstd -Xcompression-level 19";
-
-    networking.hostName = lib.mkForce "installer";
-  };
 
   myconfig = {
     fonts.enable = true;

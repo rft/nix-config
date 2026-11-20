@@ -10,6 +10,7 @@ hosts/                  Per-host configurations (delib.host)
   redwood/              Desktop, full creative+engineering
   sequoia/              Desktop, VMware guest
   myrtle/               Desktop, archiving-focused, VMware guest
+  maple/                Desktop, creative + engineering (bare metal)
   mistletoe/            WSL, programming only
   lemon/                Darwin (macOS), Apple Silicon
   pineapple/            Darwin (macOS), Apple Silicon
@@ -35,7 +36,7 @@ docs/                   This documentation
 
 ## Hosts
 
-The flake defines 10 hosts via `denix.lib.configurations`. Each host declares a
+The flake defines 11 hosts via `denix.lib.configurations`. Each host declares a
 name, type, and system in `delib.host`. The type determines which base
 extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`).
 
@@ -47,6 +48,7 @@ extensions apply (host types: `desktop`, `server`, `wsl`, `installer`, `darwin`)
 | **redwood** | desktop | America/Los_Angeles | Full modules: creative + engineering explicitly enabled |
 | **sequoia** | desktop | America/Phoenix | VMware guest, GRUB on `/dev/sda` |
 | **myrtle** | desktop | America/Phoenix | VMware guest, archiving enabled, creative/engineering/programming disabled |
+| **maple** | desktop | America/Phoenix | Same modules as sequoia (creative + engineering + programming) on bare metal, GRUB+EFI |
 | **mistletoe** | wsl | -- | WSL host, programming + analysis + cloud, nix-ld enabled |
 | **lemon** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nehir tiling WM, Karabiner Caps Lock → Esc/Ctrl. Shared Homebrew casks + topnotch, handy, cotabby |
 | **pineapple** | darwin | -- | Apple Silicon Mac (aarch64-darwin), Touch ID sudo, Nix GC disabled. Shared Homebrew casks + google-chrome |
@@ -62,23 +64,23 @@ and Hover for Safari.
 
 ### Module enablement by host
 
-| Module | bristlecone | juniper | cottonwood | redwood | sequoia | myrtle | mistletoe | lemon | pineapple | installer |
-|--------|:-----------:|:-------:|:----------:|:-------:|:-------:|:------:|:---------:|:-----:|:---------:|:---------:|
-| desktop | -- | -- | yes | yes | yes | yes | -- | -- | -- | -- |
-| applications | -- | -- | yes | yes | yes | yes | -- | yes | yes | -- |
-| applications.creative | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
-| applications.engineering | -- | -- | auto | yes | yes | no | -- | auto | auto | -- |
-| applications.archiving | -- | -- | -- | -- | -- | yes | -- | -- | -- | -- |
-| desktop.nehir | -- | -- | -- | -- | -- | -- | -- | yes | -- | -- |
-| programs.programming | -- | -- | yes | yes | yes | no | yes | yes | yes | -- |
-| programs.programming.analysis | -- | -- | auto | auto | auto | -- | yes | auto | auto | -- |
-| programs.programming.cloud | -- | -- | -- | -- | -- | -- | yes | yes | yes | -- |
-| services | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
-| security | yes | yes | -- | -- | -- | -- | -- | -- | -- | -- |
-| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
-| core.workstation | -- | -- | auto | auto | auto | auto | auto | auto | auto | -- |
-| editors | -- | -- | auto | auto | auto | auto | auto | auto | auto | -- |
-| fonts | -- | -- | auto | auto | auto | auto | -- | yes | yes | yes |
+| Module | bristlecone | juniper | cottonwood | redwood | sequoia | myrtle | maple | mistletoe | lemon | pineapple | installer |
+|--------|:-----------:|:-------:|:----------:|:-------:|:-------:|:------:|:-----:|:---------:|:-----:|:---------:|:---------:|
+| desktop | -- | -- | yes | yes | yes | yes | yes | -- | -- | -- | -- |
+| applications | -- | -- | yes | yes | yes | yes | yes | -- | yes | yes | -- |
+| applications.creative | -- | -- | auto | yes | yes | no | yes | -- | auto | auto | -- |
+| applications.engineering | -- | -- | auto | yes | yes | no | yes | -- | auto | auto | -- |
+| applications.archiving | -- | -- | -- | -- | -- | yes | -- | -- | -- | -- | -- |
+| desktop.nehir | -- | -- | -- | -- | -- | -- | -- | -- | yes | -- | -- |
+| programs.programming | -- | -- | yes | yes | yes | no | yes | yes | yes | yes | -- |
+| programs.programming.analysis | -- | -- | auto | auto | auto | -- | auto | yes | auto | auto | -- |
+| programs.programming.cloud | -- | -- | -- | -- | -- | -- | -- | yes | yes | yes | -- |
+| services | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| security | yes | yes | -- | -- | -- | -- | -- | -- | -- | -- | -- |
+| terminal | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes | yes |
+| core.workstation | -- | -- | auto | auto | auto | auto | auto | auto | auto | auto | -- |
+| editors | -- | -- | auto | auto | auto | auto | auto | auto | auto | auto | -- |
+| fonts | -- | -- | auto | auto | auto | auto | auto | -- | yes | yes | yes |
 
 `yes` = explicitly enabled, `auto` = auto-enabled by parent, `no` = explicitly disabled, `--` = not enabled.
 
@@ -351,9 +353,9 @@ terminal tools (starship, kitty, etc.) pre-configured.
 nix build .#installer-iso
 ```
 
-The ISO is written to `result/iso/`. To reduce build time during development the
-default squashfs compression is zstd level 6. For a smaller release ISO, bump
-the level to 19 in `hosts/installer/default.nix`.
+The ISO is written to `result/iso/`. Squashfs compression is zstd level 19 for
+the smallest image, which makes the final compression step slow. For faster
+test builds, drop the level to 6 in `hosts/installer/default.nix`.
 
 ### Writing to USB
 
@@ -366,7 +368,10 @@ Replace `/dev/sdX` with your USB device (use `lsblk` to identify it).
 ### Installing a host
 
 Boot the USB. KDE Plasma starts with auto-login as `nano`. The flake is
-embedded at `/etc/nixos-config`.
+embedded read-only at `/etc/nixos-config` — a snapshot from when the ISO was
+built. It can reinstall an existing host as-is; a new host, or a host whose
+hardware config must be regenerated, needs a writable checkout (see
+[How to Add a New Host](#how-to-add-a-new-host)).
 
 1. Partition and mount disks (GParted is available, or use `parted`/`fdisk`).
 2. Mount the target root at `/mnt` (and EFI partition at `/mnt/boot` if applicable).
@@ -376,13 +381,12 @@ embedded at `/etc/nixos-config`.
 sudo nixos-install --flake /etc/nixos-config#HOSTNAME
 ```
 
-For example, to install the bristlecone host:
+4. `nixos-install` only prompts for the **root** password. The repo sets no
+   password for `nano`, so set one before rebooting:
 
 ```bash
-sudo nixos-install --flake /etc/nixos-config#bristlecone
+sudo nixos-enter --root /mnt -c 'passwd nano'
 ```
-
-4. After installation completes, set the user password when prompted and reboot.
 
 ### Testing in a VM
 
@@ -518,28 +522,56 @@ home-manager switch --flake '.#nano@HOSTNAME' 2>&1 | grep "Existing file"
 
 ## How to Add a New Host
 
-1. Create `hosts/HOSTNAME/default.nix`:
+This flow uses the [installer ISO](#installer-iso). For a remote VPS use
+[VPS.md](VPS.md) instead; for a Mac see [Adding a new Darwin host](#adding-a-new-darwin-host).
+
+1. Boot the installer, connect to the network, partition, and mount the target
+   root at `/mnt` (EFI partition at `/mnt/boot`).
+
+2. Get a writable checkout. The live system has no SSH keys, so clone over HTTPS
+   (or, for a private repo, `cp -r --no-preserve=mode /etc/nixos-config ~/nix-config`
+   — the snapshot from the ISO build, without git history):
+
+```bash
+git clone https://github.com/rft/nix-config.git ~/nix-config && cd ~/nix-config
+```
+
+3. Generate the hardware config into `hardware/` — **not** `hosts/`. Denix
+   auto-loads every `.nix` file under `hosts/` and `modules/`, so a raw hardware
+   file there breaks eval for every host. `--root /mnt` picks up the target's
+   filesystem UUIDs:
+
+```bash
+sudo nixos-generate-config --root /mnt --show-hardware-config > hardware/HOSTNAME.nix
+```
+
+4. Create `hosts/HOSTNAME/default.nix` (`hosts/maple` is a minimal desktop example):
 
 ```nix
 { delib, ... }:
 delib.host {
   name = "HOSTNAME";
-  type = "desktop";  # or "server" or "wsl"
+  type = "desktop";  # desktop | server | wsl
   system = "x86_64-linux";
 
   home.home.stateVersion = "24.05";
 
   nixos = {
-    system.stateVersion = "25.11";
-    imports = [ ./hardware-configuration.nix ];
+    # The release being installed — freeze it, never bump on upgrades.
+    system.stateVersion = "26.05";
+    imports = [ ../../hardware/HOSTNAME.nix ];
 
-    # Boot loader, networking, timezone, locale, etc.
-    networking.hostName = "HOSTNAME";
-    networking.networkmanager.enable = true;
+    boot.loader = {
+      efi.canTouchEfiVariables = true;
+      grub = {
+        efiSupport = true;
+        device = "nodev";
+      };
+    };
   };
 
   myconfig = {
-    # Enable the modules you want
+    # constants.timezone = "America/Los_Angeles";  # default America/Phoenix
     applications.enable = true;
     desktop.enable = true;
     programs.programming.enable = true;
@@ -547,21 +579,31 @@ delib.host {
 }
 ```
 
-2. Copy `hardware-configuration.nix` into the same directory. Generate it with:
+   `networking.hostName` defaults to `name` — only set it when the hostname
+   differs. No `flake.nix` change is needed; hosts are picked up by `type`.
+
+5. Stage the new files (flakes ignore untracked files) and evaluate:
 
 ```bash
-nixos-generate-config --show-hardware-config > hosts/HOSTNAME/hardware-configuration.nix
+git add -A
+nix eval .#nixosConfigurations.HOSTNAME.config.system.build.toplevel.drvPath
 ```
 
-3. Set `name`, `type`, `system`, and `stateVersion` appropriately.
-
-4. Configure the `myconfig` block to enable/disable modules for this host.
-
-5. Rebuild:
+6. Install and set the user password:
 
 ```bash
-sudo nixos-rebuild switch --flake .#HOSTNAME
+sudo nixos-install --flake .#HOSTNAME
+sudo nixos-enter --root /mnt -c 'passwd nano'
 ```
+
+7. After first boot, copy the checkout onto the new system (the live system's
+   home is lost on reboot), commit and push. Add the host to the host tables in
+   `AGENTS.md`, `readme.md`, this file and `docs/architecture.puml`. CI evals it
+   automatically. Later updates: `sudo nixos-rebuild switch --flake .#HOSTNAME`.
+
+To add the host to the repo *before* the hardware exists (as with maple),
+commit a placeholder `hardware/HOSTNAME.nix` with `by-label` filesystems so it
+evaluates, then overwrite it in step 3.
 
 ## SSH Keys
 

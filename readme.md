@@ -91,6 +91,7 @@ shown here in zellij inside Windows Terminal.
 | **redwood** | desktop | Full creative + engineering modules |
 | **sequoia** | desktop | VMware guest |
 | **myrtle** | desktop | VMware guest, archiving-focused |
+| **maple** | desktop | Creative + engineering, bare metal |
 | **mistletoe** | wsl | Programming + analysis + cloud |
 | **lemon** | darwin | Apple Silicon Mac with Homebrew casks and the Nehir tiling WM |
 | **pineapple** | darwin | Apple Silicon Mac with Homebrew casks |
