@@ -1,6 +1,13 @@
 // Niri session. Noctalia is started by its home-manager systemd service.
 // Based on the upstream default config: https://github.com/YaLTeR/niri/blob/main/resources/default-config.kdl
 
+input {
+    mouse {
+        // Disable pointer acceleration.
+        accel-profile "flat"
+    }
+}
+
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
