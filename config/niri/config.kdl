@@ -8,6 +8,10 @@ input {
     }
 }
 
+// Per-machine monitor layout, kept outside this repo. wdisplays only changes the
+// running session; run `niri-save-outputs` afterwards to keep the layout.
+include optional=true "~/.config/niri-outputs.kdl"
+
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
@@ -31,6 +35,9 @@ binds {
     Mod+M hotkey-overlay-title="Media Menu: Kando" { spawn "kando" "--menu" "Media Menu"; }
     Mod+X hotkey-overlay-title="Power Menu: Kando" { spawn "kando" "--menu" "Power Menu"; }
     Mod+P hotkey-overlay-title="Window Switcher: rofi" { spawn "rofi" "-show" "window"; }
+    // Handy's own global shortcuts use X11 grabs, which don't fire for Wayland windows.
+    Mod+Alt+J repeat=false hotkey-overlay-title="Dictate: Handy" { spawn "handy" "--toggle-transcription"; }
+    Mod+Alt+Shift+J repeat=false hotkey-overlay-title="Cancel Dictation: Handy" { spawn "handy" "--cancel"; }
     Mod+Q hotkey-overlay-title="Browser: Helium" { spawn "helium"; }
     Mod+Shift+C repeat=false { close-window; }
     Mod+Shift+Q { quit skip-confirmation=true; }

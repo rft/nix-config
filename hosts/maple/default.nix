@@ -24,7 +24,23 @@ delib.host {
       grub = {
         efiSupport = true;
         device = "nodev";
-        useOSProber = true;
+        # os-prober scans every NTFS disk via grub-mount and takes ~25 min here,
+        # so boot Windows through a fixed entry on its EFI partition instead.
+        useOSProber = false;
+        extraEntries = ''
+          menuentry "Windows (NVMe 1TB)" {
+            insmod part_gpt
+            insmod fat
+            search --no-floppy --fs-uuid --set=root 54DE-3FE6
+            chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+          }
+          menuentry "Windows (SATA 700GB)" {
+            insmod part_gpt
+            insmod fat
+            search --no-floppy --fs-uuid --set=root 04F4-F660
+            chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+          }
+        '';
       };
     };
   };
