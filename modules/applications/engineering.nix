@@ -6,6 +6,7 @@
 }:
 let
   sharedPackages = with pkgs; [
+    fluidcad
     ghidra
     imhex
     qemu

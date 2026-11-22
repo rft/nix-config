@@ -67,6 +67,10 @@ delib.module {
   };
 
   nixos.always = { myconfig, ... }: {
+    # Prebuilt nix-index database; puts a comma wrapped with it on PATH.
+    imports = [ inputs.nix-index-database.nixosModules.nix-index ];
+    programs.nix-index-database.comma.enable = true;
+
     # Hostname follows the denix host name; hosts that need a different one
     # (e.g. myrtle -> "sequoia-archive") just set networking.hostName themselves.
     networking.hostName = lib.mkDefault myconfig.host.name;
@@ -93,6 +97,10 @@ delib.module {
   };
 
   darwin.always = { myconfig, ... }: {
+    # Prebuilt nix-index database; puts a comma wrapped with it on PATH.
+    imports = [ inputs.nix-index-database.darwinModules.nix-index ];
+    programs.nix-index-database.comma.enable = true;
+
     networking.hostName = lib.mkDefault myconfig.host.name;
 
     home-manager.backupFileExtension = "backup";

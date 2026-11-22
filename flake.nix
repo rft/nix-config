@@ -69,6 +69,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Prebuilt weekly nix-index database + wrapped comma (modules/core/default.nix).
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-mineral = {
       url = "github:cynicsketch/nix-mineral";
       inputs.nixpkgs.follows = "nixpkgs";
