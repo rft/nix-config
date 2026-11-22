@@ -59,6 +59,16 @@ delib.module {
         fi
       '';
 
+      # The cert lives under the DynamicUser's 0700 state directory. Publish a
+      # copy (a public cert, nothing secret) for clients on this host that have
+      # to trust it — actual-mcp under services.hermes-agent — and for fetching
+      # onto devices. `+` runs the copy as root; ExecStartPost follows the
+      # preStart that may have just regenerated the cert.
+      systemd.services.actual.serviceConfig.ExecStartPost = [
+        "+${pkgs.coreutils}/bin/install -m 0644 ${tlsDir}/cert.pem /var/lib/actual-cert/cert.pem"
+      ];
+      systemd.tmpfiles.rules = [ "d /var/lib/actual-cert 0755 root root -" ];
+
       # Hardening is left as upstream ships it rather than forced to
       # hardenedServiceConfig: upstream is already stricter (DynamicUser,
       # PrivateUsers, empty CapabilityBoundingSet, ProtectProc=invisible), and

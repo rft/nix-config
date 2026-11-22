@@ -48,7 +48,7 @@ Infrastructure modules that are always active. They have no enable option.
 
 - **Path:** `modules/config/overlays/`
 - **Name:** `overlays`
-- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, `oh-my-pi` from `numtide/llm-agents.nix` (wrapped with bun/node/git/python3 for plugins), `hermes-agent` from the same flake, and nix-vscode-extensions.
+- **Description:** Configures nixpkgs overlays for both NixOS and Home Manager. Provides: unstable channel, pins `vscodium`/`claude-code`/`kando` to unstable, `oh-my-pi` from `numtide/llm-agents.nix` (wrapped with bun/node/git/python3 for plugins), `hermes-agent` from the same flake, `actual-mcp` (`packages/actual-mcp`), and nix-vscode-extensions.
 - **Options:** None (always active).
 - **Default behavior:** Always active. Sets `config.allowUnfree = true`.
 - **Dependencies:** Flake inputs (`nixpkgs-unstable`, `nix-vscode-extensions`).
@@ -342,7 +342,7 @@ Self-hosted services. Gated by `services.enable`.
   - `services.actual` — Actual Budget sync server (port 5006, HTTPS with a self-signed cert generated on first start, NetBird-only)
   - `services.karakeep` — bookmarks / read-it-later (port 3000, NetBird-only; pulls in meilisearch on localhost:7700 and a headless chromium on localhost:9222; AI tagging points at `services.ai-gateway`)
   - `services.ai-gateway` — 9router AI gateway shared by the other hosts (port 20128, reachable only on the Netbird interface `wt0`)
-  - `services.hermes-agent` — Hermes Agent messaging gateway and cron, using upstream's NixOS module (`inputs.hermes-agent`); state in `/var/lib/hermes`, model via `services.ai-gateway`, secrets in `/var/lib/hermes/env`. When `services.home-assistant` is on, adds the official `homeassistant` plugin (`inputs.hermes-official-plugins`) pointed at the local HA. No ports.
+  - `services.hermes-agent` — Hermes Agent messaging gateway and cron (`hermes-agent`) plus the web dashboard (`hermes-backend`), using upstream's NixOS module (`inputs.hermes-agent`); state in `/var/lib/hermes`, model via `services.ai-gateway`, secrets in `/var/lib/hermes/env`. Terminal commands run in the official `bubblewrap` sandbox; also loads the official `langfuse`, `mcp-serve` and `memory-wiki` plugins (`inputs.hermes-official-plugins`), this repo's `homelab` plugin (`packages/hermes-homelab`: Paperless, Karakeep, changedetection, server health) and, when those services are on, `homeassistant` and the `actual` MCP server (`packages/actual-mcp`). Builds the package with `version = "unknown"` so plugins' `requires_hermes` gates pass (upstream stamps `0.0.0`). Ports 8642 (API server, when switched on) and 9119 (dashboard), `wt0` only.
   - `services.backup` — daily borgmatic backups of whatever the enabled services and the host declare (bristlecone adds `/srv/share`)
 - **Dependencies:** None.
 

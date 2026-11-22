@@ -1,0 +1,42 @@
+name: homelab
+label: Homelab
+kind: standalone
+version: 1.0.0
+author: nix-config
+description: >
+  Tools for the self-hosted services on this host: Paperless-ngx (search and
+  read documents), Karakeep (save and search bookmarks), changedetection.io
+  (list watches, read the latest change, add a watch) and a read-only server
+  health check (failed units, last backup, disk space). Each service's tools
+  appear only once its token is in the environment.
+requires_hermes: ">=0.21"
+provides_tools:
+  - paperless_search
+  - paperless_get_document
+  - karakeep_search
+  - karakeep_get_bookmark
+  - karakeep_add
+  - changedetection_list_watches
+  - changedetection_get_changes
+  - changedetection_add_watch
+  - server_health
+provides_hooks: []
+optional_env:
+  - name: PAPERLESS_TOKEN
+    description: "Paperless-ngx API token (Profile -> API Auth Token)"
+    password: true
+  - name: PAPERLESS_URL
+    description: "Paperless-ngx base URL"
+    password: false
+  - name: KARAKEEP_API_KEY
+    description: "Karakeep API key (Settings -> API Keys)"
+    password: true
+  - name: KARAKEEP_URL
+    description: "Karakeep base URL"
+    password: false
+  - name: CHANGEDETECTION_API_KEY
+    description: "changedetection.io API key (Settings -> API)"
+    password: true
+  - name: CHANGEDETECTION_URL
+    description: "changedetection.io base URL"
+    password: false

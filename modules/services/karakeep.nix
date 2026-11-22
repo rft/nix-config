@@ -39,6 +39,10 @@ delib.module {
           INFERENCE_IMAGE_MODEL = "cx/gpt-5.6-luna";
           # 9router drops json_schema response_format, so ask for plain JSON mode.
           INFERENCE_OUTPUT_SCHEMA = "json";
+          # 9router serves no embedding models. Karakeep already leaves
+          # auto-indexing off when OPENAI_BASE_URL is set; pinned so a later
+          # default change can't start a queue of failing embedding jobs.
+          EMBEDDING_ENABLE_AUTO_INDEXING = "false";
         };
       };
 

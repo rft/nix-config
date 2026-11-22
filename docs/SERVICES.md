@@ -21,6 +21,7 @@ also be switched on or off with `myconfig.services.<name>.enable`.
 | Zigbee2MQTT frontend | 8080  | HTTP     | NetBird (`wt0`) only |
 | 9router (AI gateway) | 20128 | HTTP     | NetBird (`wt0`) only |
 | Hermes API server    | 8642  | HTTP     | NetBird (`wt0`) only |
+| Hermes dashboard     | 9119  | HTTP     | NetBird (`wt0`) only |
 | Meilisearch          | 7700  | HTTP     | localhost      |
 | Karakeep browser CDP | 9222  | HTTP     | localhost      |
 | Samba (scanner)      | 445   | SMB      | LAN            |
@@ -391,8 +392,24 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
   system keeps only `contents`, silently dropping the variable. `CacheDirectory` does
   come from upstream and is no longer set here.
 - **AI tagging:** Inference goes through the local 9router gateway
-  (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`). It only switches on once
-  `OPENAI_API_KEY` (a 9router API key) is appended to `/var/lib/karakeep/settings.env`.
+  (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`, model `cx/gpt-5.6-luna` for text and
+  images, plain JSON output because 9router drops `json_schema`). Karakeep decides
+  whether inference is configured from `OPENAI_API_KEY` alone, so until that key exists
+  nothing is tagged and the workers log nothing about it. 9router requires an API key
+  even on loopback. Embedding auto-indexing is pinned off, because 9router serves no
+  embedding models. To switch tagging on:
+
+  1. In the 9router dashboard (`http://bristlecone.netbird.cloud:20128`), create an API
+     key for Karakeep.
+  2. Append it. `karakeep-init` never overwrites this file:
+
+     ```bash
+     echo 'OPENAI_API_KEY=<9router key>' | sudo tee -a /var/lib/karakeep/settings.env
+     sudo systemctl restart karakeep-web karakeep-workers
+     ```
+
+  3. Save a link, then watch `journalctl -u karakeep-workers -f` for the `[inference]`
+     job. Bookmarks saved before the key existed are not re-tagged on their own.
 
 ### Actual Budget
 
@@ -438,6 +455,10 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
 Check the cert from the server with
 `sudo openssl x509 -in /var/lib/actual/tls/cert.pem -noout -subject -enddate`.
 
+The unit's `ExecStartPost` also copies the cert to `/var/lib/actual-cert/cert.pem`
+(world-readable). Clients on this host trust that copy, because the original sits in the
+DynamicUser's `0700` directory. The Hermes `actual` MCP server is one such client.
+
 ### 9router
 
 - **What:** Shared AI gateway, so provider logins, OAuth refresh, and quota tracking
@@ -458,8 +479,12 @@ Check the cert from the server with
   always-on messaging gateway: talk to it from Telegram, Discord, Slack, etc., and its
   cron jobs run here. Upstream's NixOS module (`inputs.hermes-agent`) does the work.
   This repo's module sets the paths, model, hardening and backups.
-- **Port:** 8642 (`wt0` only) when the API server platform is switched on, and nothing
-  otherwise — the messaging side only dials out to bot APIs and the model endpoint.
+- **Ports:** 9119 (`wt0` only), the web dashboard (see **Dashboard and Memory Wiki**).
+  8642 (`wt0` only) is open too, but listens only once the API server platform is
+  switched on. The messaging side only dials out, to bot APIs and the model endpoint.
+- **Units:** `hermes-agent` (the gateway: messaging, cron, MCP servers) and
+  `hermes-backend` (`hermes dashboard`), both on one `HERMES_HOME`, with the same
+  sandbox.
 - **Data:** `/var/lib/hermes` (user/group `hermes`, `2770`). `HERMES_HOME` is
   `/var/lib/hermes/.hermes` (`config.yaml`, `.env`, `state.db` sessions, memories,
   skills), and the agent's working directory is `/var/lib/hermes/workspace`.
@@ -506,13 +531,42 @@ Check the cert from the server with
 - **Telemetry:** `settings` answers upstream's shared-metrics consent prompt
   (opted out). Without an answer in `config.yaml`, an interactive `hermes chat` stops
   on a full-screen question and looks like it has hung. The gateway never asks.
-- **Hardening:** Shared baseline minus `SystemCallFilter` and `RestrictNamespaces`. The
-  agent runs whatever tools it installs, and Chromium's sandbox (browser tools) needs
-  user namespaces. `ProtectHome` is forced on over upstream's `false`, because the
-  agent's `HOME` is `/var/lib/hermes`. nix-mineral mounts `/var` noexec, so
-  `/var/lib/hermes` gets an exec bind mount (like `/srv/projects`). Without it, the
-  `pip --user` / `uv tool` / `npm -g` installs in its `HOME` and the scripts in its
-  workspace could not run.
+- **Hardening:** Applied to both units: the shared baseline minus `SystemCallFilter`,
+  `RestrictNamespaces`, `ProtectKernelTunables` and `ProtectKernelLogs`. The agent runs
+  whatever tools it installs, and bubblewrap and Chromium's sandbox need user
+  namespaces. The two `ProtectKernel*` options overmount `/proc/sys` and `/proc/kmsg`.
+  While a locked overmount like that exists, the kernel refuses a fresh procfs mount in
+  a user namespace, so bwrap would fail with `Can't mount proc on /proc: Operation not
+  permitted`. Turning them off costs little: the agent isn't root, so `/proc/sys` stays
+  read-only and `/proc/kmsg` unreadable to it. `ProtectHome` is forced on over
+  upstream's `false`, because the agent's `HOME` is `/var/lib/hermes`. `MemoryMax=24G`
+  caps each unit; it stands in for bubblewrap's per-command memory limit, which is off
+  (see **Terminal sandbox**). nix-mineral mounts `/var` noexec, so `/var/lib/hermes`
+  gets an exec bind mount (like `/srv/projects`). Without it, the `pip --user` /
+  `uv tool` / `npm -g` installs in its `HOME` and the scripts in its workspace could
+  not run.
+- **Terminal sandbox:** `terminal.backend = "bubblewrap"` (official `bubblewrap`
+  plugin). Every `terminal` and `execute_code` command runs in its own `bwrap` sandbox:
+  - the host root read-only at the same paths, and the working directory writable
+  - `/srv/projects` bound read-write, `/srv/share` read-only
+  - the dot entries of `HOME` and all of `HERMES_HOME` (`.env`, `auth.json`,
+    `state.db`) hidden
+  - private `/tmp`, `/proc` and `/dev`, and no agent or D-Bus sockets
+
+  Profile `network` keeps the host network, so it can still clone and install. The
+  per-command `RLIMIT_AS` / `RLIMIT_CPU` limits are set to `0` (off). Their defaults
+  (256 MB, 30 s) break pip, node and any build, and address-space limits break the JVM
+  and V8 long before real memory runs out. `max_procs` is 2048. Approvals apply
+  unchanged on top. Commands are never run unsandboxed: if `bwrap` or its probe fails,
+  the terminal tool returns an error.
+- **Plugin version gate:** upstream's flake builds `main` without passing `version`,
+  so the package stamps the placeholder `0.0.0`. That fails every plugin's
+  `requires_hermes` floor, and the plugin is skipped at load with `requires hermes
+  >=0.21.5, running 0.0.0`. Before this module overrode it, this applied to every
+  catalog plugin here, Home Assistant included. The module builds the package with
+  `version = "unknown"`. An unparseable version passes the gate, which matches
+  upstream's pending fix (NousResearch/hermes-agent#146654, for #144616 / #150066). The
+  banner shows `vunknown` as a result. Drop the override once that PR is merged.
 - **Updating:** `inputs.hermes-agent` tracks upstream `main` (upstream's own Nix
   instructions do the same; its release tags are not kept current). The weekly lock PR
   bumps it, and bristlecone builds the package itself (about 2 min), because no binary
@@ -535,11 +589,22 @@ Check the cert from the server with
      messaging docs for each platform's variables. With none of these set the gateway
      starts and logs `No messaging platforms enabled` — it runs cron jobs but nothing
      can reach it except the local CLI.
-   - `HASS_TOKEN=…` — Home Assistant access, see **Home Assistant** below.
+   - `HASS_TOKEN=…`: Home Assistant access, see **Home Assistant** below.
+   - `PAPERLESS_TOKEN=…`, `KARAKEEP_API_KEY=…`, `CHANGEDETECTION_API_KEY=…`: see
+     **Self-hosted service tools** below.
+   - `ACTUAL_PASSWORD=…`, `ACTUAL_BUDGET_SYNC_ID=…`: see **Actual Budget (MCP)**.
+   - `HERMES_DASHBOARD_BASIC_AUTH_*`: see **Dashboard and Memory Wiki**.
+   - `HERMES_LANGFUSE_PUBLIC_KEY` / `_SECRET_KEY`: see **Langfuse**.
 2. Re-run activation to merge the file, then restart the gateway:
-   `sudo /run/current-system/activate && sudo systemctl restart hermes-agent`.
+   `sudo /run/current-system/activate && sudo systemctl restart hermes-agent hermes-backend`.
    Do the same after every later edit of the env file.
-3. Check it with `journalctl -u hermes-agent -f` and `hermes status`.
+3. Check it with `journalctl -u hermes-agent -f` and `hermes status`. Every plugin
+   should load: `journalctl -u hermes-agent | grep -i "skipped"` should print nothing
+   about `bubblewrap`, `homelab`, `langfuse`, `mcp-serve`, `memory-wiki` or
+   `homeassistant`. Ask the agent to run a command (from Telegram, say: "run `uname -a`
+   and `ls /var/lib/hermes/.hermes`"). The first should work, and the second should
+   fail because the sandbox hides `HERMES_HOME`. That confirms the bwrap sandbox works
+   inside the unit.
 
 The first OAuth login for an MCP server prints its URL to the journal instead of
 opening a browser. Run that flow once from a shell (`hermes mcp add … --auth oauth`),
@@ -579,10 +644,149 @@ Optional env-file limits: `HASS_ENTITY_ALLOWLIST` / `HASS_ENTITY_DENYLIST`
 can see and control; `HASS_HOME_CHANNEL=mobile_app_<phone>` is the target for a bare
 `deliver: homeassistant`.
 
-The module also sets `_left_core_installed = [ "homeassistant" ]` in `config.yaml`.
-Home Assistant used to be built into Hermes, and the migration that moved it out looks
-for exactly `plugins/homeassistant`. It misses the Nix-managed link and would warn on
-every start that the plugin is missing.
+The module also lists `homeassistant` and `langfuse` in `_left_core_installed` in
+`config.yaml`. Both used to be built into Hermes, and the migration that moved them out
+looks for exactly `plugins/<name>`. It misses the Nix-managed links and would warn on
+every start, and it would try to install a second copy from the catalog.
+
+#### Self-hosted service tools
+
+The `homelab` plugin (`packages/hermes-homelab`, this repo's own) gives the agent tools
+for the other services on this host. It calls their REST APIs from the gateway process
+rather than from a shell, so the tokens never reach the bwrap sandbox. A service's tools
+stay hidden until its token is in the env file.
+
+| Tools | Service | Access |
+|-------|---------|--------|
+| `paperless_search`, `paperless_get_document` | Paperless-ngx (full-text search over OCR text, then a document's text and metadata) | read only |
+| `karakeep_search`, `karakeep_get_bookmark`, `karakeep_add` | Karakeep (search, read the archived page, save a link or note with tags) | add, never edit or delete |
+| `changedetection_list_watches`, `changedetection_get_changes`, `changedetection_add_watch` | changedetection.io (watches by last change, the latest diff, add a watch) | add, never edit or delete |
+| `server_health` | systemd and borgmatic (failed units, last backup result and time, disk, load) | read only, no token |
+
+Tokens, each from a dedicated account where the app supports one:
+
+- **Paperless:** create a non-admin user `hermes` with view permission on documents,
+  then log in as it. **Profile → API Auth Token** gives `PAPERLESS_TOKEN`. Its
+  permissions bound what the agent can read. Paperless's object permissions apply as
+  well: a document owned by your own user is visible to `hermes` only if shared with it
+  (per document, or for new uploads through **Settings → Permissions → default
+  permissions** or a workflow).
+- **Karakeep:** **Settings → API Keys** gives `KARAKEEP_API_KEY`. Keys belong to a user,
+  and bookmarks the agent saves land in that user's library.
+- **changedetection.io:** **Settings → API** gives `CHANGEDETECTION_API_KEY`. The key
+  covers the whole instance.
+
+URLs default to loopback (`PAPERLESS_URL`, `KARAKEEP_URL`, `CHANGEDETECTION_URL` override
+them). Karakeep page text and changedetection diffs are third-party web content, and the
+tool descriptions tell the model to treat instructions inside them as data. Hermes's
+webhook platform could push changedetection alerts in automatically, but it requires
+HMAC-signed requests, which changedetection's notifications can't send, and it would put
+untrusted page text straight into the agent's turns. So changes are pulled with the
+tools instead. A cron job does the same job:
+
+```bash
+sudo -u hermes -H hermes cron create --name daily-health --deliver telegram "0 8 * * *" \
+  "Call server_health and changedetection_list_watches(unviewed_only=true). Message me only if something failed, the last backup is not a success from the last 26 hours, a disk is above 90%, or a watch has unseen changes (summarise each with changedetection_get_changes)."
+```
+
+#### Actual Budget (MCP)
+
+Actual has no REST API. The `@actual-app/api` library downloads the budget and works on
+a local copy. `packages/actual-mcp` packages the `actual-mcp` server, which wraps that
+library, and the module registers it as the `actual` MCP server. It is read-only (it
+runs without `--enable-write`), with these tools:
+
+- `get-transactions`, `get-accounts`, `balance-history`
+- `spending-by-category`, `monthly-summary`
+- `get-grouped-categories`, `get-payees`, `get-rules`
+
+- **Env file:** `ACTUAL_PASSWORD=<server password>` and
+  `ACTUAL_BUDGET_SYNC_ID=<Sync ID>`. The Sync ID is under **Settings → Show advanced
+  settings → Sync ID** in the Actual web UI. If the budget is end-to-end encrypted, also
+  add `ACTUAL_BUDGET_ENCRYPTION_PASSWORD`. The MCP config refers to these as `${VAR}`,
+  so nothing secret is in Nix or `config.yaml`.
+- **TLS:** the server is reached as `https://bristlecone.netbird.cloud:5006`, because
+  the self-signed cert names only that host. `NODE_EXTRA_CA_CERTS` points at the public
+  copy in `/var/lib/actual-cert/cert.pem`.
+- **Cache:** `/var/lib/hermes/actual-mcp` holds the downloaded budget. It is excluded
+  from Hermes's backup, because Actual's own backup covers the budget.
+- **Version lock:** each `actual-mcp` release pins one exact `@actual-app/api`. A newer
+  one migrates the budget file past what the server's web client can open. The module
+  asserts that `actual-mcp`'s API version equals `services.actual.package.version`. When
+  a nixpkgs bump moves Actual, eval fails until `packages/actual-mcp` moves to the
+  release that pins the same version (`npm view actual-mcp versions` and each version's
+  `dependencies`). Update the tag, `hash` and `npmDepsHash` (`prefetch-npm-deps
+  package-lock.json`).
+
+#### Langfuse
+
+The official `langfuse` plugin traces each turn, LLM call (tokens, cost) and tool call.
+It does nothing until keys are set, logging one warning.
+
+- **Langfuse Cloud:** create a project at <https://cloud.langfuse.com> and add
+  `HERMES_LANGFUSE_PUBLIC_KEY=pk-lf-…` and `HERMES_LANGFUSE_SECRET_KEY=sk-lf-…`.
+- **Self-hosted:** also add `HERMES_LANGFUSE_BASE_URL=…`. Langfuse v3 needs Postgres,
+  ClickHouse, Redis and S3-compatible storage, and nixpkgs has no module for it, so it
+  is not set up here.
+- **Capture:** `HERMES_LANGFUSE_CAPTURE=metadata` is set in Nix, so only structure,
+  tokens, cost and timing are exported, with no prompts, replies or tool content. The
+  agent handles documents, budgets and home state. To export redacted content instead,
+  set `HERMES_LANGFUSE_CAPTURE=sanitized` in the env file, which overrides the Nix
+  value.
+- **SDK:** the plugin pins `langfuse==4.15.2`. The module builds that version with
+  Hermes's own Python and adds only it and `backoff` to the venv. Upstream refuses an
+  `extraPythonPackages` closure that repeats a venv package, and the venv already has
+  httpx, pydantic, wrapt and the OpenTelemetry SDK.
+
+#### Dashboard and Memory Wiki
+
+`backend.mode = "dashboard"` runs `hermes dashboard` as `hermes-backend` on
+`bristlecone.netbird.cloud:9119` (`wt0` only). It is also the backend Hermes Desktop
+connects to. The official `memory-wiki` plugin adds a **Memory Wiki** tab: subject pages
+and daily logs derived from `state.db`, and a read-only view of `MEMORY.md` /
+`USER.md`. It makes no LLM calls and no writes.
+
+- **Auth:** binding to a non-loopback address turns on the auth gate. Add credentials
+  to the env file:
+
+  ```
+  HERMES_DASHBOARD_BASIC_AUTH_USERNAME=nano
+  HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=<strong password>
+  HERMES_DASHBOARD_BASIC_AUTH_SECRET=<openssl rand -base64 32>
+  ```
+
+  The secret keeps sessions valid across restarts.
+  `HERMES_DASHBOARD_BASIC_AUTH_PASSWORD_HASH` (scrypt) can replace the plaintext
+  password. Signed in, the dashboard can edit config and open a terminal as the agent,
+  so treat this password like SSH access.
+- **URL:** open it by name, as `http://bristlecone.netbird.cloud:9119`. The server
+  rejects any other `Host` header (a DNS-rebinding defence).
+- **Desktop app:** for the native Memory Wiki page in Hermes Desktop, copy the plugin's
+  `desktop/plugin.js` to `$HERMES_HOME/desktop-plugins/memory-wiki/plugin.js` on the
+  client, then enable it under **Capabilities → Plugins**.
+
+#### MCP serve
+
+The official `mcp-serve` plugin turns Hermes into an MCP server, over stdio only. MCP
+clients such as Claude Code, Cursor and Codex can list and read the agent's
+conversations, wait for new messages, send through its platforms and answer approval
+prompts. With `--tools`, they also get Hermes's web, vision, image and TTS tools. Its
+terminal, file and code tools are never exposed.
+
+It has to run as `hermes`, and sudo can't prompt over a non-interactive SSH session.
+So the module installs a `hermes-mcp-serve` wrapper plus a sudo rule letting the login
+user run exactly `hermes mcp-serve` and `hermes mcp-serve --tools` as `hermes` without a
+password. From a desktop with SSH key access to bristlecone:
+
+```bash
+claude mcp add hermes -- ssh bristlecone hermes-mcp-serve
+# or, with Hermes's own tools as well:
+claude mcp add hermes -- ssh bristlecone hermes-mcp-serve --tools
+```
+
+Claude Code's MCP config stays outside Nix (`~/.claude.json` must stay writable).
+Reading conversations works without the gateway. `messages_send` needs the gateway
+running.
 
 #### The API server
 
@@ -668,13 +872,9 @@ In rough order of effort:
    file — see **The API server** below. From another Hermes host:
    `hermes peer add bristlecone --url http://bristlecone.netbird.cloud:8642 --key <token>`,
    then `hermes peer dm bristlecone "…"`.
-4. **The web dashboard** — `hermes dashboard` (UI) and `hermes serve` (headless
-   backend for the desktop app) listen on `127.0.0.1:9119`. Neither is wired into Nix:
-   upstream's NixOS module only covers the gateway, so exposing one means a systemd
-   unit of its own. A non-loopback bind always requires an auth provider
-   (`HERMES_DASHBOARD_BASIC_AUTH_USERNAME` / `_PASSWORD`, or OAuth) — `--insecure` has
-   been a no-op since upstream's June 2026 hardening. Easiest without touching the
-   config: leave it on loopback and tunnel, `ssh -L 9119:127.0.0.1:9119 bristlecone`.
+4. **The web dashboard:** `http://bristlecone.netbird.cloud:9119`, which is also the
+   backend for Hermes Desktop. See **Dashboard and Memory Wiki** above.
+5. **An MCP client:** `ssh bristlecone hermes-mcp-serve`. See **MCP serve** above.
 
 ---
 
