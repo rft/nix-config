@@ -10,6 +10,7 @@ let
     ghidra
     imhex
     qemu
+    scanruler-mcp
   ];
 
   linuxOnlyPackages = with pkgs; [
