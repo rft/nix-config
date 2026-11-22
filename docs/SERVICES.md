@@ -22,6 +22,7 @@ also be switched on or off with `myconfig.services.<name>.enable`.
 | 9router (AI gateway) | 20128 | HTTP     | NetBird (`wt0`) only |
 | Hermes API server    | 8642  | HTTP     | NetBird (`wt0`) only |
 | Hermes dashboard     | 9119  | HTTP     | NetBird (`wt0`) only |
+| llama-server (Inkling 2 Mini) | 8090 | HTTP | localhost (via 9router) |
 | Meilisearch          | 7700  | HTTP     | localhost      |
 | Karakeep browser CDP | 9222  | HTTP     | localhost      |
 | Samba (scanner)      | 445   | SMB      | LAN            |
@@ -472,6 +473,21 @@ DynamicUser's `0700` directory. The Hermes `actual` MCP server is one such clien
   rather than the interactive `9router` CLI, which detaches and npm-installs deps
   into `$HOME` at startup.
 - **Hardening:** Shared baseline plus `ProtectSystem = strict`.
+
+### Local LLM (Inkling 2 Mini)
+
+- **What:** Thinking Machines' Inkling 2 Mini (26B looped MoE, ~3.4B active) on the
+  CPU via `llama-server`, offered to the mesh through 9router.
+- **Port:** 8090 on `127.0.0.1` only. llama-server has no auth, so other hosts reach
+  it through 9router.
+- **Package:** nixpkgs' `llama-cpp` bumped to `b12635` (Inkling needs b12628 or later).
+  The new `ui/` workspace is skipped, so there is no built-in chat page.
+- **Model:** `ggml-org/Inkling-2-Mini-GGUF:IQ4_NL` (~18GB). It is downloaded into
+  `/var/cache/llama-cpp` on the first start (watch `journalctl -fu llama-cpp`) and is not
+  backed up. Served as `inkling-2-mini` with a 64K context and one slot.
+- **9router:** In the dashboard, add a custom provider of type `openai-compatible` (API
+  type `chat`) with base URL `http://127.0.0.1:8090/v1`, any API key and model
+  `inkling-2-mini`. Clients then call it as `<prefix>/inkling-2-mini`.
 
 ### Hermes Agent
 
