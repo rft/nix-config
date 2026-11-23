@@ -50,6 +50,11 @@ delib.module {
           # auto-indexing off when OPENAI_BASE_URL is set; pinned so a later
           # default change can't start a queue of failing embedding jobs.
           EMBEDDING_ENABLE_AUTO_INDEXING = "false";
+          # OCR image assets with the vision model instead of Tesseract.
+          # tesseract.js throws undecodable images (e.g. animated WebP) from its
+          # worker thread, outside the job's try/catch, which kills the whole
+          # workers process. LLM OCR errors are caught per job.
+          OCR_USE_LLM = "true";
         };
       };
 
@@ -79,6 +84,12 @@ delib.module {
         // {
           ProtectSystem = "strict";
           ReadWritePaths = [ "/var/lib/karakeep" ];
+          # Upstream sets no restart policy, so one crashing job stalls every
+          # queue (imports included) until a manual restart. A job's attempt is
+          # spent when it is claimed, so a job that keeps crashing the process
+          # is dropped after its retries run out instead of looping.
+          Restart = "on-failure";
+          RestartSec = 10;
         }
       );
 
