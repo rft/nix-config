@@ -392,8 +392,15 @@ systemd.services.zigbee2mqtt.serviceConfig.DeviceAllow = [ "/dev/ttyUSB0" ];
   system keeps only `contents`, silently dropping the variable. `CacheDirectory` does
   come from upstream and is no longer set here.
 - **AI tagging:** Inference goes through the local 9router gateway
-  (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`, model `cx/gpt-5.6-luna` for text and
-  images, plain JSON output because 9router drops `json_schema`). Karakeep decides
+  (`OPENAI_BASE_URL = http://127.0.0.1:20128/v1`, model `local/karakeep` for text and
+  images, plain JSON output because 9router drops `json_schema`). `local` is a custom
+  OpenAI-compatible provider added in the 9router dashboard, pointing at llama-server
+  on pineapple (`http://pineapple.netbird.cloud:8080/v1`, Qwen3.6-35B-A3B Q4_K_M plus
+  its vision projector, served under the alias `karakeep`; see
+  `hosts/pineapple/default.nix`). The provider and its `karakeep` model live in
+  9router's state, not in Nix — 9router only listed `local/karakeep` after a
+  `systemctl restart 9router`. Tagging stalls while pineapple is asleep or off the
+  mesh, and the job timeout is raised to 120 s for the slower local model. Karakeep decides
   whether inference is configured from `OPENAI_API_KEY` alone, so until that key exists
   nothing is tagged and the workers log nothing about it. 9router requires an API key
   even on loopback. Embedding auto-indexing is pinned off, because 9router serves no

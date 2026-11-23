@@ -35,8 +35,15 @@ delib.module {
           # /var/lib/karakeep/settings.env (append `OPENAI_API_KEY=...` there —
           # karakeep-init never overwrites it).
           OPENAI_BASE_URL = "http://127.0.0.1:20128/v1";
-          INFERENCE_TEXT_MODEL = "cx/gpt-5.6-luna";
-          INFERENCE_IMAGE_MODEL = "cx/gpt-5.6-luna";
+          # 9router's `local` provider → llama-server on pineapple
+          # (pineapple.netbird.cloud:8080, model alias `karakeep`: Qwen3.6-35B-A3B
+          # with its vision projector, so one model covers text and images).
+          # Tagging stalls while pineapple is asleep or off the mesh.
+          INFERENCE_TEXT_MODEL = "local/karakeep";
+          INFERENCE_IMAGE_MODEL = "local/karakeep";
+          # Default is 30 s. pineapple evaluates prompts at roughly 120 tok/s,
+          # so a full-context page plus a cold start can run past that.
+          INFERENCE_JOB_TIMEOUT_SEC = "120";
           # 9router drops json_schema response_format, so ask for plain JSON mode.
           INFERENCE_OUTPUT_SCHEMA = "json";
           # 9router serves no embedding models. Karakeep already leaves

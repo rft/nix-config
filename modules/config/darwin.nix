@@ -28,20 +28,15 @@ delib.module {
       homebrew = {
         enable = lib.mkDefault true;
         onActivation.cleanup = lib.mkDefault "zap";
-        taps = [
-          # trusted: Homebrew 6 refuses to load casks from untrusted third-party taps.
-          {
-            name = "abue-ammar/tinycast";
-            trusted = true;
-          }
-        ];
         brews = [ "mas" ];
         # Baseline for every Mac. Casks that mirror a feature module live in
         # that module's darwin.ifEnabled block (applications,
         # applications.creative, applications.gaming, terminal.kitty,
         # desktop.nehir) so they follow its toggle.
         casks = [
-          "abue-ammar/tinycast/tinycast"
+          # In homebrew/cask; the abue-ammar/tinycast tap now only carries
+          # the Intel/universal build and redirects `tinycast` here.
+          "tinycast"
           "shortcat"
           "linearmouse"
           "orion"
@@ -68,7 +63,6 @@ delib.module {
           "SingleFile for Safari" = 6444322545;
           "Kagi for Safari" = 1622835804;
           "Userscripts" = 1463298887;
-          "Vimari" = 1480933944;
           "Kitty Progress Bar" = 6780563808;
           "Hover for Safari" = 1540705431;
         };
