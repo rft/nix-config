@@ -53,11 +53,33 @@ in
 delib.module {
   name = "core";
 
-  home.always = {
+  home.always = { myconfig, ... }: {
     home.packages = with pkgs; [
       ripgrep
       fd
     ];
+
+    # oh-my-pi custom provider: the shared 9router gateway on bristlecone
+    # (modules/services/ai-gateway.nix), loopback there and over netbird
+    # everywhere else. Discovery reads <baseUrl>/models, so every model 9router
+    # offers shows up as `9router/<id>` — pick one with /model or modelRoles in
+    # ~/.omp/agent/config.yml, which stays writable and unmanaged.
+    # The gateway requires an API key for both /models and inference; omp reads
+    # it from NINEROUTER_API_KEY (same name Hermes uses). If that variable is
+    # unset, omp sends the literal string as the key and gets a 401.
+    home.file.".omp/agent/models.yml".text = lib.generators.toYAML { } {
+      providers."9router" = {
+        baseUrl =
+          if myconfig.services.ai-gateway.enable or false then
+            "http://127.0.0.1:20128/v1"
+          else
+            "http://bristlecone.netbird.cloud:20128/v1";
+        api = "openai-completions";
+        apiKey = "NINEROUTER_API_KEY";
+        authHeader = true;
+        discovery.type = "openai-models-list";
+      };
+    };
 
     programs.direnv = {
       enable = true;

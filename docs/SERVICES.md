@@ -479,6 +479,11 @@ DynamicUser's `0700` directory. The Hermes `actual` MCP server is one such clien
   rather than the interactive `9router` CLI, which detaches and npm-installs deps
   into `$HOME` at startup.
 - **Hardening:** Shared baseline plus `ProtectSystem = strict`.
+- **oh-my-pi:** every host gets `~/.omp/agent/models.yml` (from `modules/core`) with a
+  `9router` provider — loopback on bristlecone, `bristlecone.netbird.cloud` elsewhere —
+  that discovers models from `/v1/models`. Export `NINEROUTER_API_KEY` (a key minted in
+  the dashboard) in your shell; `/v1/models` also needs it from remote hosts. Then pick
+  `9router/<id>` with `/model` or `modelRoles.default` in `~/.omp/agent/config.yml`.
 
 ### Hermes Agent
 

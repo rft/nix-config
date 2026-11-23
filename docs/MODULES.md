@@ -63,7 +63,7 @@ System-level packages and shell configuration. Always enabled, except `core.work
 
 - **Path:** `modules/core/default.nix`
 - **Name:** `core`
-- **Description:** Installs ~30 system packages on every host (bat, ripgrep, fd, fzf, git, claude-code, codex, oh-my-pi, hermes-agent, yazi, zellij, etc.) plus podman and podman-tui on Linux. Tools that only make sense on a machine someone sits at live in `core.workstation`. Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection on NixOS (delete older than 30 days); on Darwin, Determinate Nix manages the store.
+- **Description:** Installs ~30 system packages on every host (bat, ripgrep, fd, fzf, git, claude-code, codex, oh-my-pi, hermes-agent, yazi, zellij, etc.) plus podman and podman-tui on Linux. Writes oh-my-pi's `~/.omp/agent/models.yml` with a `9router` provider pointing at the bristlecone gateway (key from `NINEROUTER_API_KEY`). Tools that only make sense on a machine someone sits at live in `core.workstation`. Enables Podman virtualisation with Docker Hub registry. Sets default user shell to xonsh. Configures weekly garbage collection on NixOS (delete older than 30 days); on Darwin, Determinate Nix manages the store.
 - **Options:** None (always active).
 - **Default behavior:** Always active for all NixOS hosts. On Darwin, only the shared package set is applied (`wl-clipboard` and other Linux-only packages are excluded).
 - **Dependencies:** `nixcats-nvim` flake input (for Neovim).
