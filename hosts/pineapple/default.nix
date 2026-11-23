@@ -8,7 +8,16 @@ delib.host {
   type = "darwin";
   system = "aarch64-darwin";
 
-  home.home.stateVersion = "24.05";
+  home = {
+    home.stateVersion = "24.05";
+
+    # Let bristlecone in (it fetches models into ~/Models). Kept here rather
+    # than in constants.sshKeys so the server's key reaches this host only.
+    # `text` is a lines option, so this appends to core.ssh's shared keys.
+    home.file.".ssh/authorized_keys".text = ''
+      ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDoWgwgUW/gjYvlxz6tEz3hs4DFO1+nMeUbbQiTG8yR0 nano@bristlecone
+    '';
+  };
 
   darwin = {
     homebrew.casks = [ "google-chrome" ];
@@ -19,6 +28,10 @@ delib.host {
       pkgs.docker-client
     ];
 
+    # Vision model for Karakeep's AI tagging (bristlecone reaches it over
+    # NetBird). Qwen3.6-35B-A3B Q4_K_M + its Q8_0 mmproj from
+    # ggml-org/Qwen3.6-35B-A3B-GGUF, downloaded by hand into ~/Models. One
+    # model serves both text and image tagging.
     launchd.user.agents.llama-server = {
       serviceConfig = {
         Label = "com.llama-cpp.server";
@@ -29,12 +42,54 @@ delib.host {
           "--port"
           "8080"
           "--model"
-          "${homeDir}/Models/default.gguf"
+          "${homeDir}/Models/karakeep.gguf"
+          "--mmproj"
+          "${homeDir}/Models/karakeep-mmproj.gguf"
+          # Stable name for Karakeep's INFERENCE_*_MODEL settings.
+          "--alias"
+          "karakeep"
+          # Chat template from the GGUF; needed for json_schema output.
+          "--jinja"
+          # Qwen3.6 thinks by default; tagging doesn't need it and the
+          # thinking tokens only slow each job down.
+          "--reasoning"
+          "off"
+          # Qwen's recommended sampling for non-thinking mode.
+          "--temp"
+          "0.7"
+          "--top-p"
+          "0.8"
+          "--top-k"
+          "20"
+          "--presence-penalty"
+          "1.5"
+          "--n-gpu-layers"
+          "999"
+          # Karakeep runs one inference job at a time, so keep a single slot
+          # rather than splitting the context across parallel ones.
+          "--parallel"
+          "1"
+          "--ctx-size"
+          "16384"
         ];
         RunAtLoad = true;
         KeepAlive = true;
         StandardOutPath = "${homeDir}/Library/Logs/llama-server.log";
         StandardErrorPath = "${homeDir}/Library/Logs/llama-server.err";
+      };
+    };
+
+    # macOS caps GPU-wired memory at ~2/3 of RAM (~21 GB on 32 GB), which the
+    # 20.5 GB model + 0.6 GB mmproj + KV cache would brush against. Raise it to
+    # 24 GB at boot; the sysctl doesn't persist across reboots on its own.
+    launchd.daemons.gpu-wired-limit = {
+      serviceConfig = {
+        Label = "com.user.gpu-wired-limit";
+        ProgramArguments = [
+          "/usr/sbin/sysctl"
+          "iogpu.wired_limit_mb=24576"
+        ];
+        RunAtLoad = true;
       };
     };
 
