@@ -146,11 +146,20 @@ delib.module {
       # be revealed by it ("bwrap: Can't mount proc on /proc: Operation not
       # permitted"). Little is lost: the agent is not root, so /proc/sys stays
       # read-only and /proc/kmsg unreadable to it anyway.
+      #
+      # RestrictSUIDSGID is off because upstream makes HERMES_HOME and its
+      # subdirectories 2770, so every directory under them inherits setgid.
+      # Copying one with shutil.copytree (skill_manage's rollback snapshot,
+      # skills sync) ends in copystat's chmod(dst, 0o2770), which the filter
+      # refuses: "[Errno 1] Operation not permitted" on the copy. The bits
+      # are only ever set for the agent's own uid/group, and NoNewPrivileges
+      # still stops them from granting anything inside these units.
       agentServiceConfig =
         lib.mapAttrs (_: lib.mkForce) (
           removeAttrs hardenedServiceConfig [
             "SystemCallFilter"
             "RestrictNamespaces"
+            "RestrictSUIDSGID"
             "ProtectKernelTunables"
             "ProtectKernelLogs"
           ]
