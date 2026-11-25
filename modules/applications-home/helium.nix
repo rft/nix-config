@@ -48,7 +48,7 @@ let
     "edacconmaakjimmfgnblocblbcdcpbko" # Session Buddy
     "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
     "blockjmkbacgjkknlgpkjjiijinjdanf" # uBlock Origin
-    "ldgfbffkinooeloadekpmfoklnobpien" # Raindrop.io
+    "kgcjekpmcjjogibpjebkhaanilehneje" # Karakeep
     "jinjaccalgkegednnccohejagnlnfdag" # Violentmonkey
   ];
 
@@ -126,10 +126,10 @@ delib.module {
           "bifgfhokfobhebifcogneljkpaaloonp" # Cesturefy
           "fcjmgeodgobggcppooncdagfkogfffdm" # Imagus Reborn
           "fkagelmloambgokoeokbpihmgpkbgbfm" # Indie Wiki Buddy
+          "kgcjekpmcjjogibpjebkhaanilehneje" # Karakeep
           "halllmdjninjohpckldgkaolbhgkfnpe" # Karamel
           "oadlabdleegopgjlkcmjjogeaceagbie" # Nyan Cat Extension
           "dneaehbmnbhcippjikoajpoabadpodje" # Old Reddit Redirect
-          "ldgfbffkinooeloadekpmfoklnobpien" # Raindrop.io
           "kbmfpngjjgdllneeigpgjifpgocmfgmb" # Reddit Enhancement Suite
           "gebbhagfogifgggkldgodflihgfeippi" # Return YouTube Dislike
           "edacconmaakjimmfgnblocblbcdcpbko" # Session Buddy
